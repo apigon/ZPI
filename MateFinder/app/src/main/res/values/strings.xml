@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MateFinder</string>
+
+    <string name="welcome">Witaj w MateFiner!</string>
+    <string name="loading">Ładuję...</string>
+    <string name="action_settings">Settings</string>
+</resources>
