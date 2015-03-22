@@ -3,5 +3,16 @@
 
     <string name="welcome">Witaj w MateFiner!</string>
     <string name="loading">Ładuję...</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Hasło</string>
+    <string name="hint_password_repeat">Powtórz hasło</string>
+    <string name="hint_name">Imię i nazwisko</string>
+    <string name="hint_login">Login</string>
+    <string name="btn_login">ZALOGUJ</string>
+    <string name="btn_register">ZAREJESTRUJ</string>
+    <string name="btn_link_to_register">Nie jesteś członkiem? Zarejestruj się.</string>
+    <string name="btn_link_to_login">Jestem zarejestrowany! Zaloguj mnie.</string>
+    <string name="btn_logout">WYLOGUJ</string>
+    <string name="name">Imię i nazwisko</string>
 </resources>
