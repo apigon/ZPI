@@ -112,7 +112,7 @@ public class RegisterActivity extends Activity {
     private void registerUser(final String login, final String email,
                               final String password, final String phone) {
         // Tag used to cancel the request
-        String tag_string_req = "req_register";
+        String tag_string_req = "register";
 
         pDialog.setMessage("Rejestrowanie...");
         showDialog();
@@ -131,7 +131,6 @@ public class RegisterActivity extends Activity {
                     if (!error) {
                         // User successfully stored in MySQL
                         // Now store the user in sqlite
-                        String uid = jObj.getString("uid");
 
                         JSONObject user = jObj.getJSONObject("user");
                         String login = user.getString("login");
@@ -140,7 +139,7 @@ public class RegisterActivity extends Activity {
 
 
                         // Inserting row in users table
-                        db.addUser(login, email, uid, phone);
+                        db.addUser(login, email, phone);
 
                         // Launch login activity
 //                        Intent intent = new Intent(
