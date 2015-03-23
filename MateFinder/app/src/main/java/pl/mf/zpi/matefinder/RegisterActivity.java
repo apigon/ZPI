@@ -84,7 +84,7 @@ public class RegisterActivity extends Activity {
                         registerUser(login, email, password, phone);
                     } else {
                         Toast.makeText(getApplicationContext(),
-                                "Please enter your details!", Toast.LENGTH_LONG)
+                                "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
                                 .show();
                     }
                 else
@@ -137,11 +137,10 @@ public class RegisterActivity extends Activity {
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
-                        String created_at = user
-                                .getString("created_at");
+
 
                         // Inserting row in users table
-                        db.addUser(login, email, uid, created_at, phone);
+                        db.addUser(login, email, uid, phone);
 
                         // Launch login activity
 //                        Intent intent = new Intent(

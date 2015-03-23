@@ -26,7 +26,8 @@
             android:singleLine="true"
             android:inputType="textCapWords"
             android:textColor="@color/input"
-            android:textColorHint="@color/input_hint" />
+            android:textColorHint="@color/input_hint"
+            android:autoText="false" />
 
         <EditText
             android:id="@+id/email"
