@@ -15,4 +15,7 @@
     <string name="btn_link_to_login">Jestem zarejestrowany! Zaloguj mnie.</string>
     <string name="btn_logout">WYLOGUJ</string>
     <string name="name">Imię i nazwisko</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>
