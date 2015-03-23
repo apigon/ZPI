@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pl.mf.zpi.matefinder" >
+    package="pl.mf.zpi.matefinder"
+    android:installLocation="auto">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -8,11 +9,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <android:uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
@@ -20,19 +18,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
-        <!-- <activity -->
-        <!-- android:name=".LoginActivity" -->
-        <!-- android:label="@string/app_name" -->
-        <!-- android:launchMode="singleTop" -->
-        <!-- android:windowSoftInputMode="adjustPan" > -->
-        <!-- </activity> -->
         <activity
-            android:name=".RegisterActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,17 +33,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".RegisterActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
-        <activity
-            android:name=".helper.LoginActivity"
-            android:label="@string/title_activity_login" >
-        </activity>
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"/>
     </application>
 
 </manifest>

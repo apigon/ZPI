@@ -4,7 +4,6 @@ package pl.mf.zpi.matefinder;
  * Created by Tomek on 2015-03-22.
  */
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Request.Method.*;
+import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -23,7 +21,6 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,7 +108,7 @@ public class LoginActivity extends Activity {
 
         pDialog.setMessage("Logging in ...");
         showDialog();
-        StringRequest strReq = new StringRequest(Request.Method.POST,
+        StringRequest strReq = new StringRequest(Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
 
             @Override

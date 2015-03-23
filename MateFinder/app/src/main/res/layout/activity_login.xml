@@ -39,7 +39,8 @@
             android:padding="10dp"
             android:singleLine="true"
             android:textColor="@color/input"
-            android:textColorHint="@color/input_hint" />
+            android:textColorHint="@color/input_hint"
+            android:textIsSelectable="false" />
 
         <!-- Login Button -->
 
@@ -48,9 +49,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@color/kol3"
+            android:background="@color/kol1"
             android:text="@string/btn_login"
-            android:textColor="@color/kol1" />
+            android:textColor="@color/kol4"
+            android:textSize="20dp"
+            android:minHeight="25dp" />
 
         <!-- Link to Login Screen -->
 

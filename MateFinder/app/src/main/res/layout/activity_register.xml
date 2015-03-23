@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp" >
+        android:paddingRight="20dp">
 
         <EditText
             android:id="@+id/registerLogin"
@@ -75,10 +75,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@color/kol3"
+            android:background="@color/kol1"
             android:text="@string/btn_register"
-            android:textColor="@color/kol1"
-            android:textAlignment="center"/>
+            android:textColor="@color/kol4"
+            android:textAlignment="center"
+            android:textSize="22dp"
+            android:minHeight="25dp" />
 
         <!-- Link to Login Screen -->
 
