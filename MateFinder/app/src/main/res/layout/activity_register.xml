@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/bg"
+    android:background="@color/kol7"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp" >
@@ -20,7 +20,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/input_register_bg"
+            android:background="@color/kol8"
             android:hint="@string/hint_login"
             android:padding="10dp"
             android:singleLine="true"
@@ -34,7 +34,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/input_register_bg"
+            android:background="@color/kol8"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
             android:padding="10dp"
@@ -47,7 +47,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/input_register_bg"
+            android:background="@color/kol8"
             android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:padding="10dp"
@@ -60,7 +60,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/input_register_bg"
+            android:background="@color/kol8"
             android:hint="@string/hint_password_repeat"
             android:inputType="textPassword"
             android:padding="10dp"
@@ -75,12 +75,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@color/kol1"
             android:text="@string/btn_register"
             android:textColor="@color/kol4"
             android:textAlignment="center"
             android:textSize="22dp"
-            android:minHeight="25dp" />
+            android:minHeight="25dp"/>
+        <!--android:background="@color/kol6"-->
 
         <!-- Link to Login Screen -->
 
