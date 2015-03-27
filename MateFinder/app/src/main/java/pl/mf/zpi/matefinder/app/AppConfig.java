@@ -6,8 +6,8 @@ package pl.mf.zpi.matefinder.app;
 
 public class AppConfig {
     // Server user login url
-    public static String URL_LOGIN = "http://156.17.130.212/android_login_api/";
+    public static String URL_LOGIN = "http://156.17.130.212/android_login_api/index.php";
 
     // Server user register url
-    public static String URL_REGISTER = "http://156.17.130.212/android_login_api/";
+    public static String URL_REGISTER = "http://156.17.130.212/android_login_api/index.php";
 }

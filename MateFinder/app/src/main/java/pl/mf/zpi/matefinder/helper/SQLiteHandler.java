@@ -29,7 +29,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Login Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_LOGIN = "login";
-    private static final String KEY_NAME = "name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_PHONE = "phone";
 
@@ -41,7 +40,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," +KEY_LOGIN+"TEXT,"+ KEY_NAME + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY," +KEY_LOGIN+"TEXT,"
                 + KEY_EMAIL + " TEXT UNIQUE," +KEY_PHONE+"TEXT"
                 + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
@@ -67,8 +66,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_LOGIN, login);
-        values.put(KEY_NAME, ""); // Name
-        values.put(KEY_EMAIL, email); // Email
+        values.put(KEY_EMAIL, email);
         values.put(KEY_PHONE, phone);
 
         // Inserting Row
@@ -91,11 +89,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             user.put("login", cursor.getString(1));
-            user.put("name", cursor.getString(2));
-            user.put("email", cursor.getString(3));
-            user.put("uid", cursor.getString(4));
-            user.put("phone", cursor.getString(5));
-            user.put("created_at", cursor.getString(6));
+            user.put("email", cursor.getString(2));
+            user.put("phone", cursor.getString(3));
         }
         cursor.close();
         db.close();

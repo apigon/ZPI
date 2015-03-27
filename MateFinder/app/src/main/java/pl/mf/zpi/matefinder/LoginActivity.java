@@ -35,7 +35,7 @@ public class LoginActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnLogin;
     private Button btnLinkToRegister;
-    private EditText inputEmail;
+    private EditText inputLogin;
     private EditText inputPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
@@ -45,7 +45,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        inputEmail = (EditText) findViewById(R.id.email);
+        inputLogin = (EditText) findViewById(R.id.logLogin);
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
@@ -69,13 +69,13 @@ public class LoginActivity extends Activity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                String email = inputEmail.getText().toString();
+                String login = inputLogin.getText().toString();
                 String password = inputPassword.getText().toString();
 
                 // Check for empty data in the form
-                if (email.trim().length() > 0 && password.trim().length() > 0) {
+                if (login.trim().length() > 0 && password.trim().length() > 0) {
                     // login user
-                    checkLogin(email, password);
+                    checkLogin(login, password);
                 } else {
                     // Prompt user to enter credentials
                     Toast.makeText(getApplicationContext(),
@@ -102,7 +102,7 @@ public class LoginActivity extends Activity {
     /**
      * function to verify login details in mysql db
      * */
-    private void checkLogin(final String email, final String password) {
+    private void checkLogin(final String login, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
 
@@ -159,7 +159,7 @@ public class LoginActivity extends Activity {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "login");
-                params.put("email", email);
+                params.put("login", login);
                 params.put("password", password);
 
                 return params;

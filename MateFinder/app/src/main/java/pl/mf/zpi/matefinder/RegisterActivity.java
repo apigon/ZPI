@@ -112,7 +112,7 @@ public class RegisterActivity extends Activity {
     private void registerUser(final String login, final String email,
                               final String password, final String phone) {
         // Tag used to cancel the request
-        String tag_string_req = "register";
+        String tag_string_req = "register_req";
 
         pDialog.setMessage("Rejestrowanie...");
         showDialog();
@@ -142,11 +142,11 @@ public class RegisterActivity extends Activity {
                         db.addUser(login, email, phone);
 
                         // Launch login activity
-//                        Intent intent = new Intent(
-//                                RegisterActivity.this,
-//                                LoginActivity.class);
-//                        startActivity(intent);
-//                        finish();
+                        Intent intent = new Intent(
+                                RegisterActivity.this,
+                                LoginActivity.class);
+                        startActivity(intent);
+                        finish();
                     } else {
 
                         // Error occurred in registration. Get the error
