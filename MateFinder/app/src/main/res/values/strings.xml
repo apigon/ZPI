@@ -17,6 +17,22 @@
     <string name="btn_logout">WYLOGUJ</string>
     <string name="name">Imię i nazwisko</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="action_change_view">Przełącz widok</string>
+    <string name="action_add_user">Dodaj użytkownika</string>
+    <string name="action_add_group">Dodaj grupę</string>
+    <string name="action_send_notification">Powiadom</string>
+    <string name="action_search">Szukaj</string>
+    <string name="action_notification">Powiadomienie</string>
+    <string name="action_share_location">Włącz / wyłącz lokalizację</string>
+
+    <string name="editProfile_basic">Edycja danych logowania</string>
+    <string name="editProfile_additional">Dodatkowe informacje</string>
+    <string name="editProfile_login">Login</string>
+    <string name="editProfile_password">Hasło</string>
+    <string name="editProfile_email">Adres email</string>
+    <string name="editProfile_name">Imię</string>
+    <string name="editProfile_surname">Nazwisko</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 </resources>

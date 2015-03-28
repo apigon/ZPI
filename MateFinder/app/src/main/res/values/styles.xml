@@ -1,13 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="DarkTheme" parent="android:Theme.Black.NoTitleBar">
-        <item name="android:buttonStyle">
-                @style/DarkButton
-        </item>
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:buttonStyle">@style/DarkButton</item>
     </style>
 
-    <style name="LightTheme" parent="android:Theme.Light.NoTitleBar">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:buttonStyle">@style/LightButton</item>
     </style>
 
