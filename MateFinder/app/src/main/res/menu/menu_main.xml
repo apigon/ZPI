@@ -33,12 +33,12 @@
             app:showAsAction="always"
         />
 
-    <item
-        android:id="@+id/action_share_location"
-        android:title="@string/action_share_location"
-        android:icon="@drawable/ic_action_location_off"
-        app:showAsAction="always"
-        />
+        <item
+            android:id="@+id/action_share_location"
+            android:title="@string/action_share_location"
+            android:icon="@drawable/ic_action_location_off"
+            app:showAsAction="always"
+            />
 
 
 </menu>
