@@ -19,5 +19,7 @@
         <item name="android:background">@color/kol6</item>
         <item name="android:textColor">@color/kol2</item>
     </style>
-
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
 </resources>

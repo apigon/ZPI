@@ -18,5 +18,21 @@
     <string name="name">Imię i nazwisko</string>
     <string name="title_activity_login">LoginActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+
+    <string name="title_activity_settings">Ustawienia</string>
+    <string name="settings_sounds">Włącz dźwięki powiadomień</string>
+    <string name="settings_transfer">Ograniczenie transferu danych</string>
+    <string name="settings_nav">Nawigowanie użytkownika</string>
+    <string name="settings_radious">Promień wyszukiwania użytkowników</string>
+    <string name="settings_motive">Motyw aplikacji</string>
+    <string name="settings_save_btn">Zapisz zmiany</string>
+    <string-array name="settings_choose_nav">
+        <item>Głosowe</item>
+        <item>Wizualne</item>
+    </string-array>
+    <string-array name="settings_choose_motive">
+        <item>Klasyczny</item>
+        <item>Jasny</item>
+        <item>Ciemny</item>
+    </string-array>
 </resources>
