@@ -73,12 +73,11 @@ public class EditProfileActivity extends ActionBarActivity {
 
 
     public void onActivityResult(int reqCode, int resCode, Intent data){
-        // Nie wiem czemu tu jest błąd
-        //if(resCode = RESULT_OK){
+        if(resCode == RESULT_OK){
             if(reqCode == 1){
                 profile_photo.setImageURI(data.getData());
             }
-        //}
+        }
     }
 
     @Override
