@@ -86,10 +86,10 @@ public class EditProfileActivity extends ActionBarActivity {
         String tmp_name = sharedpreferences.getString("name","");
         String tmp_surname = sharedpreferences.getString("surname", "");
 
-        if(tmp_name.equals(null)){
+        if(tmp_name.equals("null")){
             tmp_name = "";
         }
-        if(tmp_surname.equals(null)){
+        if(tmp_surname.equals("null")){
             tmp_surname = "";
         }
 
