@@ -5,8 +5,7 @@
 
     <dimen name="editProfile_photoWidth">80dp</dimen>
     <dimen name="editProfile_photoHeight">80dp</dimen>
-    <dimen name="editProfile_fontSize_1">14dp</dimen>
-    <dimen name="editProfile_fontSize_2">16dp</dimen>
-    <dimen name="editProfile_labelHeight">32dp</dimen>
+    <dimen name="editProfile_fontSize">16dp</dimen>
+    <dimen name="editProfile_labelWidth">160dp</dimen>
 
 </resources>

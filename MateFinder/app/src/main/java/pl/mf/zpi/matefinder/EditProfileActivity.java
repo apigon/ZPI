@@ -18,7 +18,6 @@ import android.widget.Toast;
 public class EditProfileActivity extends ActionBarActivity {
 
     private Button btn_update;
-    private Button btn_change_photo;
 
     private TextView login;
     private TextView email;
@@ -27,9 +26,6 @@ public class EditProfileActivity extends ActionBarActivity {
     private TextView surname;
 
     private ImageView profile_photo;
-    private int reqCode;
-    private int resCode;
-    private Intent data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +44,8 @@ public class EditProfileActivity extends ActionBarActivity {
         surname = (TextView)findViewById(R.id.editProfile_surname_content);
 
         profile_photo = (ImageView) findViewById(R.id.editProfile_photo);
-
-        btn_change_photo = (Button) findViewById(R.id.editProfile_btn_changePhoto);
         // Change photo button Click Event
-        btn_change_photo.setOnClickListener(new View.OnClickListener() {
+        profile_photo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
