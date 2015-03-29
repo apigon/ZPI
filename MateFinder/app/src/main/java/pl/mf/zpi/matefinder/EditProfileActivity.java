@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,12 +18,18 @@ import android.widget.Toast;
 public class EditProfileActivity extends ActionBarActivity {
 
     private Button btn_update;
+    private Button btn_change_photo;
 
     private TextView login;
     private TextView email;
     private TextView phone_number;
     private TextView name;
     private TextView surname;
+
+    private ImageView profile_photo;
+    private int reqCode;
+    private int resCode;
+    private Intent data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,19 @@ public class EditProfileActivity extends ActionBarActivity {
         name = (TextView)findViewById(R.id.editProfile_name_content);
         surname = (TextView)findViewById(R.id.editProfile_surname_content);
 
+        profile_photo = (ImageView) findViewById(R.id.editProfile_photo);
+
+        btn_change_photo = (Button) findViewById(R.id.editProfile_btn_changePhoto);
+        // Change photo button Click Event
+        btn_change_photo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Wybierz zdjęcie."),1);
+            }
+        });
+
         btn_update = (Button) findViewById(R.id.editProfile_btn_accept);
         // Update button Click Event
         btn_update.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +69,16 @@ public class EditProfileActivity extends ActionBarActivity {
         });
 
         updateUserInfo();
+    }
+
+
+    public void onActivityResult(int reqCode, int resCode, Intent data){
+        // Nie wiem czemu tu jest błąd
+        //if(resCode = RESULT_OK){
+            if(reqCode == 1){
+                profile_photo.setImageURI(data.getData());
+            }
+        //}
     }
 
     @Override
