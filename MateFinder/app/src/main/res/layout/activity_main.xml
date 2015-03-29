@@ -39,16 +39,6 @@
             android:textSize="13dp"
             android:textColor="@color/kol2"/>
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dip"
-            android:background="@color/kol3"
-            android:text="@string/btn_logout"
-            android:textAllCaps="false"
-            android:textColor="@color/kol1"
-            android:textSize="15dp" />
     </LinearLayout>
 
 </RelativeLayout>

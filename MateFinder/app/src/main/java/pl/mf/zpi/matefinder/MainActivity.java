@@ -11,8 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -24,7 +22,6 @@ public class MainActivity extends ActionBarActivity {
 
     private TextView txtLogin;
     private TextView txtEmail;
-    private Button btnLogout;
 
     private SQLiteHandler db;
     private SessionManager session;
@@ -43,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
 
         txtLogin = (TextView) findViewById(R.id.main_login);
         txtEmail = (TextView) findViewById(R.id.email);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
@@ -64,15 +60,6 @@ public class MainActivity extends ActionBarActivity {
         // Displaying the user details on the screen
         txtLogin.setText(name);
         txtEmail.setText(email);
-
-        // Logout button click event
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                logoutUser();
-            }
-        });
     }
 
     @Override
@@ -88,7 +75,9 @@ public class MainActivity extends ActionBarActivity {
      * Logging out the user. Will set isLoggedIn flag to false in shared
      * preferences Clears the user data from sqlite users table
      * */
-    private void logoutUser() {
+
+    // Wyloguj
+     private void logoutUser() {
         session.setLogin(false);
 
         db.deleteUsers();
@@ -99,12 +88,23 @@ public class MainActivity extends ActionBarActivity {
         finish();
     }
 
+    // Edytuj profil
+    private void editProfile() {
+        // Launching the login activity
+        Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.action_share_location:
-                //setNotifCount(3);
+            case R.id.action_logout:
+                logoutUser();
+                return true;
+            case R.id.action_edit_profile:
+                editProfile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

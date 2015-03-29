@@ -40,5 +40,15 @@
             app:showAsAction="always"
             />
 
+        <item
+            android:id="@+id/action_logout"
+            android:title="@string/action_logout"
+            app:showAsAction="never"
+            />
 
+        <item
+            android:id="@+id/action_edit_profile"
+            android:title="@string/action_edit_profile"
+            app:showAsAction="never"
+            />
 </menu>
