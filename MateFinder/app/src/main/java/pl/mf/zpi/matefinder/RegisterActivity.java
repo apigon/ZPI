@@ -2,15 +2,6 @@ package pl.mf.zpi.matefinder; /**
  * Created by root on 22.03.15.
  */
 
-import pl.mf.zpi.matefinder.app.*;
-import pl.mf.zpi.matefinder.helper.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,6 +16,17 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import pl.mf.zpi.matefinder.app.AppConfig;
+import pl.mf.zpi.matefinder.app.AppController;
+import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -131,12 +133,10 @@ public class RegisterActivity extends Activity {
                     if (!error) {
                         // User successfully stored in MySQL
                         // Now store the user in sqlite
-
                         JSONObject user = jObj.getJSONObject("user");
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
-
 
                         // Inserting row in users table
                         db.addUser(login, email, phone);
@@ -183,7 +183,6 @@ public class RegisterActivity extends Activity {
 
                 return params;
             }
-
         };
 
         // Adding request to request queue

@@ -6,6 +6,9 @@ package pl.mf.zpi.matefinder;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,13 +27,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import pl.mf.zpi.matefinder.app.*;
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
 public class LoginActivity extends Activity {
+    // Shared preferences
+    public static final String UserPREFERENCES = "UserPrefs";
+    SharedPreferences sharedpreferences;
+
     // LogCat tag
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnLogin;
@@ -57,6 +63,10 @@ public class LoginActivity extends Activity {
         // Session manager
         session = new SessionManager(getApplicationContext());
 
+        // Shared preferences
+        sharedpreferences=getSharedPreferences(UserPREFERENCES,
+                Context.MODE_PRIVATE);
+
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
             // User is already logged in. Take him to main activity
@@ -79,7 +89,7 @@ public class LoginActivity extends Activity {
                 } else {
                     // Prompt user to enter credentials
                     Toast.makeText(getApplicationContext(),
-                            "Please enter the credentials!", Toast.LENGTH_LONG)
+                            "Podaj poprawne dane!", Toast.LENGTH_LONG)
                             .show();
                 }
             }
@@ -106,10 +116,10 @@ public class LoginActivity extends Activity {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
 
-        pDialog.setMessage("Logging in ...");
+        pDialog.setMessage("Logowanie...");
         showDialog();
         StringRequest strReq = new StringRequest(Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -123,6 +133,15 @@ public class LoginActivity extends Activity {
                     // Check for error node in json
                     if (!error) {
                         // user successfully logged in
+                        JSONObject user = jObj.getJSONObject("user");
+                        Editor editor = sharedpreferences.edit();
+                        editor.putString("login", user.getString("login"));
+                        editor.putString("email", user.getString("email"));
+                        editor.putString("phone_number", user.getString("phone_number"));
+                        editor.putString("name", user.getString("name"));
+                        editor.putString("surname", user.getString("surname"));
+                        editor.commit();
+
                         // Create login session
                         session.setLogin(true);
 
@@ -147,7 +166,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
+                Log.e(TAG, "Login ERROR: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();

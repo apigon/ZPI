@@ -4,7 +4,9 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
+
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -82,6 +86,13 @@ public class MainActivity extends ActionBarActivity {
 
         db.deleteUsers();
 
+         // Czyszcenie shared preferences
+         SharedPreferences sharedpreferences = getSharedPreferences
+                 (LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
+         SharedPreferences.Editor editor = sharedpreferences.edit();
+         editor.clear();
+         editor.commit();
+
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
@@ -96,6 +107,14 @@ public class MainActivity extends ActionBarActivity {
         finish();
     }
 
+    // Ustawienia
+    private void settings() {
+        // Launching the login activity
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -105,6 +124,9 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.action_edit_profile:
                 editProfile();
+                return true;
+            case R.id.action_settings:
+                settings();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
