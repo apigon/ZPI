@@ -6,6 +6,7 @@
     tools:context="pl.mf.zpi.matefinder.SettingsActivity"
     android:orientation="vertical">
 
+    <include android:id="@+id/app_bar" layout="@layout/app_bar"/>
 
     <CheckBox
         android:layout_width="wrap_content"
