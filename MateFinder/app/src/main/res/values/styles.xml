@@ -1,13 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="DarkTheme" parent="android:Theme.Black.NoTitleBar">
-        <item name="android:buttonStyle">
-                @style/DarkButton
-        </item>
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:buttonStyle">@style/DarkButton</item>
     </style>
 
-    <style name="LightTheme" parent="android:Theme.Light.NoTitleBar">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:buttonStyle">@style/LightButton</item>
     </style>
 
@@ -19,5 +17,7 @@
         <item name="android:background">@color/kol6</item>
         <item name="android:textColor">@color/kol2</item>
     </style>
-
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
 </resources>

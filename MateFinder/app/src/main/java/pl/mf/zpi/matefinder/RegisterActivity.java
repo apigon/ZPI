@@ -139,12 +139,10 @@ public class RegisterActivity extends Activity {
                     if (!error) {
                         // User successfully stored in MySQL
                         // Now store the user in sqlite
-
                         JSONObject user = jObj.getJSONObject("user");
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
-
 
                         // Inserting row in users table
                         db.addUser(login, email, phone);
@@ -191,7 +189,6 @@ public class RegisterActivity extends Activity {
 
                 return params;
             }
-
         };
 
         // Adding request to request queue

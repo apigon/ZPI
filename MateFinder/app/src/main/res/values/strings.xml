@@ -14,11 +14,50 @@
     <string name="btn_register">ZAREJESTRUJ</string>
     <string name="btn_link_to_register">Nie jesteś członkiem? Zarejestruj się.</string>
     <string name="btn_link_to_login">Jestem zarejestrowany! Zaloguj mnie.</string>
-    <string name="btn_logout">WYLOGUJ</string>
+    <string name="action_logout">Wyloguj</string>
     <string name="name">Imię i nazwisko</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="podaj_nr">Podaj numer telefonu:</string>
     <string name="podaj_nr_wiad">Nie udało się pobrać numeru Twojego telefonu. \n Proszę wprowadzić ręcznie:</string>
 
+    <!-- Actionbar -->
+    <string name="action_change_view">Przełącz widok</string>
+    <string name="action_add_user">Dodaj użytkownika</string>
+    <string name="action_add_group">Dodaj grupę</string>
+    <string name="action_send_notification">Powiadom</string>
+    <string name="action_search">Szukaj</string>
+    <string name="action_notification">Powiadomienie</string>
+    <string name="action_share_location">Włącz / wyłącz lokalizację</string>
+    <string name="action_edit_profile">Edytuj profil</string>
+
+    <!-- Edycja profilu -->
+    <string name="editProfile_login">Login:</string>
+    <string name="editProfile_email">E-mail:</string>
+    <string name="editProfile_name">Imię:</string>
+    <string name="editProfile_surname">Nazwisko:</string>
+    <string name="editProfile_phone">Telefon:</string>
+    <string name="editProfile_newPass">Nowe hasło:</string>
+    <string name="editProfile_newPassRep">Powtórz hasło:</string>
+    <string name="editProfile_btn_changePhoto">Ustaw zdjęcie</string>
+    <string name="editProfile_btn_confirm">Zatwierdź zmiany</string>
+
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_edit_profile">Edytuj profil</string>
+
+    <string name="title_activity_settings">Ustawienia</string>
+    <string name="settings_sounds">Włącz dźwięki powiadomień</string>
+    <string name="settings_transfer">Ograniczenie transferu danych</string>
+    <string name="settings_nav">Nawigowanie użytkownika</string>
+    <string name="settings_radious">Promień wyszukiwania użytkowników</string>
+    <string name="settings_motive">Motyw aplikacji</string>
+    <string name="settings_save_btn">Zapisz zmiany</string>
+    <string-array name="settings_choose_nav">
+        <item>Głosowe</item>
+        <item>Wizualne</item>
+    </string-array>
+    <string-array name="settings_choose_motive">
+        <item>Klasyczny</item>
+        <item>Jasny</item>
+        <item>Ciemny</item>
+    </string-array>
 </resources>

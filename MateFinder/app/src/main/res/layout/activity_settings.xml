@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+
+    tools:context="pl.mf.zpi.matefinder.SettingsActivity"
+    android:orientation="vertical">
+
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_sounds"
+        android:id="@+id/checkBox"
+        android:checked="false"
+        android:layout_below="@+id/checkBox2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="10dp"
+        android:layout_marginLeft="20dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_transfer"
+        android:id="@+id/checkBox2"
+        android:checked="false"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="44dp"
+        android:padding="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/settings_nav"
+        android:id="@+id/textView"
+        android:layout_gravity="center"
+        android:layout_alignTop="@+id/spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:paddingLeft="15dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:spinnerMode="dropdown"
+        android:entries="@array/settings_choose_nav"
+        android:layout_marginTop="43dp"
+        android:layout_below="@+id/checkBox"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="40dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/settings_motive"
+        android:id="@+id/textView2"
+        android:layout_gravity="center"
+        android:layout_alignTop="@+id/spinner2"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_alignBottom="@+id/spinner2"
+        android:layout_marginLeft="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner2"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/spinner"
+        android:layout_alignLeft="@+id/spinner"
+        android:layout_alignStart="@+id/spinner"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="40dp"
+        android:entries="@array/settings_choose_motive" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/settings_radious"
+        android:id="@+id/textView3"
+        android:layout_gravity="center"
+        android:padding="15dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/numberPicker"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/numberPicker" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_save_btn"
+        android:id="@+id/button"
+        android:padding="10dp"
+        android:layout_below="@+id/numberPicker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="km"
+        android:id="@+id/textView4"
+        android:layout_marginTop="52dp"
+        android:layout_alignTop="@+id/numberPicker"
+        android:layout_toRightOf="@+id/numberPicker"
+        android:layout_toEndOf="@+id/numberPicker"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp" />
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/numberPicker"
+        android:minWidth="50dp"
+        android:minHeight="60dp"
+        android:maxHeight="120dp"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignRight="@+id/checkBox2"
+        android:layout_alignEnd="@+id/checkBox2" />
+
+</RelativeLayout>

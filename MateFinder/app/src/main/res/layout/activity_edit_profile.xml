@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}"
+    android:background="@color/kol4"
+    android:alpha="1">
+
+    <include android:id="@+id/app_bar" layout="@layout/app_bar"/>
+
+    <ImageView
+        android:layout_width="@dimen/editProfile_photoWidth"
+        android:layout_height="@dimen/editProfile_photoHeight"
+        android:id="@+id/editProfile_photo"
+        android:background="@color/white"
+        android:layout_below="@+id/app_bar"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/editProfile_btn_confirm"
+        android:id="@+id/editProfile_btn_accept"
+        android:layout_marginBottom="15dp"
+        android:background="@color/kol1"
+        android:textColor="@color/kol3"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfile_row_login"
+        android:layout_below="@+id/editProfile_photo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_login"
+            android:id="@+id/editProfile_login"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/editProfile_login_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="29dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfile_row_email"
+        android:layout_below="@+id/editProfile_row_login"
+        android:layout_alignRight="@+id/editProfile_row_surname"
+        android:layout_alignEnd="@+id/editProfile_row_surname"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/editProfile_email"
+            android:id="@+id/editProfile_email"
+            android:textColor="@color/kol1"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/editProfile_email_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="20dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfile_row_phone"
+        android:layout_below="@+id/editProfile_row_email"
+        android:layout_alignRight="@+id/editProfile_row_surname"
+        android:layout_alignEnd="@+id/editProfile_row_surname"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_phone"
+            android:id="@+id/editProfile_phone"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/editProfile_phone_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="10dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editProfile_row_phone"
+        android:layout_marginTop="25dp"
+        android:id="@+id/editProfile_row_newPass"
+        android:layout_marginLeft="15dp"
+        android:layout_alignRight="@+id/tableRow"
+        android:layout_alignEnd="@+id/tableRow">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_newPass"
+            android:id="@+id/editProfile_newPass"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/EditProfile_newPass_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="27dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editProfile_row_newPass"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/tableRow">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_newPassRep"
+            android:id="@+id/editProfile_newPassRep"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/editProfile_newPassRep_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="10dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/editProfile_photo"
+        android:layout_toRightOf="@+id/editProfile_photo"
+        android:layout_toEndOf="@+id/editProfile_photo"
+        android:id="@+id/editProfile_row_name"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_name"
+            android:id="@+id/editProfile_name"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editProfile_name_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="49dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfile_row_surname"
+        android:layout_below="@+id/editProfile_row_name"
+        android:layout_toRightOf="@+id/editProfile_photo"
+        android:layout_toEndOf="@+id/editProfile_photo"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_surname"
+            android:id="@+id/editProfile_surname"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editProfile_surname_content"
+            android:textColor="@color/kol1"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginLeft="10dp" />
+    </TableRow>
+
+</RelativeLayout>
