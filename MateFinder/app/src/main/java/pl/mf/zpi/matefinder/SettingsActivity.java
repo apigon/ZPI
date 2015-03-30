@@ -1,5 +1,6 @@
 package pl.mf.zpi.matefinder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,9 +46,16 @@ public class SettingsActivity extends ActionBarActivity {
         }
         if (id == android.R.id.home)
         {
-            onBackPressed();
+            backToMain();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void backToMain() {
+        // Launching the login activity
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
