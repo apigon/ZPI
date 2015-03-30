@@ -42,9 +42,6 @@ public class MainActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
-        txtLogin = (TextView) findViewById(R.id.main_login);
-        txtEmail = (TextView) findViewById(R.id.email);
-
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
 
@@ -55,15 +52,6 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
-        // Fetching user details from sqlite
-        HashMap<String, String> user = db.getUserDetails();
-
-        String name = user.get("login");
-        String email = user.get("email");
-
-        // Displaying the user details on the screen
-        txtLogin.setText(name);
-        txtEmail.setText(email);
     }
 
     @Override
