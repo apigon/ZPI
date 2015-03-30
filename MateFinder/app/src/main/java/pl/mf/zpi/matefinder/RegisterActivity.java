@@ -225,7 +225,6 @@ public class RegisterActivity extends Activity {
                 }
             });
             alert.show();
-            System.out.print("hello world yuo r registerd :)");
         }
         return done;
     }
