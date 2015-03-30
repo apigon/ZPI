@@ -2,29 +2,36 @@ package pl.mf.zpi.matefinder; /**
  * Created by root on 22.03.15.
  */
 
-import pl.mf.zpi.matefinder.app.*;
-import pl.mf.zpi.matefinder.helper.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.telephony.TelephonyManager;
 
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import pl.mf.zpi.matefinder.app.AppConfig;
+import pl.mf.zpi.matefinder.app.AppController;
+import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -38,6 +45,7 @@ public class RegisterActivity extends Activity {
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private String login, email, password, phone;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,22 +71,22 @@ public class RegisterActivity extends Activity {
 
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
-//            // User is already logged in. Take him to main activity
-//            Intent intent = new Intent(RegisterActivity.this,
-//                    MainActivity.class);
-//            startActivity(intent);
-//            finish();
+            // User is already logged in. Take him to main activity
+            Intent intent = new Intent(RegisterActivity.this,
+                    MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         // Register Button Click event
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String login = inputLogin.getText().toString();
-                String email = inputEmail.getText().toString();
-                String password = inputPassword.getText().toString();
-                String phone = getPhone();
+                login = inputLogin.getText().toString();
+                email = inputEmail.getText().toString();
+                password = inputPassword.getText().toString();
                 String repeatPassword = inputRepeatPassword.getText().toString();
 
+                if(getPhone())
                 if (repeatPassword.equals(password))
                     if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
                         registerUser(login, email, password, phone);
@@ -200,8 +208,28 @@ public class RegisterActivity extends Activity {
             pDialog.dismiss();
     }
 
-    private String getPhone(){
-        //TODO pobieranie numeru tel.
-        return "";
+    private boolean getPhone(){
+        Context mAppContext = getApplicationContext();
+        TelephonyManager tMgr = (TelephonyManager)mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
+        phone = tMgr.getLine1Number();
+        boolean done = true;
+        if(phone==null||phone.equals("")){
+            done=false;
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_PHONE);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle(R.string.podaj_nr);
+            alert.setMessage(R.string.podaj_nr_wiad);
+            alert.setView(input);
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    phone = input.getText().toString();
+                    registerUser(login, email, password, phone);
+                }
+            });
+            alert.show();
+        }
+        return done;
     }
+
 }

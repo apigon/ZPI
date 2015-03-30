@@ -17,6 +17,8 @@
     <string name="btn_logout">WYLOGUJ</string>
     <string name="name">Imię i nazwisko</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="podaj_nr">Podaj numer telefonu:</string>
+    <string name="podaj_nr_wiad">Nie udało się pobrać numeru Twojego telefonu. \n Proszę wprowadzić ręcznie:</string>
 
     <string name="hello_world">Hello world!</string>
 </resources>
