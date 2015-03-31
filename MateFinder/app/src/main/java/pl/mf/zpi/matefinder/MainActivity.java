@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity {
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
-        finish();
+        finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
     // Edytuj profil
@@ -92,7 +92,7 @@ public class MainActivity extends ActionBarActivity {
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
         startActivity(intent);
-        finish();
+
     }
 
     // Ustawienia
@@ -100,7 +100,14 @@ public class MainActivity extends ActionBarActivity {
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
-        finish();
+        //finish(); NIE DAWAJCIE TEGO FINISH() bo potem przy przycisku powrotu
+        // wychodzi z aplikacji zamiast wracac do poprzedniego ekranu!!!
+    }
+    private void maps() {
+
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        startActivity(intent);
+
     }
 
     @Override
@@ -114,6 +121,9 @@ public class MainActivity extends ActionBarActivity {
                 editProfile();
                 return true;
             case R.id.action_settings:
+                maps();
+                return true;
+            case R.id.action_notification:
                 settings();
                 return true;
             default:

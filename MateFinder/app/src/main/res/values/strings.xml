@@ -40,10 +40,9 @@
     <string name="editProfile_newPassRep">Powtórz hasło:</string>
     <string name="editProfile_btn_changePhoto">Ustaw zdjęcie</string>
     <string name="editProfile_btn_confirm">Zatwierdź zmiany</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_edit_profile">Edytuj profil</string>
 
+    <!-- Ustawienia -->
     <string name="title_activity_settings">Ustawienia</string>
     <string name="settings_sounds">Włącz dźwięki powiadomień</string>
     <string name="settings_transfer">Ograniczenie transferu danych</string>
@@ -60,4 +59,7 @@
         <item>Jasny</item>
         <item>Ciemny</item>
     </string-array>
+
+    <!-- Mapy -->
+    <string name="title_activity_maps">Mapy</string>
 </resources>
