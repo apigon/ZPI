@@ -3,14 +3,14 @@ package pl.mf.zpi.matefinder.helper;
 /**
  * Created by root on 22.03.15.
  */
-import java.util.HashMap;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.HashMap;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
@@ -31,6 +31,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_LOGIN = "login";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_PHONE = "phone";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_SURNAME = "surname";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,9 +42,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," +KEY_LOGIN+"TEXT,"
-                + KEY_EMAIL + " TEXT UNIQUE," +KEY_PHONE+"TEXT"
-                + ")";
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LOGIN + " TEXT,"
+                + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT," + KEY_SURNAME + " TEXT" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
 
         Log.d(TAG, "Database tables created");
@@ -61,13 +62,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String login, String email, String phone) {
+    public void addUser(String login, String email, String phone, String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_LOGIN, login);
         values.put(KEY_EMAIL, email);
         values.put(KEY_PHONE, phone);
+        values.put(KEY_NAME, name);
+        values.put(KEY_SURNAME, surname);
 
         // Inserting Row
         long id = db.insert(TABLE_LOGIN, null, values);
@@ -91,6 +94,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             user.put("login", cursor.getString(1));
             user.put("email", cursor.getString(2));
             user.put("phone", cursor.getString(3));
+            user.put("name", cursor.getString(4));
+            user.put("surname", cursor.getString(5));
         }
         cursor.close();
         db.close();

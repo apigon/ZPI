@@ -117,60 +117,6 @@
     <TableRow
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editProfile_row_phone"
-        android:layout_marginTop="25dp"
-        android:id="@+id/editProfile_row_newPass"
-        android:layout_marginLeft="15dp"
-        android:layout_alignRight="@+id/tableRow"
-        android:layout_alignEnd="@+id/tableRow">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/editProfile_newPass"
-            android:id="@+id/editProfile_newPass"
-            android:textSize="@dimen/editProfile_fontSize"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/EditProfile_newPass_content"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginLeft="27dp" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editProfile_row_newPass"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:id="@+id/tableRow">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/editProfile_newPassRep"
-            android:id="@+id/editProfile_newPassRep"
-            android:textSize="@dimen/editProfile_fontSize" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/editProfile_newPassRep_content"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginLeft="10dp" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/editProfile_photo"
         android:layout_toRightOf="@+id/editProfile_photo"
         android:layout_toEndOf="@+id/editProfile_photo"
@@ -221,5 +167,15 @@
             android:textSize="@dimen/editProfile_fontSize"
             android:layout_marginLeft="10dp" />
     </TableRow>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editProfile_changePass_link"
+        android:text="@string/editProfile_changePass_link"
+        android:layout_below="@+id/editProfile_row_phone"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:linksClickable="true" />
 
 </RelativeLayout>

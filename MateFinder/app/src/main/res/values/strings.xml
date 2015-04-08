@@ -36,11 +36,14 @@
     <string name="editProfile_name">Imię:</string>
     <string name="editProfile_surname">Nazwisko:</string>
     <string name="editProfile_phone">Telefon:</string>
+    <string name="editProfile_oldPass">Stare hasło:</string>
     <string name="editProfile_newPass">Nowe hasło:</string>
     <string name="editProfile_newPassRep">Powtórz hasło:</string>
     <string name="editProfile_btn_changePhoto">Ustaw zdjęcie</string>
     <string name="editProfile_btn_confirm">Zatwierdź zmiany</string>
-    <string name="title_activity_edit_profile">Edytuj profil</string>
+    <string name="title_activity_edit_profile">Edycja profilu</string>
+    <string name="title_activity_edit_password">Zmiana hasła</string>
+    <string name="editProfile_changePass_link">Zmień hasło</string>
 
     <!-- Ustawienia -->
     <string name="title_activity_settings">Ustawienia</string>
@@ -62,4 +65,6 @@
 
     <!-- Mapy -->
     <string name="title_activity_maps">Mapy</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

@@ -1,11 +1,12 @@
 package pl.mf.zpi.matefinder;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,8 +15,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import pl.mf.zpi.matefinder.app.AppConfig;
+import pl.mf.zpi.matefinder.app.AppController;
+import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 public class EditProfileActivity extends ActionBarActivity {
+
+    private static final String TAG = EditProfileActivity.class.getSimpleName();
+    private ProgressDialog pDialog;
 
     private Button btn_update;
 
@@ -27,6 +45,8 @@ public class EditProfileActivity extends ActionBarActivity {
 
     private ImageView profile_photo;
 
+    private SQLiteHandler db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +56,13 @@ public class EditProfileActivity extends ActionBarActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Progress dialog
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
 
         login = (TextView)findViewById(R.id.editProfile_login_content);
         email = (TextView)findViewById(R.id.editProfile_email_content);
@@ -51,6 +78,15 @@ public class EditProfileActivity extends ActionBarActivity {
                 intent.setType("image/*");
                 intent.setAction(intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Wybierz zdjęcie."),1);
+            }
+        });
+
+        TextView change_pass = (TextView) findViewById(R.id.editProfile_changePass_link);
+        change_pass.setMovementMethod(LinkMovementMethod.getInstance());
+        change_pass.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(EditProfileActivity.this, EditPasswordActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -102,38 +138,108 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     private void updateUserInfo(){
-        // Shred preferences
-        SharedPreferences sharedpreferences = getSharedPreferences
-                (LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
+        // Fetching user details from sqlite
+        HashMap<String, String> user = db.getUserDetails();
 
-        String tmp_name = sharedpreferences.getString("name","");
-        String tmp_surname = sharedpreferences.getString("surname", "");
-
-        if(tmp_name.equals("null")){
-            tmp_name = "";
-        }
-        if(tmp_surname.equals("null")){
-            tmp_surname = "";
-        }
-
-        login.setText(sharedpreferences.getString("login", ""));
-        email.setText(sharedpreferences.getString("email", ""));
-        phone_number.setText(sharedpreferences.getString("phone_number", ""));
-        name.setText(tmp_name);
-        surname.setText(tmp_surname);
+        login.setText(user.get("login"));
+        email.setText(user.get("email"));
+        phone_number.setText(user.get("phone"));
+        name.setText(user.get("name"));
+        surname.setText(user.get("surname"));
     }
 
     private void actionUpdate(){
-        SharedPreferences sharedpreferences = getSharedPreferences
-                (LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("login", login.getText().toString());
-        editor.putString("email", email.getText().toString());
-        editor.putString("phone_number", phone_number.getText().toString());
-        editor.putString("name", name.getText().toString());
-        editor.putString("surname", surname.getText().toString());
-        editor.commit();
+        String up_login = login.getText().toString();
+        String up_email = email.getText().toString();
+        String up_phone = phone_number.getText().toString();
+        String up_name = name.getText().toString();
+        String up_surname = surname.getText().toString();
 
-        Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+        updateUserDB(up_login,up_email,up_phone,up_name,up_surname);
+    }
+
+    private void updateUserDB(final String login, final String email, final String phone,
+                              final String name, final String surname) {
+        // Tag used to cancel the request
+        String tag_string_req = "update_req";
+
+        pDialog.setMessage("Aktualizowanie informacji...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Update Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully updated in MySQL
+                        // Now store the user in sqlite
+                        JSONObject user = jObj.getJSONObject("user");
+                        String login = user.getString("login");
+                        String email = user.getString("email");
+                        String phone = user.getString("phone_number");
+                        String name = user.getString("name");
+                        String surname = user.getString("surname");
+
+                        // Inserting row in users table
+                        db.deleteUsers();
+                        db.addUser(login, email, phone, name, surname);
+                        Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Registration Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "update");
+                params.put("login", login);
+                params.put("email", email);
+                params.put("phone_number", phone);
+                params.put("name", name);
+                params.put("surname", surname);
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }

@@ -6,9 +6,6 @@ package pl.mf.zpi.matefinder;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,13 +26,11 @@ import java.util.Map;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
+import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
 public class LoginActivity extends Activity {
-    // Shared preferences
-    public static final String UserPREFERENCES = "UserPrefs";
-    SharedPreferences sharedpreferences;
 
     // LogCat tag
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -44,6 +39,7 @@ public class LoginActivity extends Activity {
     private EditText inputLogin;
     private EditText inputPassword;
     private ProgressDialog pDialog;
+    private SQLiteHandler db;
     private SessionManager session;
 
     @Override
@@ -63,9 +59,8 @@ public class LoginActivity extends Activity {
         // Session manager
         session = new SessionManager(getApplicationContext());
 
-        // Shared preferences
-        sharedpreferences=getSharedPreferences(UserPREFERENCES,
-                Context.MODE_PRIVATE);
+        // SQLite database handler
+        db = new SQLiteHandler(getApplicationContext());
 
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
@@ -106,7 +101,6 @@ public class LoginActivity extends Activity {
                 finish();
             }
         });
-
     }
 
     /**
@@ -134,13 +128,14 @@ public class LoginActivity extends Activity {
                     if (!error) {
                         // user successfully logged in
                         JSONObject user = jObj.getJSONObject("user");
-                        Editor editor = sharedpreferences.edit();
-                        editor.putString("login", user.getString("login"));
-                        editor.putString("email", user.getString("email"));
-                        editor.putString("phone_number", user.getString("phone_number"));
-                        editor.putString("name", user.getString("name"));
-                        editor.putString("surname", user.getString("surname"));
-                        editor.commit();
+                        String login = user.getString("login");
+                        String email = user.getString("email");
+                        String phone = user.getString("phone_number");
+                        String name = user.getString("name");
+                        String surname = user.getString("surname");
+
+                        // Inserting row in users table
+                        db.addUser(login, email, phone, name, surname);
 
                         // Create login session
                         session.setLogin(true);

@@ -89,7 +89,7 @@ public class RegisterActivity extends Activity {
                 if(getPhone())
                 if (repeatPassword.equals(password))
                     if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                        registerUser(login, email, password, phone);
+                        registerUser(login, email, password, phone, "", "");
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
@@ -118,7 +118,8 @@ public class RegisterActivity extends Activity {
      * email, password) to register url
      */
     private void registerUser(final String login, final String email,
-                              final String password, final String phone) {
+                              final String password, final String phone,
+                              final String name, final String surname) {
         // Tag used to cancel the request
         String tag_string_req = "register_req";
 
@@ -143,9 +144,11 @@ public class RegisterActivity extends Activity {
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
+                        String name = user.getString("name");
+                        String surname = user.getString("surname");
 
                         // Inserting row in users table
-                        db.addUser(login, email, phone);
+                        db.addUser(login, email, phone, name, surname);
 
                         // Launch login activity
                         Intent intent = new Intent(
@@ -186,6 +189,8 @@ public class RegisterActivity extends Activity {
                 params.put("email", email);
                 params.put("password", password);
                 params.put("phone_number", phone);
+                params.put("name", name);
+                params.put("surname", surname);
 
                 return params;
             }
@@ -221,7 +226,7 @@ public class RegisterActivity extends Activity {
             alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     phone = input.getText().toString();
-                    registerUser(login, email, password, phone);
+                    registerUser(login, email, password, phone, "", "");
                 }
             });
             alert.show();

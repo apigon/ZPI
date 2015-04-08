@@ -4,9 +4,7 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import java.util.HashMap;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
@@ -51,7 +47,6 @@ public class MainActivity extends ActionBarActivity {
         if (!session.isLoggedIn()) {
             logoutUser();
         }
-
     }
 
     @Override
@@ -73,13 +68,6 @@ public class MainActivity extends ActionBarActivity {
         session.setLogin(false);
 
         db.deleteUsers();
-
-         // Czyszcenie shared preferences
-         SharedPreferences sharedpreferences = getSharedPreferences
-                 (LoginActivity.UserPREFERENCES, Context.MODE_PRIVATE);
-         SharedPreferences.Editor editor = sharedpreferences.edit();
-         editor.clear();
-         editor.commit();
 
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
