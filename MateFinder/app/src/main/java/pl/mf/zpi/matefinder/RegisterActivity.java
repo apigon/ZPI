@@ -6,16 +6,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.telephony.TelephonyManager;
 
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
@@ -30,8 +30,6 @@ import java.util.Map;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
-import pl.mf.zpi.matefinder.helper.SQLiteHandler;
-import pl.mf.zpi.matefinder.helper.SessionManager;
 
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -43,8 +41,6 @@ public class RegisterActivity extends Activity {
     private EditText inputRepeatPassword;
 
     private ProgressDialog pDialog;
-    private SessionManager session;
-    private SQLiteHandler db;
     private String login, email, password, phone;
 
     @Override
@@ -62,21 +58,6 @@ public class RegisterActivity extends Activity {
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-
-        // Session manager
-        session = new SessionManager(getApplicationContext());
-
-        // SQLite database handler
-        db = new SQLiteHandler(getApplicationContext());
-
-        // Check if user is already logged in or not
-        if (session.isLoggedIn()) {
-            // User is already logged in. Take him to main activity
-            Intent intent = new Intent(RegisterActivity.this,
-                    MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
 
         // Register Button Click event
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -138,18 +119,6 @@ public class RegisterActivity extends Activity {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        // User successfully stored in MySQL
-                        // Now store the user in sqlite
-                        JSONObject user = jObj.getJSONObject("user");
-                        String login = user.getString("login");
-                        String email = user.getString("email");
-                        String phone = user.getString("phone_number");
-                        String name = user.getString("name");
-                        String surname = user.getString("surname");
-
-                        // Inserting row in users table
-                        db.addUser(login, email, phone, name, surname);
-
                         // Launch login activity
                         Intent intent = new Intent(
                                 RegisterActivity.this,
