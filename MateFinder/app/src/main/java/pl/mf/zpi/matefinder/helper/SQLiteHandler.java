@@ -33,6 +33,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_PHONE = "phone";
     private static final String KEY_NAME = "name";
     private static final String KEY_SURNAME = "surname";
+    private static final String KEY_PHOTO = "photo";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,7 +44,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LOGIN + " TEXT,"
-                + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT," + KEY_SURNAME + " TEXT" + ")";
+                + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT,"
+                + KEY_SURNAME + " TEXT," + KEY_PHOTO + " TEXT" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
 
         Log.d(TAG, "Database tables created");
@@ -62,7 +64,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String login, String email, String phone, String name, String surname) {
+    public void addUser(String login, String email, String phone, String name, String surname, String photo) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -71,6 +73,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_PHONE, phone);
         values.put(KEY_NAME, name);
         values.put(KEY_SURNAME, surname);
+        values.put(KEY_PHOTO, photo);
 
         // Inserting Row
         long id = db.insert(TABLE_LOGIN, null, values);
@@ -96,6 +99,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             user.put("phone", cursor.getString(3));
             user.put("name", cursor.getString(4));
             user.put("surname", cursor.getString(5));
+            user.put("photo", cursor.getString(6));
         }
         cursor.close();
         db.close();

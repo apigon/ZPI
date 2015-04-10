@@ -133,9 +133,10 @@ public class LoginActivity extends Activity {
                         String phone = user.getString("phone_number");
                         String name = user.getString("name");
                         String surname = user.getString("surname");
+                        String photo = user.getString("photo");
 
                         // Inserting row in users table
-                        db.addUser(login, email, phone, name, surname);
+                        db.addUser(login, email, phone, name, surname, photo);
 
                         // Create login session
                         session.setLogin(true);

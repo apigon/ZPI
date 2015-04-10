@@ -2,10 +2,18 @@ package pl.mf.zpi.matefinder;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,11 +26,16 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +57,7 @@ public class EditProfileActivity extends ActionBarActivity {
     private TextView surname;
 
     private ImageView profile_photo;
+    private String image_data;
 
     private SQLiteHandler db;
 
@@ -98,16 +112,76 @@ public class EditProfileActivity extends ActionBarActivity {
             }
         });
 
-        updateUserInfo();
+        try {
+            updateUserInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-
+    // Ustawianie zdjęcia wybranego z galerii
     public void onActivityResult(int reqCode, int resCode, Intent data){
         if(resCode == RESULT_OK){
             if(reqCode == 1){
-                profile_photo.setImageURI(data.getData());
+                Uri selected_image_uri = data.getData();
+                if(Build.VERSION.SDK_INT < 19){
+                    String selected_image_path = getPath(selected_image_uri);
+                    Bitmap bitmap = BitmapFactory.decodeFile(selected_image_path);
+                    setImage(bitmap);
+                }
+                else {
+                    ParcelFileDescriptor parcel_file_descriptor;
+                    try {
+                        parcel_file_descriptor = getContentResolver().openFileDescriptor(selected_image_uri, "r");
+                        FileDescriptor file_descriptor = parcel_file_descriptor.getFileDescriptor();
+                        Bitmap image = BitmapFactory.decodeFileDescriptor(file_descriptor);
+                        parcel_file_descriptor.close();
+                        setImage(image);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+    }
+
+    private void setImage(Bitmap image){
+        image = Bitmap.createScaledBitmap(image, 80, 80, false);
+        profile_photo.setImageBitmap(image);
+
+        //upload
+        image_data = encodeToBase64(image);
+    }
+
+    private static String encodeToBase64(Bitmap image){
+        System.gc();
+
+        if(image == null)
+            return null;
+
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        byte[] b = baos.toByteArray();
+        String image_encoded = Base64.encodeToString(b, Base64.DEFAULT);
+        return image_encoded;
+    }
+
+    private String getPath(Uri uri){
+        if(uri == null){
+            return null;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if(cursor != null){
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        return uri.getPath();
     }
 
     @Override
@@ -137,7 +211,7 @@ public class EditProfileActivity extends ActionBarActivity {
         finish();
     }
 
-    private void updateUserInfo(){
+    private void updateUserInfo() throws IOException {
         // Fetching user details from sqlite
         HashMap<String, String> user = db.getUserDetails();
 
@@ -146,6 +220,17 @@ public class EditProfileActivity extends ActionBarActivity {
         phone_number.setText(user.get("phone"));
         name.setText(user.get("name"));
         surname.setText(user.get("surname"));
+
+        String url = "http://156.17.130.212/android_login_api/images/" + user.get("photo");
+        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
+            @Override
+            public void onResponse(Bitmap response){
+                image_data = encodeToBase64(response);
+                profile_photo.setImageBitmap(response);
+            }
+        }, 0, 0, null, null);
+
+        AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
 
     private void actionUpdate(){
@@ -155,7 +240,7 @@ public class EditProfileActivity extends ActionBarActivity {
         String up_name = name.getText().toString();
         String up_surname = surname.getText().toString();
 
-        updateUserDB(up_login,up_email,up_phone,up_name,up_surname);
+        updateUserDB(up_login, up_email, up_phone, up_name, up_surname);
     }
 
     private void updateUserDB(final String login, final String email, final String phone,
@@ -168,7 +253,6 @@ public class EditProfileActivity extends ActionBarActivity {
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Update Response: " + response.toString());
@@ -186,10 +270,11 @@ public class EditProfileActivity extends ActionBarActivity {
                         String phone = user.getString("phone_number");
                         String name = user.getString("name");
                         String surname = user.getString("surname");
+                        String photo = user.getString("photo");
 
                         // Inserting row in users table
                         db.deleteUsers();
-                        db.addUser(login, email, phone, name, surname);
+                        db.addUser(login, email, phone, name, surname, photo);
                         Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
@@ -207,11 +292,12 @@ public class EditProfileActivity extends ActionBarActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
+                Log.e(TAG, "Update Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
             }
+
         }) {
 
             @Override
@@ -224,6 +310,7 @@ public class EditProfileActivity extends ActionBarActivity {
                 params.put("phone_number", phone);
                 params.put("name", name);
                 params.put("surname", surname);
+                params.put("image", image_data);
 
                 return params;
             }
