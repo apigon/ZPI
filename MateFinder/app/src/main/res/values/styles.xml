@@ -10,7 +10,6 @@
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:buttonStyle">@style/LightButton</item>
         <item name="android:textViewStyle">@style/TextView</item>
-        <item name="android:actionBarStyle">@style/AB</item>
     </style>
 
     <style name="DarkButton" parent="android:style/Widget.Button">

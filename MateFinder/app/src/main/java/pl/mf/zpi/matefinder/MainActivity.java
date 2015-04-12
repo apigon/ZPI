@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.support.v4.view.ViewPager;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
@@ -30,6 +31,12 @@ public class MainActivity extends ActionBarActivity {
 
     private static boolean location_shared;
 
+    private ViewPager pager;
+    private ViewPagerAdapter adapter;
+    private SlidingTabLayout zakladki;
+    private CharSequence tytuly[]={"Grupy","Znajomi"};
+    private int n =2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,29 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+
+        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),tytuly,n);
+
+        // Assigning ViewPager View and setting the adapter
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
+
+        // Assiging the Sliding Tab Layout View
+        zakladki = (SlidingTabLayout) findViewById(R.id.tabs);
+        zakladki.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        zakladki.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.kol3);
+            }
+        });
+
+        // Setting the ViewPager For the SlidingTabsLayout
+        zakladki.setViewPager(pager);
+
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
