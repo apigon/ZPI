@@ -13,6 +13,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
@@ -37,6 +44,26 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence tytuly[]={"Grupy","Znajomi"};
     private int n =2;
 
+    //First We Declare Titles And Icons For Our Navigation Drawer List View
+    //This Icons And Titles Are holded in an Array as you can see
+
+    String TITLES[] = {"Grupy","Mapa","Konto","Ustawienia"};
+    int ICONS[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher};
+
+    //Similarly we Create a String Resource for the name and email in the header view
+    //And we also create a int resource for profile picture in the header view
+
+    String NAME = "user name";
+    String EMAIL = "user e-mail";
+    int PROFILE = R.mipmap.ic_launcher;
+
+    RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+
+    ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +71,88 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
+
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+
+        mAdapter = new MyAdapter(TITLES,ICONS,NAME,EMAIL,PROFILE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        // And passing the titles,icons,header view name, header view email,
+        // and header view profile picture
+
+        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+
+        final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+        });
+
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
+
+
+
+                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
+                    Drawer.closeDrawers();
+                    int i = recyclerView.getChildPosition(child);
+                    switch(i){
+                        case 1:
+                            //TODO
+                        case 2:
+                            maps();
+                            break;
+                        case 3:
+                            editProfile();
+                            break;
+                        case 4:
+                            settings();
+                    }
+
+                    return true;
+
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+        });
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+
+        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+
+        }; // Drawer Toggle Object Made
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(getSupportFragmentManager(),tytuly,n);
@@ -63,10 +172,6 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        zakladki.setViewPager(pager);
-
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
@@ -142,7 +247,7 @@ public class MainActivity extends ActionBarActivity {
                 maps();
                 return true;
             case R.id.action_notification:
-                settings();
+//                settings();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
