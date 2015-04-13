@@ -1,5 +1,6 @@
 package pl.mf.zpi.matefinder;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +21,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 public class MapsActivity extends ActionBarActivity {
 
 
     GoogleMap googleMap;
     StreetViewPanorama myStreetView;
     boolean isStreetView=false;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         createMapView();
@@ -58,13 +61,15 @@ public class MapsActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         setMyLocalization();
-        setSupportActionBar(toolbar);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+         setSupportActionBar(toolbar);
+         getSupportActionBar().setHomeButtonEnabled(true);
+         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void createStreetView() {
+
         myStreetView = ((StreetViewPanoramaFragment)
                 getFragmentManager().findFragmentById(R.id.streetView))
                 .getStreetViewPanorama();
@@ -75,14 +80,21 @@ public class MapsActivity extends ActionBarActivity {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManager.getBestProvider(criteria, false);
         Location location = locationManager.getLastKnownLocation(provider);
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        LatLng coordinate = new LatLng(lat, lng);
+        if (location != null)
+        {
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            LatLng coordinate = new LatLng(lat, lng);
 
-        CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
+            CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
+
+
+            googleMap.moveCamera(center);
+
+        }
+        else Toast.makeText(getApplicationContext(),
+                "Localization problem", Toast.LENGTH_SHORT).show();
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-
-        googleMap.moveCamera(center);
         googleMap.animateCamera(zoom);
     }
 
@@ -107,7 +119,7 @@ public class MapsActivity extends ActionBarActivity {
             return true;
         }
         if (id == android.R.id.home) {
-            backToMain();
+
             return true;
         }
 
@@ -123,6 +135,7 @@ public class MapsActivity extends ActionBarActivity {
             if (null == googleMap) {
                 googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                         R.id.mapView)).getMap();
+
 
                 /**
                  * If the map is still null after attempted initialisation,
@@ -166,7 +179,7 @@ public class MapsActivity extends ActionBarActivity {
         {
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
-
+            finish();
         }
 
     }
