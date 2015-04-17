@@ -3,9 +3,13 @@ package pl.mf.zpi.matefinder;
 /**
  * Created by Tomek on 2015-03-22.
  */
+
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +20,14 @@ import android.widget.Toast;
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,6 +142,8 @@ public class LoginActivity extends Activity {
                         String surname = user.getString("surname");
                         String photo = user.getString("photo");
 
+                        // Save profile photo to gallery
+                        savePhotoToGallery(photo);
                         // Inserting row in users table
                         db.addUser(login, email, phone, name, surname, photo);
 
@@ -194,5 +203,31 @@ public class LoginActivity extends Activity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void savePhotoToGallery(final String photo_name){
+        String url = "http://156.17.130.212/android_login_api/images/" + photo_name;
+        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
+            @Override
+            public void onResponse(Bitmap response){
+                ContextWrapper cw = new ContextWrapper(getApplicationContext());
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                File my_path = new File(directory, "profile.jpg");
+                FileOutputStream fos = null;
+                try{
+                    fos = new FileOutputStream(my_path);
+                    response.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.close();
+                    Toast.makeText(getApplicationContext(),
+                            "Udało się!", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),
+                            "Lipa ;/", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, 0, 0, null, null);
+
+        AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
 }
