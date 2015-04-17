@@ -1,18 +1,15 @@
 package pl.mf.zpi.matefinder;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
@@ -36,7 +33,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -95,8 +91,8 @@ public class EditProfileActivity extends ActionBarActivity {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Wybierz zdjęcie."),1);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Wybieranie zdjęcia z galerii"), 1);
             }
         });
 
@@ -274,30 +270,36 @@ public class EditProfileActivity extends ActionBarActivity {
             pDialog.dismiss();
     }
 
+    // Wycinanie zdjęcia, żeby rozmiar pasował
+    private void performCrop(Uri u) {
+        try {
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(u, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 80);
+            cropIntent.putExtra("outputY", 80);
+            cropIntent.putExtra("return-data", true);
+            startActivityForResult(cropIntent, 2);
+        }catch (ActivityNotFoundException anfe) {
+            Toast toast = Toast
+                    .makeText(this, "To urządzenie nie obsługuje przycinania zdjęć!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
     // Ustawianie zdjęcia wybranego z galerii
-    public void onActivityResult(int reqCode, int resCode, Intent data){
-        if(resCode == RESULT_OK){
-            if(reqCode == 1){
+    public void onActivityResult(int reqCode, int resCode, Intent data) {
+        if (resCode == RESULT_OK) {
+            if (reqCode == 2) {
+                Bundle extras = data.getExtras();
+                Bitmap bitmap = extras.getParcelable("data");
+                setImage(bitmap);
+            }
+            else if(reqCode == 1){
                 Uri selected_image_uri = data.getData();
-                if(Build.VERSION.SDK_INT < 19){
-                    String selected_image_path = getPath(selected_image_uri);
-                    Bitmap bitmap = BitmapFactory.decodeFile(selected_image_path);
-                    setImage(bitmap);
-                }
-                else {
-                    ParcelFileDescriptor parcel_file_descriptor;
-                    try {
-                        parcel_file_descriptor = getContentResolver().openFileDescriptor(selected_image_uri, "r");
-                        FileDescriptor file_descriptor = parcel_file_descriptor.getFileDescriptor();
-                        Bitmap image = BitmapFactory.decodeFileDescriptor(file_descriptor);
-                        parcel_file_descriptor.close();
-                        setImage(image);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                performCrop(selected_image_uri);
             }
         }
     }
@@ -316,29 +318,14 @@ public class EditProfileActivity extends ActionBarActivity {
         if(image == null)
             return null;
 
-        Bitmap immagex = image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
         byte[] b = baos.toByteArray();
-        String image_encoded = Base64.encodeToString(b, Base64.DEFAULT);
-        return image_encoded;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
-    private String getPath(Uri uri){
-        if(uri == null){
-            return null;
-        }
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if(cursor != null){
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        return uri.getPath();
-    }
-
+    // Zapis zdjęcia do galerii po aktualizacji
     private void savePhotoToGallery(){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
