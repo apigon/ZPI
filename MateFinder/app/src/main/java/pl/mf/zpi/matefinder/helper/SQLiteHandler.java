@@ -28,12 +28,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_ID_DATABASE = "userID";
     private static final String KEY_LOGIN = "login";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_PHONE = "phone";
     private static final String KEY_NAME = "name";
     private static final String KEY_SURNAME = "surname";
     private static final String KEY_PHOTO = "photo";
+    private static final String KEY_LOCATION= "location";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,9 +45,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LOGIN + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY," +KEY_ID_DATABASE+" TEXT,"+ KEY_LOGIN + " TEXT,"
                 + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT,"
-                + KEY_SURNAME + " TEXT," + KEY_PHOTO + " TEXT" + ")";
+                + KEY_SURNAME + " TEXT," + KEY_PHOTO + " TEXT," + KEY_LOCATION+" TEXT"+")";
         db.execSQL(CREATE_LOGIN_TABLE);
 
         Log.d(TAG, "Database tables created");
@@ -64,17 +66,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String login, String email, String phone, String name, String surname, String photo) {
+    public void addUser(String userID, String login, String email, String phone, String name, String surname, String photo,String location) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_ID_DATABASE, userID);
         values.put(KEY_LOGIN, login);
         values.put(KEY_EMAIL, email);
         values.put(KEY_PHONE, phone);
         values.put(KEY_NAME, name);
         values.put(KEY_SURNAME, surname);
         values.put(KEY_PHOTO, photo);
-
+        values.put(KEY_LOCATION, location);
         // Inserting Row
         long id = db.insert(TABLE_LOGIN, null, values);
         db.close(); // Closing database connection
@@ -94,12 +97,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Move to first row
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
-            user.put("login", cursor.getString(1));
-            user.put("email", cursor.getString(2));
-            user.put("phone", cursor.getString(3));
-            user.put("name", cursor.getString(4));
-            user.put("surname", cursor.getString(5));
-            user.put("photo", cursor.getString(6));
+            user.put("userID",cursor.getString(1));
+            user.put("login", cursor.getString(2));
+            user.put("email", cursor.getString(3));
+            user.put("phone", cursor.getString(4));
+            user.put("name", cursor.getString(5));
+            user.put("surname", cursor.getString(6));
+            user.put("photo", cursor.getString(7));
+            user.put("location", cursor.getString(8));
         }
         cursor.close();
         db.close();
@@ -135,5 +140,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
+
 
 }

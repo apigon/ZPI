@@ -135,17 +135,18 @@ public class LoginActivity extends Activity {
                     if (!error) {
                         // user successfully logged in
                         JSONObject user = jObj.getJSONObject("user");
+                        String userID = user.getString("userID");
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
                         String name = user.getString("name");
                         String surname = user.getString("surname");
                         String photo = user.getString("photo");
-
+                        String location = user.getString("location");
                         // Save profile photo to gallery
                         savePhotoToGallery(photo);
                         // Inserting row in users table
-                        db.addUser(login, email, phone, name, surname, photo);
+                        db.addUser(userID, login, email, phone, name, surname, photo,location);
 
                         // Create login session
                         session.setLogin(true);

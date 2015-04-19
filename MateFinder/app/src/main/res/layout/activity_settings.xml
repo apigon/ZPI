@@ -6,8 +6,13 @@
     tools:context="pl.mf.zpi.matefinder.SettingsActivity"
     android:orientation="vertical">
 
-    <include android:id="@+id/app_bar" layout="@layout/app_bar"/>
-
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
     <CheckBox
         android:paddingTop="?android:attr/actionBarSize"
         android:layout_width="wrap_content"
@@ -135,5 +140,8 @@
         android:layout_alignTop="@+id/textView3"
         android:layout_alignRight="@+id/checkBox2"
         android:layout_alignEnd="@+id/checkBox2" />
+        </RelativeLayout>
+   </ScrollView>
 
+    <include android:id="@+id/app_bar" layout="@layout/app_bar"/>
 </RelativeLayout>

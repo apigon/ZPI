@@ -173,6 +173,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     private void actionUpdate(){
+
         String up_login = login.getText().toString();
         String up_email = email.getText().toString();
         String up_phone = phone_number.getText().toString();
@@ -206,16 +207,17 @@ public class EditProfileActivity extends ActionBarActivity {
                         // User successfully updated in MySQL
                         // Now store the user in sqlite
                         JSONObject user = jObj.getJSONObject("user");
+                        String userID = user.getString("userID");
                         String login = user.getString("login");
                         String email = user.getString("email");
                         String phone = user.getString("phone_number");
                         String name = user.getString("name");
                         String surname = user.getString("surname");
                         String photo = user.getString("photo");
-
+                        String location = user.getString("location");
                         // Inserting row in users table
                         db.deleteUsers();
-                        db.addUser(login, email, phone, name, surname, photo);
+                        db.addUser(userID, login, email, phone, name, surname, photo, location);
                         Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error

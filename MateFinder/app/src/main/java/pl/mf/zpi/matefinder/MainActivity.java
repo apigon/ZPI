@@ -230,6 +230,7 @@ public class MainActivity extends ActionBarActivity {
 
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
+        finish(); //tutaj ma byc
 
     }
 
@@ -248,6 +249,8 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.action_notification:
 //                settings();
+                return true;
+            case R.id.home:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 
 public class SettingsActivity extends ActionBarActivity {
 
+    NumberPicker picker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +22,9 @@ public class SettingsActivity extends ActionBarActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        picker = (NumberPicker)findViewById(R.id.numberPicker);
+        picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
     }
 
     @Override
