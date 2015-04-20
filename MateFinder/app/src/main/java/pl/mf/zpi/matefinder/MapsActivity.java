@@ -74,7 +74,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         setContentView(R.layout.activity_maps);
         createMapView();
 
-        addMarker();
+
         if (googleMap != null)
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
@@ -139,7 +139,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    private void updateLocationDB(final String lat, final String lng) {
+    private void updateLocationDB(final String lat, final String lng)throws IOException {
+        db = new SQLiteHandler(getApplicationContext());
+        if(db==null)
+            Log.d(TAG, "Błąd!!!: ");
         HashMap<String, String> user = db.getUserDetails();
         final String userId = user.get("userID");
         final String login = user.get("login");
@@ -250,19 +253,24 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         refresh();
-        locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
+        //locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-        googleMap.animateCamera(zoom);
+
         if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             coordinate = new LatLng(lat, lng);
+            googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
+                    .draggable(false));
             CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
             googleMap.moveCamera(center);
-
+            googleMap.animateCamera(zoom);
         } else
+        {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
+            addMarker();
+        }
 
 
         return coordinate;
@@ -270,9 +278,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     public void refresh() {
         provider = locationManager.getBestProvider(criteria, false);
-        location = locationManager.getLastKnownLocation(provider);
+        //location = locationManager.getLastKnownLocation(provider);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        location = locationManager.getLastKnownLocation(locationProvider);
         if (location != null)
-            updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+            try {
+                updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override
@@ -377,7 +391,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-        refresh();
+        //refresh();
     }
 
     @Override
