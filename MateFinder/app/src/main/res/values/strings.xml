@@ -62,9 +62,9 @@
         <item>Wizualne</item>
     </string-array>
     <string-array name="settings_choose_motive">
-        <item>Klasyczny</item>
-        <item>Jasny</item>
-        <item>Ciemny</item>
+        <item>Automatyczny</item>
+        <item>Dzienny</item>
+        <item>Nocny</item>
     </string-array>
 
     <!-- Mapy -->

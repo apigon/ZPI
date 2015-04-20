@@ -112,7 +112,7 @@ public class LoginActivity extends Activity {
 
     /**
      * function to verify login details in mysql db
-     * */
+     */
     private void checkLogin(final String login, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -146,7 +146,7 @@ public class LoginActivity extends Activity {
                         // Save profile photo to gallery
                         savePhotoToGallery(photo);
                         // Inserting row in users table
-                        db.addUser(userID, login, email, phone, name, surname, photo,location);
+                        db.addUser(userID, login, email, phone, name, surname, photo, location);
 
                         // Create login session
                         session.setLogin(true);
@@ -206,16 +206,16 @@ public class LoginActivity extends Activity {
             pDialog.dismiss();
     }
 
-    private void savePhotoToGallery(final String photo_name){
+    private void savePhotoToGallery(final String photo_name) {
         String url = "http://156.17.130.212/android_login_api/images/" + photo_name;
-        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
+        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
-            public void onResponse(Bitmap response){
+            public void onResponse(Bitmap response) {
                 ContextWrapper cw = new ContextWrapper(getApplicationContext());
                 File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
                 File my_path = new File(directory, "profile.jpg");
                 FileOutputStream fos = null;
-                try{
+                try {
                     fos = new FileOutputStream(my_path);
                     response.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.close();

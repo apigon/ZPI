@@ -100,7 +100,7 @@ public class EditPasswordActivity extends ActionBarActivity {
         finish();
     }
 
-    private void changePassword(){
+    private void changePassword() {
         // Fetching user details from sqlite
         HashMap<String, String> user = db.getUserDetails();
 
@@ -109,10 +109,9 @@ public class EditPasswordActivity extends ActionBarActivity {
         String new_pass = new_password.getText().toString();
         String new_pass_rep = new_password_rep.getText().toString();
 
-        if(new_pass.equals(new_pass_rep)){
+        if (new_pass.equals(new_pass_rep)) {
             changePasswordDB(login, old_pass, new_pass);
-        }
-        else{
+        } else {
             Toast.makeText(getApplicationContext(), "Wprowadzone hasła nie są takie same.", Toast.LENGTH_LONG).show();
         }
     }

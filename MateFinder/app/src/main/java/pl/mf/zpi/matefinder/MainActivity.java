@@ -20,10 +20,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
-
 
 
 public class MainActivity extends ActionBarActivity {
@@ -41,33 +41,30 @@ public class MainActivity extends ActionBarActivity {
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout zakladki;
-    private CharSequence tytuly[]={"Grupy","Znajomi"};
-    private int n =2;
+    private CharSequence tytuly[] = {"Grupy", "Znajomi"};
+    private int n = 2;
 
-    //First We Declare Titles And Icons For Our Navigation Drawer List View
-    //This Icons And Titles Are holded in an Array as you can see
+    private RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    private RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
+    private DrawerLayout Drawer;                                  // Declaring DrawerLayout
 
-    String TITLES[] = {"Grupy","Mapa","Konto","Ustawienia"};
-    int ICONS[] = {R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher};
-
-    //Similarly we Create a String Resource for the name and email in the header view
-    //And we also create a int resource for profile picture in the header view
-
-    String NAME = "user name";
-    String EMAIL = "user e-mail";
-    int PROFILE = R.mipmap.ic_launcher;
-
-    RecyclerView mRecyclerView;                           // Declaring RecyclerView
-    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
-
-    ActionBarDrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -76,56 +73,11 @@ public class MainActivity extends ActionBarActivity {
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
 
-        mAdapter = new MyAdapter(TITLES,ICONS,NAME,EMAIL,PROFILE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        mAdapter = new MyAdapter(this, db);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
         // And passing the titles,icons,header view name, header view email,
         // and header view profile picture
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
-
-        final GestureDetector mGestureDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-
-            @Override public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-
-        });
-
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-                View child = recyclerView.findChildViewUnder(motionEvent.getX(),motionEvent.getY());
-
-
-
-                if(child!=null && mGestureDetector.onTouchEvent(motionEvent)){
-                    Drawer.closeDrawers();
-                    int i = recyclerView.getChildPosition(child);
-                    switch(i){
-                        case 1:
-                            //TODO
-                        case 2:
-                            maps();
-                            break;
-                        case 3:
-                            editProfile();
-                            break;
-                        case 4:
-                            settings();
-                    }
-
-                    return true;
-
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
-            }
-        });
 
         mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
 
@@ -133,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
 
 
         Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
-        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+        mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -149,13 +101,12 @@ public class MainActivity extends ActionBarActivity {
             }
 
 
-
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),tytuly,n);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), tytuly, n);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -173,15 +124,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // SqLite database handler
-        db = new SQLiteHandler(getApplicationContext());
 
-        // session manager
-        session = new SessionManager(getApplicationContext());
-
-        if (!session.isLoggedIn()) {
-            logoutUser();
-        }
     }
 
     @Override
@@ -196,10 +139,10 @@ public class MainActivity extends ActionBarActivity {
     /**
      * Logging out the user. Will set isLoggedIn flag to false in shared
      * preferences Clears the user data from sqlite users table
-     * */
+     */
 
     // Wyloguj
-     private void logoutUser() {
+    private void logoutUser() {
         session.setLogin(false);
 
         db.deleteUsers();
@@ -210,47 +153,45 @@ public class MainActivity extends ActionBarActivity {
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
-    // Edytuj profil
-    private void editProfile() {
-        // Launching the login activity
-        Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
-        startActivity(intent);
-
-    }
-
-    // Ustawienia
-    private void settings() {
-        // Launching the login activity
-        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-        startActivity(intent);
-        //finish(); NIE DAWAJCIE TEGO FINISH() bo potem przy przycisku powrotu
-        // wychodzi z aplikacji zamiast wracac do poprzedniego ekranu!!!
-    }
-    private void maps() {
-
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        startActivity(intent);
-        finish(); //tutaj ma byc
-
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Toast toast;
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_logout:
                 logoutUser();
-                return true;
-            case R.id.action_edit_profile:
-                editProfile();
-                return true;
-            case R.id.action_settings:
-                maps();
+                toast = Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT);
+                toast.show();
                 return true;
             case R.id.action_notification:
-//                settings();
+                toast = Toast.makeText(this, "Przepraszamy, wysyłanie powiadomień jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
                 return true;
             case R.id.home:
+                return true;
+            case R.id.action_change_view:
+                toast = Toast.makeText(this, "Przepraszamy, zmiana widoku jeszcze nie gotowa", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            case R.id.action_send_notification:
+                toast = Toast.makeText(this, "Przepraszamy, wysyłanie powiadomień jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            case R.id.action_add_user:
+                toast = Toast.makeText(this, "Przepraszamy, dodawanie znajomych jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            case R.id.action_add_group:
+                toast = Toast.makeText(this, "Przepraszamy, dodawanie grup jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            case R.id.action_search:
+                toast = Toast.makeText(this, "Przepraszamy, wyszukiwanie znajomych jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            case R.id.action_share_location:
+                toast = Toast.makeText(this, "Przepraszamy, udostępnianie lokalizacji jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                toast.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

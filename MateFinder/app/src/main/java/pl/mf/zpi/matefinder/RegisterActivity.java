@@ -67,17 +67,17 @@ public class RegisterActivity extends Activity {
                 password = inputPassword.getText().toString();
                 String repeatPassword = inputRepeatPassword.getText().toString();
 
-                if(getPhone())
-                if (repeatPassword.equals(password))
-                    if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                        registerUser(login, email, password, phone, "", "");
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
-                                .show();
-                    }
-                else
-                    Toast.makeText(getApplicationContext(), "Podane hasła nie są takie same!", Toast.LENGTH_LONG).show();
+                if (getPhone())
+                    if (repeatPassword.equals(password))
+                        if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
+                            registerUser(login, email, password, phone, "", "");
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    else
+                        Toast.makeText(getApplicationContext(), "Podane hasła nie są takie same!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -179,13 +179,13 @@ public class RegisterActivity extends Activity {
             pDialog.dismiss();
     }
 
-    private boolean getPhone(){
+    private boolean getPhone() {
         Context mAppContext = getApplicationContext();
-        TelephonyManager tMgr = (TelephonyManager)mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
         phone = tMgr.getLine1Number();
         boolean done = true;
-        if(phone==null||phone.equals("")){
-            done=false;
+        if (phone == null || phone.equals("")) {
+            done = false;
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_PHONE);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);

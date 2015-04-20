@@ -13,7 +13,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private int iloscZakladek;
 
 
-    public ViewPagerAdapter(FragmentManager fm,CharSequence mTitles[], int n) {
+    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int n) {
         super(fm);
 
         this.tutuly = mTitles;
@@ -25,12 +25,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0) // dla 0 zwracamy zkładkę grup
+        if (position == 0) // dla 0 zwracamy zkładkę grup
         {
             ZakladkaGrup grupy = new ZakladkaGrup();
             return grupy;
-        }
-        else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
+        } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
         {
             ZakladkaZnajomi znajomi = new ZakladkaZnajomi();
             return znajomi;

@@ -10,7 +10,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
@@ -62,6 +66,13 @@ public class EditProfileActivity extends ActionBarActivity {
 
     private SQLiteHandler db;
 
+    RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+
+    ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,11 +90,11 @@ public class EditProfileActivity extends ActionBarActivity {
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
 
-        login = (TextView)findViewById(R.id.editProfile_login_content);
-        email = (TextView)findViewById(R.id.editProfile_email_content);
-        phone_number = (TextView)findViewById(R.id.editProfile_phone_content);
-        name = (TextView)findViewById(R.id.editProfile_name_content);
-        surname = (TextView)findViewById(R.id.editProfile_surname_content);
+        login = (TextView) findViewById(R.id.editProfile_login_content);
+        email = (TextView) findViewById(R.id.editProfile_email_content);
+        phone_number = (TextView) findViewById(R.id.editProfile_phone_content);
+        name = (TextView) findViewById(R.id.editProfile_name_content);
+        surname = (TextView) findViewById(R.id.editProfile_surname_content);
 
         profile_photo = (ImageView) findViewById(R.id.editProfile_photo);
         // Change photo button Click Event
@@ -118,6 +129,45 @@ public class EditProfileActivity extends ActionBarActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        //Boczne menu
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
+
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+
+        mAdapter = new MyAdapter(this, db);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        // And passing the titles,icons,header view name, header view email,
+        // and header view profile picture
+
+        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+
+        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+        }; // Drawer Toggle Object Made
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
     }
 
     @Override
@@ -160,19 +210,19 @@ public class EditProfileActivity extends ActionBarActivity {
         loadImageFromStorage();
     }
 
-    private void loadImageFromStorage(){
+    private void loadImageFromStorage() {
         try {
             ContextWrapper cw = new ContextWrapper(getApplicationContext());
             File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-            File f=new File(directory, "profile.jpg");
+            File f = new File(directory, "profile.jpg");
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             profile_photo.setImageBitmap(b);
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void actionUpdate(){
+    private void actionUpdate() {
 
         String up_login = login.getText().toString();
         String up_email = email.getText().toString();
@@ -218,7 +268,7 @@ public class EditProfileActivity extends ActionBarActivity {
                         // Inserting row in users table
                         db.deleteUsers();
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
-                        Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
                         // message
@@ -284,7 +334,7 @@ public class EditProfileActivity extends ActionBarActivity {
             cropIntent.putExtra("outputY", 80);
             cropIntent.putExtra("return-data", true);
             startActivityForResult(cropIntent, 2);
-        }catch (ActivityNotFoundException anfe) {
+        } catch (ActivityNotFoundException anfe) {
             Toast toast = Toast
                     .makeText(this, "To urządzenie nie obsługuje przycinania zdjęć!", Toast.LENGTH_SHORT);
             toast.show();
@@ -298,15 +348,14 @@ public class EditProfileActivity extends ActionBarActivity {
                 Bundle extras = data.getExtras();
                 Bitmap bitmap = extras.getParcelable("data");
                 setImage(bitmap);
-            }
-            else if(reqCode == 1){
+            } else if (reqCode == 1) {
                 Uri selected_image_uri = data.getData();
                 performCrop(selected_image_uri);
             }
         }
     }
 
-    private void setImage(Bitmap image){
+    private void setImage(Bitmap image) {
         image = Bitmap.createScaledBitmap(image, 80, 80, false);
         profile_photo.setImageBitmap(image);
 
@@ -314,10 +363,10 @@ public class EditProfileActivity extends ActionBarActivity {
         image_data = encodeToBase64(image);
     }
 
-    private static String encodeToBase64(Bitmap image){
+    private static String encodeToBase64(Bitmap image) {
         System.gc();
 
-        if(image == null)
+        if (image == null)
             return null;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -328,14 +377,14 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     // Zapis zdjęcia do galerii po aktualizacji
-    private void savePhotoToGallery(){
+    private void savePhotoToGallery() {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File my_path = new File(directory, "profile.jpg");
         FileOutputStream fos = null;
-        try{
+        try {
             fos = new FileOutputStream(my_path);
-            Bitmap bitmap = ((BitmapDrawable)profile_photo.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) profile_photo.getDrawable()).getBitmap();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
             image_data = encodeToBase64(bitmap);

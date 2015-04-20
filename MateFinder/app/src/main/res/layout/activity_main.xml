@@ -4,12 +4,12 @@
     android:id="@+id/DrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="7dp">
+    android:elevation="7dp"
+    tools:context=".MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <include
             android:id="@+id/app_bar"
@@ -20,25 +20,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="2dp"
-            android:background="@color/kol2" />
+            android:background="@color/kol2"
+            android:layout_below="@+id/app_bar" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"></android.support.v4.view.ViewPager>
+            android:layout_weight="1"
+            android:layout_below="@+id/tabs" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/RecyclerView"
         android:layout_width="270dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-
         android:background="@color/white"
-        android:scrollbars="vertical">
+        android:scrollbars="vertical" />
 
-    </android.support.v7.widget.RecyclerView>
 </android.support.v4.widget.DrawerLayout>

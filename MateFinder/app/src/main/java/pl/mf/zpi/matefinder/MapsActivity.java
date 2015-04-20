@@ -11,19 +11,25 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.maps.*;import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
@@ -40,12 +46,12 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 
-public class MapsActivity extends ActionBarActivity implements LocationListener{
+public class MapsActivity extends ActionBarActivity implements LocationListener {
 
 
     GoogleMap googleMap;
     StreetViewPanorama myStreetView;
-    boolean isStreetView=false;
+    boolean isStreetView = false;
     String provider;
     Location location;
     LocationManager locationManager;
@@ -55,6 +61,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
     private static final String TAG = MapsActivity.class.getSimpleName();
     private ProgressDialog pDialog;
 
+    private RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    private RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
+    private DrawerLayout Drawer;                                  // Declaring DrawerLayout
+
+    private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,36 +75,71 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
         createMapView();
 
         addMarker();
-        if(googleMap!=null)
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                createStreetView(latLng);
-            }
-        });
-
+        if (googleMap != null)
+            googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLng) {
+                    createStreetView(latLng);
+                }
+            });
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         setMyLocalization();
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-       // googleMap.getUiSettings().setZoomControlsEnabled(true);
+        // googleMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setCompassEnabled(true);
 
-         //actionbar
-         setSupportActionBar(toolbar);
-         getSupportActionBar().setHomeButtonEnabled(true);
-         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //actionbar
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //baza danych
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
         db = new SQLiteHandler(getApplicationContext());
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
+
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+
+        mAdapter = new MyAdapter(this, db);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        // And passing the titles,icons,header view name, header view email,
+        // and header view profile picture
+
+        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+
+        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+        }; // Drawer Toggle Object Made
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
 
     }
-    private void updateLocationDB(final String lat,final String lng)
-    {
+
+    private void updateLocationDB(final String lat, final String lng) {
         HashMap<String, String> user = db.getUserDetails();
         final String userId = user.get("userID");
         final String login = user.get("login");
@@ -106,26 +154,26 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
                 hideDialog();
 
                 try {
-                   JSONObject jObj = new JSONObject(response);
-                   boolean error = jObj.getBoolean("error");
-                   if (!error) {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
                         // User successfully updated in MySQL
                         // Now store the user in sqlite
                         JSONObject user = jObj.getJSONObject("user");
-                      //String userID = user.getString("userID");
-                     //  String login = user.getString("login");
+                        //String userID = user.getString("userID");
+                        //  String login = user.getString("login");
                      /*  String email = user.getString("email");
                        String phone = user.getString("phone_number");
                        String name = user.getString("name");
                        String surname = user.getString("surname");
                        String photo = user.getString("photo"); */
-                       String location = user.getString("location");
+                        String location = user.getString("location");
 
 
                         // Inserting row in users table
-                      //  db.deleteUsers();
-                    //    db.addUser(userID, login, email, phone, name, surname, photo,location);
-                        Toast.makeText(getApplicationContext(),"Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+                        //  db.deleteUsers();
+                        //    db.addUser(userID, login, email, phone, name, surname, photo,location);
+                        Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
                         // message
@@ -158,7 +206,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
                 params.put("lat", lat);
                 params.put("lng", lng);
 
-              return params;
+                return params;
             }
         };
 
@@ -169,10 +217,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
     private void createStreetView(final LatLng latLng) {
 
 
-       if(myStreetView == null)
-        myStreetView =((StreetViewPanoramaFragment)
-                getFragmentManager().findFragmentById(R.id.streetView))
-                .getStreetViewPanorama();
+        if (myStreetView == null)
+            myStreetView = ((StreetViewPanoramaFragment)
+                    getFragmentManager().findFragmentById(R.id.streetView))
+                    .getStreetViewPanorama();
         myStreetView.setPosition(latLng);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -191,45 +239,42 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
                 } else
                     Toast.makeText(getApplicationContext(),
                             "StreetView niedostępne w tym miejscu!", Toast.LENGTH_SHORT).show();
-            }},1000);
-
-
-
-
+            }
+        }, 1000);
 
 
     }
+
     public LatLng setMyLocalization() {
-        LatLng coordinate=null;
+        LatLng coordinate = null;
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         refresh();
-        locationManager.requestLocationUpdates(provider,5000,10,this); // odswiezanie co 5 sek lub 10 metrow
+        locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         googleMap.animateCamera(zoom);
-        if (location != null)
-        {
+        if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             coordinate = new LatLng(lat, lng);
             CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
             googleMap.moveCamera(center);
 
-        }
-        else Toast.makeText(getApplicationContext(),"Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
 
 
         return coordinate;
     }
 
-    public void refresh()
-    {
+    public void refresh() {
         provider = locationManager.getBestProvider(criteria, false);
         location = locationManager.getLastKnownLocation(provider);
-        if(location!=null)
-        updateLocationDB(Double.toString(location.getLatitude()),Double.toString(location.getLongitude()));
+        if (location != null)
+            updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -294,40 +339,39 @@ public class MapsActivity extends ActionBarActivity implements LocationListener{
         }
 
     }
+
     private String getMyLastLocation() throws IOException {
         // Fetching user details from sqlite
         HashMap<String, String> user = db.getUserDetails();
-       String lastLocation;
-       return lastLocation = (user.get("location"));
+        String lastLocation;
+        return lastLocation = (user.get("location"));
     }
 
     private void backToMain() {
         // Launching the login activity
-        if(isStreetView)
-        {
+        if (isStreetView) {
 
             Fragment street = getFragmentManager().findFragmentById(R.id.streetView);
             getFragmentManager().beginTransaction().hide(street).commit();
             Fragment map = getFragmentManager().findFragmentById(R.id.mapView);
             getFragmentManager().beginTransaction().show(map).commit();
-            isStreetView=false;
-            myStreetView.setPosition((LatLng)null);
-        }
-        else
-        {
+            isStreetView = false;
+            myStreetView.setPosition((LatLng) null);
+        } else {
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
 
     }
+
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         backToMain();
     }
 
