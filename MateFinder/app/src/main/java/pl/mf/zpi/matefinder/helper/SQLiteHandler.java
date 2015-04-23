@@ -26,6 +26,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Login table name
     private static final String TABLE_LOGIN = "login";
+    private static final String TABLE_LOCATIONS = "locations";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -37,6 +38,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_SURNAME = "surname";
     private static final String KEY_PHOTO = "photo";
     private static final String KEY_LOCATION = "location";
+    private static final String KEY_LAT = "lat";
+    private static final String KEY_LNG = "lng";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +53,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT,"
                 + KEY_SURNAME + " TEXT," + KEY_PHOTO + " TEXT," + KEY_LOCATION + " TEXT" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
+        String CREATE_LOCATIONS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS +"("
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LOCATION + " TEXT," + KEY_LAT
+                + " TEXT,"+ KEY_LNG + " TEXT"+")";
+        db.execSQL(CREATE_LOCATIONS_TABLE);
 
         Log.d(TAG, "Database tables created");
     }
@@ -63,7 +70,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Create tables again
         onCreate(db);
     }
+    public void addLocation(String locationID, String lat,String lng)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_LOCATION, locationID);
+        values.put(KEY_LAT, lat);
+        values.put(KEY_LNG, lng);
+        long id = db.insert(TABLE_LOCATIONS, null, values);
+        db.close(); // Closing database connection
 
+        Log.d(TAG, "New location inserted into sqlite: " + id);
+    }
     /**
      * Storing user details in database
      */
@@ -114,7 +132,27 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return user;
     }
+    public HashMap<String, String> getLocationDetails() {
+        HashMap<java.lang.String, java.lang.String> locations = new HashMap<java.lang.String, java.lang.String>();
+        java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS;
 
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            locations.put("locationID", cursor.getString(1));
+            locations.put("lat", cursor.getString(2));
+            locations.put("lng", cursor.getString(3));
+
+        }
+        cursor.close();
+        db.close();
+        // return user
+        Log.d(TAG, "Fetching user from Sqlite: " + locations.toString());
+
+        return locations;
+    }
     /**
      * Getting user login status return true if rows are there in table
      */
@@ -129,7 +167,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // return row count
         return rowCount;
     }
+    public void deleteLocations() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete All Rows
+        db.delete(TABLE_LOCATIONS, null, null);
+        db.close();
 
+        Log.d(TAG, "Deleted all user info from sqlite");
+    }
     /**
      * Re crate database Delete all tables and create them again
      */

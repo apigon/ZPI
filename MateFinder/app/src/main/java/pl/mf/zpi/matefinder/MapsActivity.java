@@ -1,10 +1,12 @@
 package pl.mf.zpi.matefinder;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -57,6 +59,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     LocationManager locationManager;
     Criteria criteria;
 
+
     private SQLiteHandler db;
     private static final String TAG = MapsActivity.class.getSimpleName();
     private ProgressDialog pDialog;
@@ -85,7 +88,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setMyLocalization();
+        setMyLocalization();    //pobiera lokalizacje i ustawia na nas kamere
+
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         // googleMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setCompassEnabled(true);
@@ -94,6 +98,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // jesli wylaczony GPS wyswietl ALERT
+            buildAlertMessageNoGps();
+        }
+
+
 
         //baza danych
         pDialog = new ProgressDialog(this);
@@ -138,11 +147,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
     }
-
+    //aktualizacja danych na serwer oraz do bazy SQLite
     private void updateLocationDB(final String lat, final String lng)throws IOException {
         db = new SQLiteHandler(getApplicationContext());
-        if(db==null)
-            Log.d(TAG, "Błąd!!!: ");
         HashMap<String, String> user = db.getUserDetails();
         final String userId = user.get("userID");
         final String login = user.get("login");
@@ -163,19 +170,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                         // User successfully updated in MySQL
                         // Now store the user in sqlite
                         JSONObject user = jObj.getJSONObject("user");
-                        //String userID = user.getString("userID");
-                        //  String login = user.getString("login");
-                     /*  String email = user.getString("email");
-                       String phone = user.getString("phone_number");
-                       String name = user.getString("name");
-                       String surname = user.getString("surname");
-                       String photo = user.getString("photo"); */
-                        String location = user.getString("location");
-
+                        String locationID = user.getString("locationID");
+                        String lat = user.getString("lat");
+                        String lng = user.getString("lng");
 
                         // Inserting row in users table
-                        //  db.deleteUsers();
-                        //    db.addUser(userID, login, email, phone, name, surname, photo,location);
+                        db.deleteLocations();
+                        db.addLocation(locationID, lat, lng);
                         Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
@@ -248,34 +249,52 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    public LatLng setMyLocalization() {
-        LatLng coordinate = null;
+    public void setMyLocalization() {
+        //LatLng coordinate = null;
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         refresh();
-        //locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
+        locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
 
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+        //CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
         if (location != null) {
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            coordinate = new LatLng(lat, lng);
-            googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
-                    .draggable(false));
-            CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
-            googleMap.moveCamera(center);
-            googleMap.animateCamera(zoom);
+            moveCameraOnMe();
         } else
         {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
-            addMarker();
+            try {
+
+                if(getMyLastLocation()!=null)
+                {
+                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+                    CameraUpdate lastLocation = CameraUpdateFactory.newLatLng(getMyLastLocation());
+                    googleMap.moveCamera(lastLocation);
+                    googleMap.animateCamera(zoom);
+                }
+                else
+                addMarker();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //refresh();
         }
 
 
-        return coordinate;
+      //  return coordinate;
     }
-
+    public void moveCameraOnMe()
+    {
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        LatLng coordinate = new LatLng(lat, lng);
+        googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
+                .draggable(false));
+        CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
+        googleMap.moveCamera(center);
+        googleMap.animateCamera(zoom);
+    }
     public void refresh() {
         provider = locationManager.getBestProvider(criteria, false);
         //location = locationManager.getLastKnownLocation(provider);
@@ -284,6 +303,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         if (location != null)
             try {
                 updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+                moveCameraOnMe();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -354,11 +374,16 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    private String getMyLastLocation() throws IOException {
+    private LatLng getMyLastLocation() throws IOException {
+        db = new SQLiteHandler(getApplicationContext());
         // Fetching user details from sqlite
-        HashMap<String, String> user = db.getUserDetails();
-        String lastLocation;
-        return lastLocation = (user.get("location"));
+        HashMap<String, String> locations = db.getLocationDetails();
+        String latString = locations.get("lat");
+        String lngString = locations.get("lng");
+        double lat = Double.parseDouble(latString.toString());
+        double lng = Double.parseDouble(lngString.toString());
+        LatLng lastLocation = new LatLng(lat,lng);
+        return lastLocation;
     }
 
     private void backToMain() {
@@ -383,7 +408,34 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Twój GPS wygląda na wyłączony, chcesz go włączyć?")
+                .setCancelable(false)
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        Handler handler = new Handler(); //wait 1 sec than try again set my location
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setMyLocalization();
+            }},1000);
 
+    }
     @Override
     public void onBackPressed() {
         backToMain();
@@ -391,7 +443,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-        //refresh();
+        this.location=location;
+        refresh();
     }
 
     @Override
