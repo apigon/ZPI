@@ -1,10 +1,8 @@
 package pl.mf.zpi.matefinder;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,9 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,8 +84,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setMyLocalization();    //pobiera lokalizacje i ustawia na nas kamere
-
+        //pobiera lokalizacje i ustawia na nas kamere
+            setMyLocation();
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         // googleMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setCompassEnabled(true);
@@ -99,7 +95,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // jesli wylaczony GPS wyswietl ALERT
-            buildAlertMessageNoGps();
+           buildAlertMessageNoGps();
         }
 
 
@@ -249,7 +245,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    public void setMyLocalization() {
+    public void setMyLocation() {
         //LatLng coordinate = null;
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -263,6 +259,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         } else
         {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
+            Log.e("mapApp", "Błąd!!!");
             try {
 
                 if(getMyLastLocation()!=null)
@@ -377,12 +374,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     private LatLng getMyLastLocation() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         // Fetching user details from sqlite
+        LatLng lastLocation=null;
         HashMap<String, String> locations = db.getLocationDetails();
-        String latString = locations.get("lat");
-        String lngString = locations.get("lng");
-        double lat = Double.parseDouble(latString.toString());
-        double lng = Double.parseDouble(lngString.toString());
-        LatLng lastLocation = new LatLng(lat,lng);
+        if(!(locations.get("lat")).equals(null) && !(locations.get("lng")).equals(null)) {
+            String latString = locations.get("lat");
+            String lngString = locations.get("lng");
+            double lat = Double.parseDouble(latString.toString());
+            double lng = Double.parseDouble(lngString.toString());
+           lastLocation = new LatLng(lat, lng);
+        }
         return lastLocation;
     }
 
@@ -432,7 +432,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                setMyLocalization();
+                setMyLocation();
             }},1000);
 
     }
