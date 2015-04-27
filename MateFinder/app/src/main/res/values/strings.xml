@@ -71,4 +71,9 @@
     <string name="title_activity_maps">Mapy</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_group_details">GroupDetailsActivity</string>
+
+    <!--Edycja grupy-->
+    <string name="edit_group_nazwa_grupy">Nazwa grupy</string>
+    <string name="edit_group_zapisz">Zapisz</string>
 </resources>

@@ -12,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
@@ -20,7 +22,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 public class SettingsActivity extends ActionBarActivity implements View.OnClickListener {
 
-    NumberPicker picker;
+    private NumberPicker picker;
     private Button zapisz;
 
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
@@ -29,6 +31,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     private DrawerLayout Drawer;                                  // Declaring DrawerLayout
 
     private ActionBarDrawerToggle mDrawerToggle;
+    private SQLiteHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +43,14 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        picker = (NumberPicker)findViewById(R.id.numberPicker);
+        picker = (NumberPicker)findViewById(R.id.radius);
         picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         zapisz = (Button) findViewById(R.id.button);
         zapisz.setOnClickListener(this);
 
         //Boczne menu
-        SQLiteHandler db = new SQLiteHandler(this);
+        db = new SQLiteHandler(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
@@ -90,7 +93,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings, menu);
-        NumberPicker np=(NumberPicker) findViewById(R.id.numberPicker);
+        NumberPicker np=(NumberPicker) findViewById(R.id.radius);
         np.setMaxValue(10);
         np.setMinValue(0);
 
@@ -126,6 +129,18 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         if (v.equals(zapisz)) {
+            db.deleteSettings();
+            CheckBox internet = (CheckBox)findViewById(R.id.internet);
+            String internetS=""+(internet.isChecked()?1:0);
+            CheckBox soudS=(CheckBox)findViewById(R.id.notification);
+            String soundS =""+(soudS.isChecked()?1:0);
+            Spinner navigation = (Spinner)findViewById(R.id.navigation);
+            String navigationS =""+navigation.getSelectedItemPosition();
+            Spinner layout =(Spinner)findViewById(R.id.layout);
+            String layoutS =""+layout.getSelectedItemPosition();
+            NumberPicker radius = (NumberPicker)findViewById(R.id.radius);
+            String radiusS =""+radius.getValue();
+            db.addSettings(internetS, soundS, navigationS, layoutS, radiusS);
             Toast toast = Toast.makeText(this, "Zapisano zmiany", Toast.LENGTH_SHORT);
             toast.show();
             backToMain();

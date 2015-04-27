@@ -18,8 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
@@ -153,6 +151,11 @@ public class MainActivity extends ActionBarActivity {
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
+    private void createGroup(){
+        Intent intent = new Intent(this, AddGroupActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Toast toast;
@@ -182,8 +185,7 @@ public class MainActivity extends ActionBarActivity {
                 toast.show();
                 return true;
             case R.id.action_add_group:
-                toast = Toast.makeText(this, "Przepraszamy, dodawanie grup jeszcze nie gotowe", Toast.LENGTH_SHORT);
-                toast.show();
+                createGroup();
                 return true;
             case R.id.action_search:
                 toast = Toast.makeText(this, "Przepraszamy, wyszukiwanie znajomych jeszcze nie gotowe", Toast.LENGTH_SHORT);

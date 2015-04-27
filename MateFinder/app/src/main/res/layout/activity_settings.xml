@@ -21,12 +21,12 @@
                 android:layout_height="fill_parent">
 
                 <CheckBox
-                    android:id="@+id/checkBox"
+                    android:id="@+id/notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/checkBox2"
+                    android:layout_below="@+id/internet"
                     android:layout_marginLeft="20dp"
                     android:checked="false"
                     android:padding="10dp"
@@ -34,7 +34,7 @@
                     android:text="@string/settings_sounds" />
 
                 <CheckBox
-                    android:id="@+id/checkBox2"
+                    android:id="@+id/internet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_alignTop="@+id/spinner"
+                    android:layout_alignTop="@+id/navigation"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:paddingLeft="15dp"
@@ -60,10 +60,10 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/navigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/checkBox"
+                    android:layout_below="@+id/notification"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="43dp"
@@ -75,10 +75,10 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/spinner2"
+                    android:layout_alignBottom="@+id/layout"
                     android:layout_alignLeft="@+id/textView"
                     android:layout_alignStart="@+id/textView"
-                    android:layout_alignTop="@+id/spinner2"
+                    android:layout_alignTop="@+id/layout"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:paddingLeft="10dp"
@@ -87,12 +87,12 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <Spinner
-                    android:id="@+id/spinner2"
+                    android:id="@+id/layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/spinner"
-                    android:layout_alignStart="@+id/spinner"
-                    android:layout_below="@+id/spinner"
+                    android:layout_alignLeft="@+id/navigation"
+                    android:layout_alignStart="@+id/navigation"
+                    android:layout_below="@+id/navigation"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="40dp"
                     android:entries="@array/settings_choose_motive"
@@ -108,8 +108,8 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_toLeftOf="@+id/numberPicker"
-                    android:layout_toStartOf="@+id/numberPicker"
+                    android:layout_toLeftOf="@+id/radius"
+                    android:layout_toStartOf="@+id/radius"
                     android:padding="15dp"
                     android:text="@string/settings_radious"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -118,7 +118,7 @@
                     android:id="@+id/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/numberPicker"
+                    android:layout_below="@+id/radius"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="20dp"
                     android:padding="10dp"
@@ -128,21 +128,21 @@
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/numberPicker"
+                    android:layout_alignTop="@+id/radius"
                     android:layout_marginLeft="30dp"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="52dp"
-                    android:layout_toEndOf="@+id/numberPicker"
-                    android:layout_toRightOf="@+id/numberPicker"
+                    android:layout_toEndOf="@+id/radius"
+                    android:layout_toRightOf="@+id/radius"
                     android:text="km"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <NumberPicker
-                    android:id="@+id/numberPicker"
+                    android:id="@+id/radius"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignEnd="@+id/checkBox2"
-                    android:layout_alignRight="@+id/checkBox2"
+                    android:layout_alignEnd="@+id/internet"
+                    android:layout_alignRight="@+id/internet"
                     android:layout_alignTop="@+id/textView3"
                     android:maxHeight="120dp"
                     android:minHeight="60dp"
