@@ -70,6 +70,10 @@
             android:name=".AddGroupActivity"
             android:label="@string/title_activity_group_details" >
         </activity>
+        <activity
+            android:name=".AddFriendActivity"
+            android:label="@string/title_activity_add_friend" >
+        </activity>
     </application>
 
 </manifest>

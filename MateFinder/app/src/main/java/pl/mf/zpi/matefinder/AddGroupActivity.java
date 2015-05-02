@@ -121,6 +121,7 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
+                        Toast.makeText(getApplicationContext(),"Dodano użytkownika do znajomych !",Toast.LENGTH_LONG);
                         // Launch login activity
                         backToMain();
                     } else {

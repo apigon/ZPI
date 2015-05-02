@@ -156,6 +156,11 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    private void makeFriend(){
+        Intent intent = new Intent (this, AddFriendActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Toast toast;
@@ -181,8 +186,7 @@ public class MainActivity extends ActionBarActivity {
                 toast.show();
                 return true;
             case R.id.action_add_user:
-                toast = Toast.makeText(this, "Przepraszamy, dodawanie znajomych jeszcze nie gotowe", Toast.LENGTH_SHORT);
-                toast.show();
+                makeFriend();
                 return true;
             case R.id.action_add_group:
                 createGroup();

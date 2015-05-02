@@ -11,7 +11,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
@@ -28,6 +31,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_LOGIN = "login";
     private static final String TABLE_LOCATIONS = "locations";
     private static final String TABLE_SETTINGS = "settings";
+    private static final String TABLE_FRIENDS = "friends";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -38,9 +42,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_SURNAME = "surname";
     private static final String KEY_PHOTO = "photo";
-    private static final String KEY_LOCATION = "location";
-    private static final String KEY_LAT = "lat";
-    private static final String KEY_LNG = "lng";
+    private static final String KEY_LOCATION = "location";              // location table + login table + friends table
+    private static final String KEY_LAT = "lat";                        // location table
+    private static final String KEY_LNG = "lng";                        // location table
 
     //settings table columns name
     private static final String KEY_INTERNET_LIMIT = "internet";
@@ -48,6 +52,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_USER_NAVIGATION = "navigation";
     private static final String KEY_LAYOUT = "layout";
     private static final String KEY_SEARCH_RADIUS = "radius";
+
+    // Friends table column names
+    private static final String KEY_FRIEND_ID = "id";
+    private static final String KEY_FRIEND_ID_DATABASE = "userID";
+    private static final String KEY_FRIEND_LOGIN = "login";
+    private static final String KEY_FRIEND_EMAIL = "email";
+    private static final String KEY_FRIEND_PHONE = "phone";
+    private static final String KEY_FRIEND_NAME = "name";
+    private static final String KEY_FRIEND_SURNAME = "surname";
+    private static final String KEY_FRIEND_PHOTO = "photo";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -61,6 +75,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT," + KEY_NAME + " TEXT,"
                 + KEY_SURNAME + " TEXT," + KEY_PHOTO + " TEXT," + KEY_LOCATION + " TEXT" + ")";
         db.execSQL(CREATE_LOGIN_TABLE);
+
         String CREATE_LOCATIONS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_LOCATION + " TEXT," + KEY_LAT
                 + " TEXT," + KEY_LNG + " TEXT" + ")";
@@ -69,6 +84,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String CREATE_SETTINGS_TABLE = "CREATE TABLE " + TABLE_SETTINGS + "(" + KEY_ID + " INTEGER PRIMARY KEY, " + KEY_INTERNET_LIMIT + " INTEGER, " +
                 KEY_NOTIFICATION_SOUND + " INTEGER, " + KEY_USER_NAVIGATION + " INTEGER, " + KEY_LAYOUT + " INTEGER, " + KEY_SEARCH_RADIUS + " INTEGER)";
         db.execSQL(CREATE_SETTINGS_TABLE);
+
+        String CREATE_FRIENDS_TABLE = "CREATE TABLE " + TABLE_FRIENDS + "("
+                + KEY_FRIEND_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_ID_DATABASE + " TEXT," + KEY_FRIEND_LOGIN + " TEXT,"
+                + KEY_FRIEND_EMAIL + " TEXT," + KEY_FRIEND_PHONE + " TEXT," + KEY_FRIEND_NAME + " TEXT,"
+                + KEY_FRIEND_SURNAME + " TEXT," + KEY_FRIEND_PHOTO + " TEXT," + KEY_LOCATION + " TEXT" + ")";
+        db.execSQL(CREATE_FRIENDS_TABLE);
 
         Log.d(TAG, "Database tables created");
     }
@@ -80,6 +101,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FRIENDS);
 
         // Create tables again
         onCreate(db);
@@ -133,6 +155,55 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
+    public void addFriend(String userID, String login, String email, String phone, String name, String surname, String photo, String location) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_FRIEND_ID_DATABASE, userID);
+        values.put(KEY_FRIEND_LOGIN, login);
+        values.put(KEY_FRIEND_EMAIL, email);
+        values.put(KEY_FRIEND_PHONE, phone);
+        values.put(KEY_FRIEND_NAME, name);
+        values.put(KEY_FRIEND_SURNAME, surname);
+        values.put(KEY_FRIEND_PHOTO, photo);
+        values.put(KEY_LOCATION, location);
+        // Inserting Row
+        long id = db.insert(TABLE_LOGIN, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New friend inserted into sqlite: " + id);
+    }
+
+    /**
+     * Getting friends data from database
+     */
+    public List<HashMap<String, String>> getFriendsDetails(){
+        List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
+        String selectQuery = "SELECT * FROM " + TABLE_FRIENDS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        // Move to first row
+        cursor.moveToFirst();
+        int i=0;
+        while(!cursor.isAfterLast()) {
+            friends.get(i).put("userID", cursor.getString(1));
+            friends.get(i).put("login", cursor.getString(2));
+            friends.get(i).put("email", cursor.getString(3));
+            friends.get(i).put("phone", cursor.getString(4));
+            friends.get(i).put("name", cursor.getString(5));
+            friends.get(i).put("surname", cursor.getString(6));
+            friends.get(i).put("photo", cursor.getString(7));
+            friends.get(i).put("location", cursor.getString(8));
+            cursor.moveToNext();
+            i++;
+        }
+        cursor.close();
+        db.close();
+        // return friends
+        Log.d(TAG, "Fetching friends from Sqlite: " + friends.toString());
+        return friends;
+    }
     /**
      * Getting user data from database
      */
@@ -253,5 +324,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all location info from sqlite");
     }
 
+    public void deleteFriends(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Delete All Rows
+        db.delete(TABLE_FRIENDS,null,null);
+        db.close();
+
+        Log.d(TAG, "Deleted all friends info from sqlite");
+    }
 
 }

@@ -76,4 +76,10 @@
     <!--Edycja grupy-->
     <string name="edit_group_nazwa_grupy">Nazwa grupy</string>
     <string name="edit_group_zapisz">Zapisz</string>
+    <string name="title_activity_add_friend">AddFriendActivity</string>
+
+    <!--Dodawanie znajomego-->
+    <string name="add_friend_login_znajomego">Login użytkownika</string>
+    <string name="add_friend_dodaj">Dodaj użytkownika do znajomych</string>
+    <string name="friend_login">Login znajomego</string>
 </resources>
