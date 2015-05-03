@@ -122,20 +122,8 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        SQLiteHandler db = new SQLiteHandler(getApplicationContext());
-                        JSONObject user = jObj.getJSONObject("user");
-                        String userID = user.getString("userID");
-                        String login = user.getString("login");
-                        String email = user.getString("email");
-                        String phone = user.getString("phone_number");
-                        String name = user.getString("name");
-                        String surname = user.getString("surname");
-                        String photo = user.getString("photo");
-                        String location = user.getString("location");
-                        // Inserting row in users table
-                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
-                        // Launch login activity
-                        backToMain();
+                        Toast.makeText(getApplicationContext(),
+                                "Dodano użytkownika do bazy.", Toast.LENGTH_LONG).show();
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -166,7 +154,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
                 HashMap<String, String> user = db.getUserDetails();
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "addUserToFriends");
+                params.put("tag", "addUserToGroup");
                 params.put("ownerID", user.get("userID"));
                 params.put("groupName", "Znajomi");
                 params.put("userLogin",login);

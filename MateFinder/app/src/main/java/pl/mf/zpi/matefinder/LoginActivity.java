@@ -150,7 +150,7 @@ public class LoginActivity extends Activity {
 
                         // Create login session
                         session.setLogin(true);
-
+                        addFriendsList(userID);
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
@@ -230,5 +230,72 @@ public class LoginActivity extends Activity {
         }, 0, 0, null, null);
 
         AppController.getInstance().addToRequestQueue(ir, "image_request");
+    }
+
+    private void addFriendsList(final String userID) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_getFriends";
+
+        pDialog.setMessage("Aktualizowanie listy znajomych...");
+        showDialog();
+        StringRequest strReq = new StringRequest(Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Login Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        JSONObject user = jObj.getJSONObject("user");
+                        for(int i=0;i<user.length();i++) {
+                            // user successfully logged in
+                            String login = user.getJSONObject(Integer.toString(i)).getString("login");
+                            String photo = user.getJSONObject(Integer.toString(i)).getString("photo");
+                            String location = user.getJSONObject(Integer.toString(i)).getString("location");
+                            // Inserting row in users table
+                            db.addFriend(null, login, null, null, null, null, photo, location);
+                        }
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "friends");
+                params.put("userID",userID );
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

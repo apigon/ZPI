@@ -20,6 +20,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
@@ -121,8 +125,7 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-
-
+        wyswietl();
     }
 
     @Override
@@ -202,5 +205,22 @@ public class MainActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void wyswietl()
+    {
+        db = new SQLiteHandler(getApplicationContext());
+        List<HashMap<String, String>> friends = db.getFriendsDetails();
+        List<String> login = new ArrayList();
+        int i=0;
+        while(i<friends.size())
+        {
+            login.add(friends.get(i).get("login"));
+            i++;
+        }
+        Toast.makeText(getApplicationContext(), "użytkownik " + friends.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "użytkownik " + login.get(1), Toast.LENGTH_SHORT).show();
+        //String lng = friend.getString("lng");
+
     }
 }
