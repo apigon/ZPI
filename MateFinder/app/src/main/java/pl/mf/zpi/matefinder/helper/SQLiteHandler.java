@@ -279,7 +279,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //getting members of group specified with id
-    public List<HashMap<String, String>> getFriendsDetails(String gid){
+    public List<HashMap<String, String>> getMembersDetails(String gid){
         List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
         String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + "WHERE " + KEY_MEMBESR_GROUP_ID + " = " + gid;
 
