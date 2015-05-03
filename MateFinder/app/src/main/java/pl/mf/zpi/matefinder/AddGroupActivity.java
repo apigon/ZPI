@@ -33,6 +33,7 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
 
     private static final String TAG = "addGroup";
     private ProgressDialog pDialog;
+    private SQLiteHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
 
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
+
+        db = new SQLiteHandler(this);
     }
 
     @Override
@@ -121,7 +124,8 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        Toast.makeText(getApplicationContext(),"Dodano użytkownika do znajomych !",Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),"Utworzono grupę!",Toast.LENGTH_LONG);
+                        db.addGroup(nazwa);
                         // Launch login activity
                         backToMain();
                     } else {
