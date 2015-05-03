@@ -242,15 +242,15 @@ public class LoginActivity extends Activity {
         // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
 
-        pDialog.setMessage("Aktualizowanie listy znajomych...");
-        showDialog();
+        // pDialog.setMessage("Aktualizowanie listy znajomych...");
+        // showDialog();
         StringRequest strReq = new StringRequest(Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Login Response: " + response.toString());
-                hideDialog();
+                // hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
