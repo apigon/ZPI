@@ -168,7 +168,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_FRIEND_PHOTO, photo);
         values.put(KEY_LOCATION, location);
         // Inserting Row
-        long id = db.insert(TABLE_LOGIN, null, values);
+        long id = db.insert(TABLE_FRIENDS, null, values);
         db.close(); // Closing database connection
 
         Log.d(TAG, "New friend inserted into sqlite: " + id);
@@ -187,9 +187,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // Move to first row
         cursor.moveToFirst();
 
-        if (cursor != null)
+        if (cursor.getCount() > 0)
         {
-            if (cursor.getCount()>0) {
+           // cursor.moveToFirst();
                 do {
                     HashMap<String, String> friend = new HashMap<String, String>();
                     friend.put("userID", cursor.getString(1));
@@ -201,13 +201,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     friend.put("photo", cursor.getString(7));
                     friend.put("location", cursor.getString(8));
                     friends.add(friend);
-                    cursor.moveToNext();
+
                     Log.d(TAG, "Pętla while ");
                 }
 
                 while (cursor.moveToNext());
             }
-            }
+
 
             cursor.close();
             db.close();

@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,7 +131,7 @@ public class MainActivity extends ActionBarActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                wyswietl();
+               try{ wyswietl();} catch(IOException e){}
             }},1000);
 
 
@@ -215,7 +216,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void wyswietl()
+    private void wyswietl() throws IOException
     {
         db = new SQLiteHandler(getApplicationContext());
         List<HashMap<String, String>> friends = db.getFriendsDetails();
