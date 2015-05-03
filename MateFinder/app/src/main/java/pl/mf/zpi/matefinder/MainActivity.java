@@ -6,6 +6,7 @@ package pl.mf.zpi.matefinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -125,8 +126,15 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-        wyswietl();
-    }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                wyswietl();
+            }},1000);
+
+
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

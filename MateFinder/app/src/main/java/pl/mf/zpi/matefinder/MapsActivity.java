@@ -30,13 +30,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
@@ -54,7 +57,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     Location location;
     LocationManager locationManager;
     Criteria criteria;
-
+    Marker me;
+    List<Marker> markers;
 
     private SQLiteHandler db;
     private static final String TAG = MapsActivity.class.getSimpleName();
@@ -140,6 +144,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
 
 
     }
@@ -250,7 +255,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         refresh();
-        locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
+        locationManager.requestLocationUpdates(provider, 5, 1, this); // odswiezanie co 5 sek lub 10 metrow
 
         //CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
@@ -270,7 +275,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     googleMap.animateCamera(zoom);
                 }
                 else
-                addMarker();
+                addWroclawMarker();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -280,13 +285,21 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
       //  return coordinate;
     }
+
+
     public void moveCameraOnMe()
     {
+        if(me!=null)
+        {
+            me.remove();
+            me=null;
+        }
+
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         LatLng coordinate = new LatLng(lat, lng);
-        googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
+        me =googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
                 .draggable(false));
         CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
         googleMap.moveCamera(center);
@@ -300,6 +313,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         if (location != null)
             try {
                 updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+
                 moveCameraOnMe();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -358,7 +372,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
     }
 
-    private void addMarker() {
+    private void addWroclawMarker() {
 
         /** Make sure that the map has been initialised **/
         if (null != googleMap) {
@@ -368,6 +382,98 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(wroclaw, 10));
 
         }
+
+    }
+
+    private void getMyFriendsLocalization()
+    {
+        db = new SQLiteHandler(getApplicationContext());
+        HashMap<String, String> friends = db.getUserDetails();
+      //  final String userId = user.get("userID");
+       // final String login = user.get("login");
+        String tag_string_req = "update_req";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Update Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully updated in MySQL
+                        // Now store the user in sqlite
+                        JSONObject friend = jObj.getJSONObject("friend");
+                        String locationID = friend.getString("locationID");
+                        String lat = friend.getString("lat");
+                        String lng = friend.getString("lng");
+
+                        // Inserting row in users table
+                        db.deleteLocations();
+                        db.addLocation(locationID, lat, lng);
+                        Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Update Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+              /*  params.put("tag", "getFriendsLocation");
+                params.put("userID", userId);
+                params.put("lat", lat);
+                params.put("lng", lng); */
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+
+    private void showMyFriends() throws IOException {
+        db = new SQLiteHandler(getApplicationContext());
+        markers =  new ArrayList<Marker>();
+        // Fetching user details from sqlite
+        LatLng friendLocation=null;
+        HashMap<String, String> friends = db.getLocationDetails();
+
+            String friendLogin = friends.get("login");
+            String friendLat = friends.get("lat");
+            String friendLng = friends.get("lng");
+            double lat = Double.parseDouble(friendLng.toString());
+            double lng = Double.parseDouble(friendLat.toString());
+            friendLocation= new LatLng(lat, lng);
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(friendLocation)
+                    .title(friendLogin));
+            markers.add(marker);
 
     }
 

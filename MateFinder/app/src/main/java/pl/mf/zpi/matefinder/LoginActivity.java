@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -147,7 +148,7 @@ public class LoginActivity extends Activity {
                         savePhotoToGallery(photo);
                         // Inserting row in users table
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
-
+                        db.addLocation(location,"7","7");
                         // Create login session
                         session.setLogin(true);
                         addFriendsList(userID);
@@ -248,25 +249,27 @@ public class LoginActivity extends Activity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
+                //    boolean error = jObj.getBoolean("error");
 
                     // Check for error node in json
-                    if (!error) {
-                        JSONObject user = jObj.getJSONObject("user");
-                        for(int i=0;i<user.length();i++) {
+                 //   if (!error) {
+                       // JSONObject users = jObj.getJSONObject("users");
+                        JSONArray user = jObj.getJSONArray("users");
+                        for (int i = 0; i < user.length(); i++) {
                             // user successfully logged in
-                            String login = user.getJSONObject(Integer.toString(i)).getString("login");
-                            String photo = user.getJSONObject(Integer.toString(i)).getString("photo");
-                            String location = user.getJSONObject(Integer.toString(i)).getString("location");
+                       JSONObject u = user.getJSONObject(i);
+                       String login = u.getString("login");
+                         //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
+                          //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
                             // Inserting row in users table
-                            db.addFriend(null, login, null, null, null, null, photo, location);
-                        }
-                    } else {
+                            db.addFriend("1", login, "a", "1", "a", "a", "a", "1");
+                   //     }
+                   /*} else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
-                    }
+                    }*/ }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();

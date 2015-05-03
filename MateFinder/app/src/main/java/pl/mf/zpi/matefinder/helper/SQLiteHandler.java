@@ -177,33 +177,45 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Getting friends data from database
      */
-    public List<HashMap<String, String>> getFriendsDetails(){
+    public List<HashMap<String, String>> getFriendsDetails() {
         List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
+
         String selectQuery = "SELECT * FROM " + TABLE_FRIENDS;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,null);
+        Cursor cursor = db.rawQuery(selectQuery, null);
         // Move to first row
         cursor.moveToFirst();
-        int i=0;
-        while(!cursor.isAfterLast()) {
-            friends.get(i).put("userID", cursor.getString(1));
-            friends.get(i).put("login", cursor.getString(2));
-            friends.get(i).put("email", cursor.getString(3));
-            friends.get(i).put("phone", cursor.getString(4));
-            friends.get(i).put("name", cursor.getString(5));
-            friends.get(i).put("surname", cursor.getString(6));
-            friends.get(i).put("photo", cursor.getString(7));
-            friends.get(i).put("location", cursor.getString(8));
-            cursor.moveToNext();
-            i++;
+
+        if (cursor != null)
+        {
+            if (cursor.getCount()>0) {
+                do {
+                    HashMap<String, String> friend = new HashMap<String, String>();
+                    friend.put("userID", cursor.getString(1));
+                    friend.put("login", cursor.getString(2));
+                    friend.put("email", cursor.getString(3));
+                    friend.put("phone", cursor.getString(4));
+                    friend.put("name", cursor.getString(5));
+                    friend.put("surname", cursor.getString(6));
+                    friend.put("photo", cursor.getString(7));
+                    friend.put("location", cursor.getString(8));
+                    friends.add(friend);
+                    cursor.moveToNext();
+                    Log.d(TAG, "Pętla while ");
+                }
+
+                while (cursor.moveToNext());
+            }
+            }
+
+            cursor.close();
+            db.close();
+            // return friends
+            Log.d(TAG, "Fetching friends from Sqlite: " + friends.toString());
+            return friends;
         }
-        cursor.close();
-        db.close();
-        // return friends
-        Log.d(TAG, "Fetching friends from Sqlite: " + friends.toString());
-        return friends;
-    }
+
     /**
      * Getting user data from database
      */
