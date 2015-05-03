@@ -396,7 +396,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //Delete All Rows
         db.delete(TABLE_LOCATIONS_FRIENDS,null,null);
         db.close();
-
         Log.d(TAG, "Deleted all friends locations info from sqlite");
     }
 

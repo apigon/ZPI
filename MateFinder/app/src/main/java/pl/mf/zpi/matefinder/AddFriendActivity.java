@@ -204,6 +204,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
                         String location = u.getString("location");
                         // Inserting row in users table
                         db.addFriend(location, login, null, photo, null, null, null, location);
+
                         //     }
                    /*} else {
                         // Error in login. Get the error message

@@ -268,6 +268,7 @@ public class LoginActivity extends Activity {
                        String location = u.getString("location");
                             // Inserting row in users table
                        db.addFriend(location, login, null, photo, null, null, null, location);
+
                    //     }
                    /*} else {
                         // Error in login. Get the error message

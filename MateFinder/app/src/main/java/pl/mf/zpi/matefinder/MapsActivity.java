@@ -500,6 +500,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                         .draggable(false)
                         .icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
                 marker.showInfoWindow();
                 markers.add(marker);
                 Log.e(TAG, "friend "+friendLogin+" "+friends.get(i).get("locationID"));
