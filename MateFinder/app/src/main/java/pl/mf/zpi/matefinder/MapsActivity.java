@@ -91,7 +91,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         //pobiera lokalizacje i ustawia na nas kamere
-            setMyLocation();
+        setMyLocation();
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         // googleMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setCompassEnabled(true);
@@ -101,7 +101,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // jesli wylaczony GPS wyswietl ALERT
-           buildAlertMessageNoGps();
+            buildAlertMessageNoGps();
         }
 
 
@@ -282,7 +282,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     googleMap.animateCamera(zoom);
                 }
                 else
-                addWroclawMarker();
+                    addWroclawMarker();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -290,7 +290,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
 
 
-      //  return coordinate;
+        //  return coordinate;
     }
 
 
@@ -394,44 +394,44 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     private void getMyFriendsLocalization() {
         db = new SQLiteHandler(getApplicationContext());
-       // final String [] friends = getMyFriendsId();
+        // final String [] friends = getMyFriendsId();
 
         HashMap<String, String> user = db.getUserDetails();
         final String userId = user.get("userID");
         String tag_string_req = "update_req";
 
-            StringRequest strReq = new StringRequest(Request.Method.POST,
-                    AppConfig.URL_REGISTER, new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
 
-                @Override
-                public void onResponse(String response) {
-                    Log.d(TAG, "Update Response: " + response.toString());
-                    hideDialog();
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Update Response: " + response.toString());
+                hideDialog();
 
-                    try {
-                        JSONObject jObj = new JSONObject(response);
-                       // boolean error = jObj.getBoolean("error");
-                       // if (!error) {
-                            // User successfully updated in MySQL
-                            // Now store the user in sqlite
-                            db.deleteFriendsLocations();
-                            JSONArray user = jObj.getJSONArray("users");
-                            for (int i = 0; i < user.length(); i++) {
-                                // user successfully logged in
-                                JSONObject u = user.getJSONObject(i);
-                                String login = u.getString("login");
-                                String lat = u.getString("lat");
-                                String lng = u.getString("lng");
-                                // Inserting row in users table
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    // boolean error = jObj.getBoolean("error");
+                    // if (!error) {
+                    // User successfully updated in MySQL
+                    // Now store the user in sqlite
+                    db.deleteFriendsLocations();
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        // user successfully logged in
+                        JSONObject u = user.getJSONObject(i);
+                        String login = u.getString("login");
+                        String lat = u.getString("lat");
+                        String lng = u.getString("lng");
+                        // Inserting row in users table
 
-                                db.addFriendLocation(login, lat, lng);
-                            }
+                        db.addFriendLocation(login, lat, lng);
+                    }
 
 
-                            // Inserting row in users table
-                            //db.deleteLocations();
+                    // Inserting row in users table
+                    //db.deleteLocations();
 
-                            Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
                       /*  } else {
                             // Error occurred in registration. Get the error
                             // message
@@ -439,37 +439,37 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                             Toast.makeText(getApplicationContext(),
                                     errorMsg, Toast.LENGTH_LONG).show();*/
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
+            }
+        }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "Update Error: " + error.getMessage());
-                    Toast.makeText(getApplicationContext(),
-                            error.getMessage(), Toast.LENGTH_LONG).show();
-                    hideDialog();
-                }
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Update Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
 
-            }) {
+        }) {
 
-                @Override
-                protected Map<String, String> getParams() {
-                    // Posting params to register url
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("tag", "getFriendsLocations");
-                    params.put("userID", userId);
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "getFriendsLocations");
+                params.put("userID", userId);
               /*  params.put("lat", lat);
                 params.put("lng", lng); */
 
-                    return params;
-                }
-            };
+                return params;
+            }
+        };
 
-            // Adding request to request queue
-            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
     }
 
@@ -499,8 +499,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                         .snippet(friendLogin)
                         .draggable(false)
                         .icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 marker.showInfoWindow();
                 markers.add(marker);
                 Log.e(TAG, "friend "+friendLogin+" "+friends.get(i).get("locationID"));
@@ -521,7 +520,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             String lngString = locations.get("lng");
             double lat = Double.parseDouble(latString.toString());
             double lng = Double.parseDouble(lngString.toString());
-           lastLocation = new LatLng(lat, lng);
+            lastLocation = new LatLng(lat, lng);
         }
         return lastLocation;
     }
