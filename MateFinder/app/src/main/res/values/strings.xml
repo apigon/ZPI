@@ -82,4 +82,6 @@
     <string name="add_friend_login_znajomego">Login użytkownika</string>
     <string name="add_friend_dodaj">Dodaj użytkownika do znajomych</string>
     <string name="friend_login">Login znajomego</string>
+    <string name="show_friends_button">Pokaż Znajomych</string>
+    <string name="friends_list">Lista Znajomych</string>
 </resources>

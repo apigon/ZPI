@@ -127,13 +127,13 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-        Handler handler = new Handler();
+        /* Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                try{ wyswietl();} catch(IOException e){}
             }},1000);
-
+        */
 
 }
 

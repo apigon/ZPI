@@ -202,7 +202,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     friend.put("location", cursor.getString(8));
                     friends.add(friend);
 
-                    Log.d(TAG, "Pętla while ");
+                    // Log.d(TAG, "Pętla while ");
                 }
 
                 while (cursor.moveToNext());

@@ -257,12 +257,19 @@ public class LoginActivity extends Activity {
                         JSONArray user = jObj.getJSONArray("users");
                         for (int i = 0; i < user.length(); i++) {
                             // user successfully logged in
-                       JSONObject u = user.getJSONObject(i);
-                       String login = u.getString("login");
+                               JSONObject u = user.getJSONObject(i);
+                               String userID = u.getString("userID");
+                               String login = u.getString("login");
+                               String email = u.getString("email");
+                               String phone = u.getString("phone_number");
+                               String name = u.getString("name");
+                               String surname = u.getString("surname");
+                               String photo = u.getString("photo");
+                               String location = u.getString("location");
                          //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
                           //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
                             // Inserting row in users table
-                            db.addFriend("1", login, "a", "1", "a", "a", "a", "1");
+                            db.addFriend(userID, login, email, phone, name, surname, photo, location);
                    //     }
                    /*} else {
                         // Error in login. Get the error message
