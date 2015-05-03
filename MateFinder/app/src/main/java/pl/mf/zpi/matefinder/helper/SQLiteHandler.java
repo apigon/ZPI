@@ -32,6 +32,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_LOCATIONS = "locations";
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_FRIENDS = "friends";
+    private static final String TABLE_LOCATIONS_FRIENDS = "friends_locations";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -63,6 +64,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_FRIEND_SURNAME = "surname";
     private static final String KEY_FRIEND_PHOTO = "photo";
 
+    private static final String KEY_FRIEND_LOCATION_ID = "id";
+    private static final String KEY_FRIEND_LOCATION_ID_DATABASE = "locationID";
+    private static final String KEY_FRIEND_LAT = "lat";
+    private static final String KEY_FRIEND_LNG = "lng";
+
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -91,6 +97,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + KEY_FRIEND_SURNAME + " TEXT," + KEY_FRIEND_PHOTO + " TEXT," + KEY_LOCATION + " TEXT" + ")";
         db.execSQL(CREATE_FRIENDS_TABLE);
 
+        String CREATE_FRIENDS_LOCATIONS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS_FRIENDS + "("
+                + KEY_FRIEND_LOCATION_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_LOCATION_ID_DATABASE + " TEXT," + KEY_FRIEND_LAT
+                + " TEXT," + KEY_FRIEND_LNG + " TEXT" + ")";
+        db.execSQL(CREATE_FRIENDS_LOCATIONS_TABLE);
         Log.d(TAG, "Database tables created");
     }
 
@@ -102,7 +112,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FRIENDS);
-
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS_FRIENDS);
         // Create tables again
         onCreate(db);
     }
@@ -117,6 +127,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
 
         Log.d(TAG, "New location inserted into sqlite: " + id);
+    }
+    public void addFriendLocation(String locationID, String lat, String lng) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_FRIEND_LOCATION_ID_DATABASE, locationID);
+        values.put(KEY_FRIEND_LAT, lat);
+        values.put(KEY_FRIEND_LNG, lng);
+        long id = db.insert(TABLE_LOCATIONS_FRIENDS, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New friend location inserted into sqlite: " + id);
     }
 
     public void addSettings(String internet, String notification, String navigation, String layout, String radius) {
@@ -202,7 +223,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     friend.put("location", cursor.getString(8));
                     friends.add(friend);
 
-                    Log.d(TAG, "Pętla while ");
+
                 }
 
                 while (cursor.moveToNext());
@@ -267,6 +288,32 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return locations;
     }
 
+    public List<HashMap<String, String>> getFriendLocationDetails() {
+        List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
+        java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS_FRIENDS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+            do {
+                HashMap<String,String> location = new HashMap<String,String>();
+                location.put("locationID", cursor.getString(1));
+                location.put("lat", cursor.getString(2));
+                location.put("lng", cursor.getString(3));
+                locations.add(location);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        // return user
+        Log.d(TAG, "Fetching friend location from Sqlite: " + locations.toString());
+
+        return locations;
+    }
     public HashMap<String, String> getSettings() {
         HashMap<String, String> settings = new HashMap<String, String>();
         String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
@@ -343,6 +390,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Deleted all friends info from sqlite");
+    }
+    public void deleteFriendsLocations(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Delete All Rows
+        db.delete(TABLE_LOCATIONS_FRIENDS,null,null);
+        db.close();
+
+        Log.d(TAG, "Deleted all friends locations info from sqlite");
     }
 
 }
