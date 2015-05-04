@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,121 +48,51 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 /**
  * Created by root on 12.04.15.
  */
-public class ZakladkaZnajomi extends Fragment implements View.OnClickListener{
+public class ZakladkaZnajomi extends Fragment{
 
 
     ListView friendslist;
-    Button showFriends;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
-        /*
-        showList = (Button) v.findViewById(R.id.buttonPokazZnajomych);
-        showList.setOnClickListener(new View.OnClickListener() {
+        friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                friendslist = (ListView)v.findViewById(R.id.ListaZnajomych);
+            public void run() {
                 friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
             }
-        });
-        */
-        // friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
-        // friendslist.setAdapter(new FriendsAdapter(getActivity().getBaseContext()));
-        friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
-        showFriends = (Button) v.findViewById(R.id.buttonPokazZnajomych);
-        showFriends.setOnClickListener(this);
+        }, 5000);
         return v;
     }
-
-    @Override
-    public void onClick(View v) {
-        friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
-    }
-    // @Override
-
 }
 
 class SingleFriend {
     String friendLogin;
     Bitmap friendPhoto;
-    // Context c;
-
     public SingleFriend(String friendLogin,String friendPhoto){
-        // this.c=c;
-        // ImageView tmp = new ImageView(this.c);
         this.friendLogin = friendLogin;
-        // tmp.setTag("http://156.17.130.212/android_login_api/images/" + friendPhoto);
-        // new DownloadImagesTask().execute(tmp);
-        // this.friendPhoto = getFriendPhoto(friendPhoto);
-        DownloadBitmapTask dbt = new DownloadBitmapTask();
-        dbt.execute(friendPhoto);
-        // String tmp = new DownloadBitmapTask().execute(friendPhoto).toString();
-        byte[] decodedString = Base64.decode(friendPhoto, Base64.URL_SAFE);
-        this.friendPhoto = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        // DownloadBitmapTask dbt = new DownloadBitmapTask();
-        // this.friendPhoto = dbt.doInBackground(friendPhoto);
-        // new DownloadBitmapTask().execute(friendPhoto);
-        // DownloadBitmapTask dbt = new DownloadBitmapTask();
-        // dbt.execute(this.friendPhoto);
-        // this.friendPhoto = getFriendPhoto(friendPhoto);
-        // this.friendPhoto = new ImageLoader(c,friendPhoto).doInBackground();
+        getFriendPhoto(friendPhoto);
+        Log.d("setting singlefriend","SingleFriend utworzony");
     }
-    public Bitmap getFriendPhoto(String friendPhoto){
-        final Bitmap[] friendBitmap = new Bitmap[1];
+    public void setFriendPhoto(Bitmap photo){
+        this.friendPhoto = photo;
+        Log.d("setting photo","Bitmapa ustawiona");
+    }
+    public void getFriendPhoto(String friendPhoto){
         String url = "http://156.17.130.212/android_login_api/images/" + friendPhoto;
-        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
 
+        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
             @Override
             public void onResponse(Bitmap bitmap) {
-                friendBitmap[0] = bitmap;
+                Log.d("Bitmap", "Bitmap Response: " + bitmap.toString());
+                setFriendPhoto(bitmap);
             }
         }, 0, 0, null, null);
-
-        AppController.getInstance().addToRequestQueue(ir, "image_request");
-        return friendBitmap[0];
-    }
-
-    public Bitmap getFriendBitmap(String friendPhoto){
-        String url_photo = "http://156.17.130.212/android_login_api/images/" + friendPhoto;
-        InputStream is = null;
-        try {
-               URL url = new URL(url_photo);
-               HttpURLConnection connection  = (HttpURLConnection) url.openConnection();
-               is = connection.getInputStream();
-        } catch (IOException e) {
-                e.printStackTrace();
-        }
-        Bitmap img = BitmapFactory.decodeStream(is);
-        return img;
-        }
-
-    /* private void savePhotoToGallery(final String photo_name) {
-        String url = "http://156.17.130.212/android_login_api/images/" + photo_name;
-        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                ContextWrapper cw = new ContextWrapper(getApplicationContext());
-                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-                File my_path = new File(directory, "profile.jpg");
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(my_path);
-                    response.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.close();
-                    Toast.makeText(getApplicationContext(),
-                            "Udało się!", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),
-                            "Lipa ;/", Toast.LENGTH_LONG).show();
-                }
-            }
-        }, 0, 0, null, null);
-
         AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
-    */
 }
+
 class FriendsAdapter extends BaseAdapter{
 
     SQLiteHandler dbHandler;
@@ -204,74 +135,5 @@ class FriendsAdapter extends BaseAdapter{
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
         return row;
-    }
-}
-
-class DownloadBitmapTask extends AsyncTask<String,Void,String>{
-    String result;
-    Bitmap tmp;
-    @Override
-    protected String doInBackground(String... params) {
-        String url_string = "http://156.17.130.212/android_login_api/images/" + params[0];
-        URL url = null;
-        try {
-            url = new URL(url_string);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        HttpURLConnection connection = null;
-        try {
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            result = convertStreamToString(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-
-        // tmp = getFriendBitmap(params[0]);
-        // return tmp;
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        s=result;
-    }
-
-    String convertStreamToString(InputStream is) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
-
-    public Bitmap getFriendBitmap(String friendPhoto){
-        String url_photo = "http://156.17.130.212/android_login_api/images/" + friendPhoto;
-        InputStream is = null;
-        try {
-            URL url = new URL(url_photo);
-            HttpURLConnection connection  = (HttpURLConnection) url.openConnection();
-            is = connection.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap img = BitmapFactory.decodeStream(is);
-        return img;
     }
 }
