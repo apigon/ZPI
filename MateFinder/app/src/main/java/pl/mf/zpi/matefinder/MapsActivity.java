@@ -29,10 +29,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,7 +91,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         //pobiera lokalizacje i ustawia na nas kamere
-            setMyLocation();
+        setMyLocation();
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         // googleMap.getUiSettings().setZoomControlsEnabled(true);
         //googleMap.getUiSettings().setCompassEnabled(true);
@@ -99,7 +101,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // jesli wylaczony GPS wyswietl ALERT
-           buildAlertMessageNoGps();
+            buildAlertMessageNoGps();
         }
 
 
@@ -146,7 +148,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
 
-
+        getMyFriendsLocalization();
+        try {
+            showMyFriends();
+        }catch(IOException e){ e.printStackTrace();};
     }
     //aktualizacja danych na serwer oraz do bazy SQLite
     private void updateLocationDB(final String lat, final String lng)throws IOException {
@@ -255,16 +260,18 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         criteria = new Criteria();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         refresh();
-        locationManager.requestLocationUpdates(provider, 5, 1, this); // odswiezanie co 5 sek lub 10 metrow
+        locationManager.requestLocationUpdates(provider, 5000, 10, this); // odswiezanie co 5 sek lub 10 metrow
 
         //CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
         if (location != null) {
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
             moveCameraOnMe();
+            googleMap.animateCamera(zoom);
         } else
         {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
-            Log.e("mapApp", "Błąd!!!");
+            Log.e("mapApp", "Problem z lokalizacją!");
             try {
 
                 if(getMyLastLocation()!=null)
@@ -275,7 +282,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     googleMap.animateCamera(zoom);
                 }
                 else
-                addWroclawMarker();
+                    addWroclawMarker();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -283,7 +290,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
 
 
-      //  return coordinate;
+        //  return coordinate;
     }
 
 
@@ -295,7 +302,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             me=null;
         }
 
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         LatLng coordinate = new LatLng(lat, lng);
@@ -303,7 +310,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 .draggable(false));
         CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
         googleMap.moveCamera(center);
-        googleMap.animateCamera(zoom);
+
     }
     public void refresh() {
         provider = locationManager.getBestProvider(criteria, false);
@@ -385,12 +392,12 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    private void getMyFriendsLocalization()
-    {
+    private void getMyFriendsLocalization() {
         db = new SQLiteHandler(getApplicationContext());
-        HashMap<String, String> friends = db.getUserDetails();
-      //  final String userId = user.get("userID");
-       // final String login = user.get("login");
+        // final String [] friends = getMyFriendsId();
+
+        HashMap<String, String> user = db.getUserDetails();
+        final String userId = user.get("userID");
         String tag_string_req = "update_req";
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -403,26 +410,35 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // User successfully updated in MySQL
-                        // Now store the user in sqlite
-                        JSONObject friend = jObj.getJSONObject("friend");
-                        String locationID = friend.getString("locationID");
-                        String lat = friend.getString("lat");
-                        String lng = friend.getString("lng");
-
+                    // boolean error = jObj.getBoolean("error");
+                    // if (!error) {
+                    // User successfully updated in MySQL
+                    // Now store the user in sqlite
+                    db.deleteFriendsLocations();
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        // user successfully logged in
+                        JSONObject u = user.getJSONObject(i);
+                        String login = u.getString("login");
+                        String lat = u.getString("lat");
+                        String lng = u.getString("lng");
                         // Inserting row in users table
-                        db.deleteLocations();
-                        db.addLocation(locationID, lat, lng);
-                        Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
-                    } else {
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
+
+                        db.addFriendLocation(login, lat, lng);
                     }
+
+
+                    // Inserting row in users table
+                    //db.deleteLocations();
+
+                    Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
+                      /*  } else {
+                            // Error occurred in registration. Get the error
+                            // message
+                            String errorMsg = jObj.getString("error_msg");
+                            Toast.makeText(getApplicationContext(),
+                                    errorMsg, Toast.LENGTH_LONG).show();*/
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -443,9 +459,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-              /*  params.put("tag", "getFriendsLocation");
+                params.put("tag", "getFriendsLocations");
                 params.put("userID", userId);
-                params.put("lat", lat);
+              /*  params.put("lat", lat);
                 params.put("lng", lng); */
 
                 return params;
@@ -454,27 +470,46 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
 
+    }
 
     private void showMyFriends() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         markers =  new ArrayList<Marker>();
+        Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation=null;
-        HashMap<String, String> friends = db.getLocationDetails();
+        List<HashMap<String, String>> friends = db.getFriendLocationDetails();
 
-            String friendLogin = friends.get("login");
-            String friendLat = friends.get("lat");
-            String friendLng = friends.get("lng");
-            double lat = Double.parseDouble(friendLng.toString());
-            double lng = Double.parseDouble(friendLat.toString());
-            friendLocation= new LatLng(lat, lng);
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .position(friendLocation)
-                    .title(friendLogin));
-            markers.add(marker);
+        int i=0;
+        while(i<friends.size()) {
+            if (friends.get(i).get("lat") !=null && friends.get(i).get("lng") !=null) {
 
+
+                String friendID = friends.get(i).get("locationID");
+                String friendLogin= friends.get(i).get("locationID");
+                String friendLat = friends.get(i).get("lat");
+                String friendLng = friends.get(i).get("lng");
+                if(!friendLat.equals("null") && !friendLng.equals("null")) {
+                    double lat = Double.parseDouble(friendLat.toString());
+                    double lng = Double.parseDouble(friendLng.toString());
+                    friendLocation = new LatLng(lat, lng);
+                    marker = googleMap.addMarker(new MarkerOptions()
+                            .position(friendLocation)
+                            .title(friendLogin)
+                            .snippet(friendLogin)
+                            .draggable(false)
+                            .icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    marker.showInfoWindow();
+                    markers.add(marker);
+                }
+                Log.e(TAG, "friend "+friendLogin+" "+friends.get(i).get("locationID"));
+            }
+            else
+                Log.e(TAG, "NULL FRIEND LOCATION"+friends.get(i).get("locationID"));
+            i++;
+        }
     }
 
     private LatLng getMyLastLocation() throws IOException {
@@ -487,7 +522,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             String lngString = locations.get("lng");
             double lat = Double.parseDouble(latString.toString());
             double lng = Double.parseDouble(lngString.toString());
-           lastLocation = new LatLng(lat, lng);
+            lastLocation = new LatLng(lat, lng);
         }
         return lastLocation;
     }
@@ -539,7 +574,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             @Override
             public void run() {
                 setMyLocation();
-            }},1000);
+            }},1500);
 
     }
     @Override
