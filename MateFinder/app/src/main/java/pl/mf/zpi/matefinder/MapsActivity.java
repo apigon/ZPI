@@ -483,25 +483,27 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         int i=0;
         while(i<friends.size()) {
-            if (!friends.get(i).get("lat").equals(null) && !friends.get(i).get("lng").equals(null)) {
+            if (friends.get(i).get("lat") !=null && friends.get(i).get("lng") !=null) {
 
 
                 String friendID = friends.get(i).get("locationID");
                 String friendLogin= friends.get(i).get("locationID");
                 String friendLat = friends.get(i).get("lat");
                 String friendLng = friends.get(i).get("lng");
-                double lat = Double.parseDouble(friendLat.toString());
-                double lng = Double.parseDouble(friendLng.toString());
-                friendLocation = new LatLng(lat, lng);
-                marker = googleMap.addMarker(new MarkerOptions()
-                        .position(friendLocation)
-                        .title(friendLogin)
-                        .snippet(friendLogin)
-                        .draggable(false)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                marker.showInfoWindow();
-                markers.add(marker);
+                if(!friendLat.equals("null") && !friendLng.equals("null")) {
+                    double lat = Double.parseDouble(friendLat.toString());
+                    double lng = Double.parseDouble(friendLng.toString());
+                    friendLocation = new LatLng(lat, lng);
+                    marker = googleMap.addMarker(new MarkerOptions()
+                            .position(friendLocation)
+                            .title(friendLogin)
+                            .snippet(friendLogin)
+                            .draggable(false)
+                            .icon(BitmapDescriptorFactory
+                                    .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    marker.showInfoWindow();
+                    markers.add(marker);
+                }
                 Log.e(TAG, "friend "+friendLogin+" "+friends.get(i).get("locationID"));
             }
             else

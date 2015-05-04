@@ -33,6 +33,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_FRIENDS = "friends";
     private static final String TABLE_LOCATIONS_FRIENDS = "friends_locations";
+    private static final String TABLE_GROUPS = "groups";
+    private static final String TABLE_MEMBERS = "members";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -69,6 +71,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_FRIEND_LAT = "lat";
     private static final String KEY_FRIEND_LNG = "lng";
 
+    //Groups table column names
+    private static final String KEY_GROUP_ID = "id";
+    private static final String KEY_GROUP_NAME = "name";
+
+    //Members table column names
+    private static final String KEY_MEMBESR_ID = "id";
+    private static final String KEY_MEMBESR_GROUP_ID = "groupID";
+    private static final String KEY_MEMBESR_USER_ID = "userID";
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -101,6 +111,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + KEY_FRIEND_LOCATION_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_LOCATION_ID_DATABASE + " TEXT," + KEY_FRIEND_LAT
                 + " TEXT," + KEY_FRIEND_LNG + " TEXT" + ")";
         db.execSQL(CREATE_FRIENDS_LOCATIONS_TABLE);
+
+        String createGroupsTable = "CREATE TABLE " + TABLE_GROUPS + "(" + KEY_GROUP_ID + " INTEGER PRIMARY KEY, " +
+                KEY_GROUP_NAME + " TEXT)";
+        db.execSQL(createGroupsTable);
+
+        String createMembersTable = "CREATE TABLE " + TABLE_MEMBERS + " (" + KEY_MEMBESR_ID + " INTEGER PRIMARY KEY, " + KEY_MEMBESR_GROUP_ID
+                + " INTEGER, " + KEY_MEMBESR_USER_ID + " INTEGER, FOREIGN KEY (" + KEY_MEMBESR_GROUP_ID + ") REFERENCES " +
+                TABLE_GROUPS + "(" + KEY_GROUP_ID + "), FOREIGN KEY (" + KEY_MEMBESR_USER_ID + ") REFERENCES " +
+                TABLE_FRIENDS + "(" + KEY_FRIEND_ID + "))";
+        db.execSQL(createMembersTable);
+
+
         Log.d(TAG, "Database tables created");
     }
 
@@ -113,6 +135,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FRIENDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS_FRIENDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEMBERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GROUPS);
         // Create tables again
         onCreate(db);
     }
@@ -153,7 +177,29 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New location inserted into sqlite: " + id);
     }
+    private void addMember(int gid, int uid){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
+        values.put(KEY_MEMBESR_ID, getMemberID()+1);
+        values.put(KEY_MEMBESR_GROUP_ID, gid);
+        values.put(KEY_MEMBESR_USER_ID, uid);
+
+        long id = db.insert(TABLE_MEMBERS, null, values);
+
+        Log.d(TAG, "New grop member inserted into SQLite: "+id);
+
+        db.close();
+    }
+    public void addGroup(String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_GROUP_ID, getGroupID() + 1);
+        values.put(KEY_GROUP_NAME, name);
+        long id = db.insert(TABLE_GROUPS, null, values);
+        db.close();
+        Log.d(TAG, "New group inserted into SQLite: " + id);
+    }
     /**
      * Storing user details in database
      */
@@ -193,6 +239,51 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
 
         Log.d(TAG, "New friend inserted into sqlite: " + id);
+    }
+    //Getting groups details from db
+    public List<HashMap<String, String>> getGroupsDetails(){
+        List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
+        String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        // Move to first row
+        cursor.moveToFirst();
+        int i=0;
+        while(!cursor.isAfterLast()) {
+            friends.get(i).put("groupID", cursor.getString(1));
+            friends.get(i).put("name", cursor.getString(2));
+            cursor.moveToNext();
+            i++;
+        }
+        cursor.close();
+        db.close();
+        // return friends
+        Log.d(TAG, "Fetching groups from Sqlite: " + friends.toString());
+        return friends;
+    }
+    //getting members of group specified with id
+    public List<HashMap<String, String>> getMembersDetails(String gid){
+        List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
+        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + "WHERE " + KEY_MEMBESR_GROUP_ID + " = " + gid;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery,null);
+        // Move to first row
+        cursor.moveToFirst();
+        int i=0;
+        while(!cursor.isAfterLast()) {
+            friends.get(i).put("memberID", cursor.getString(1));
+            friends.get(i).put("groupID", cursor.getString(2));
+            friends.get(i).put("userID", cursor.getString(3));
+            cursor.moveToNext();
+            i++;
+        }
+        cursor.close();
+        db.close();
+        // return friends
+        Log.d(TAG, "Fetching members from Sqlite: " + friends.toString());
+        return friends;
     }
 
     /**
@@ -398,6 +489,41 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Deleted all friends locations info from sqlite");
+    }
+    private int getGroupID(){
+        int id = 1;
+
+        String selectQuery = "SELECT  * FROM " + TABLE_GROUPS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToLast();
+        if (cursor.getCount() > 0) {
+            id = Integer.parseInt(cursor.getString(1));
+        }
+        cursor.close();
+        db.close();
+
+        return id;
+    }
+
+    private int getMemberID(){
+        int id = 1;
+
+        String selectQuery = "SELECT  * FROM " + TABLE_MEMBERS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToLast();
+        if (cursor.getCount() > 0) {
+            id = Integer.parseInt(cursor.getString(1));
+        }
+        cursor.close();
+        db.close();
+
+        return id;
     }
 
 }

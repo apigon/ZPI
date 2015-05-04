@@ -86,7 +86,7 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
     public void onClick(View v) {
         String nazwa = ((EditText) findViewById(R.id.nazwa)).getText().toString();
         if (!nazwa.equals(""))
-            addGroup(nazwa);
+            addNewGroup(nazwa);
         else {
             Toast.makeText(getApplicationContext(),
                     "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
@@ -105,8 +105,9 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
             pDialog.dismiss();
     }
 
-    private void addGroup(final String nazwa){
+    private void addNewGroup(final String nazwa){
         // Tag used to cancel the request
+        //db = new SQLiteHandler(getApplicationContext());
         String tag_string_req = "addGroup_req";
 
         pDialog.setMessage("Zapisywanie...");
