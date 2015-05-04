@@ -49,6 +49,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class ZakladkaZnajomi extends Fragment implements View.OnClickListener{
 
+
     ListView friendslist;
     Button showFriends;
     @Override

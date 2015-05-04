@@ -14,7 +14,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
@@ -76,9 +75,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_GROUP_NAME = "name";
 
     //Members table column names
-    private static final String KEY_MEMBESR_ID = "id";
-    private static final String KEY_MEMBESR_GROUP_ID = "groupID";
-    private static final String KEY_MEMBESR_USER_ID = "userID";
+    private static final String KEY_MEMBER_ID = "id";
+    private static final String KEY_MEMBER_GROUP_ID = "groupID";
+    private static final String KEY_MEMBER_USER_ID = "userID";
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -116,9 +115,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 KEY_GROUP_NAME + " TEXT)";
         db.execSQL(createGroupsTable);
 
-        String createMembersTable = "CREATE TABLE " + TABLE_MEMBERS + " (" + KEY_MEMBESR_ID + " INTEGER PRIMARY KEY, " + KEY_MEMBESR_GROUP_ID
-                + " INTEGER, " + KEY_MEMBESR_USER_ID + " INTEGER, FOREIGN KEY (" + KEY_MEMBESR_GROUP_ID + ") REFERENCES " +
-                TABLE_GROUPS + "(" + KEY_GROUP_ID + "), FOREIGN KEY (" + KEY_MEMBESR_USER_ID + ") REFERENCES " +
+        String createMembersTable = "CREATE TABLE " + TABLE_MEMBERS + " (" + KEY_MEMBER_ID + " INTEGER PRIMARY KEY, " + KEY_MEMBER_GROUP_ID
+                + " INTEGER, " + KEY_MEMBER_USER_ID + " INTEGER, FOREIGN KEY (" + KEY_MEMBER_GROUP_ID + ") REFERENCES " +
+                TABLE_GROUPS + "(" + KEY_GROUP_ID + "), FOREIGN KEY (" + KEY_MEMBER_USER_ID + ") REFERENCES " +
                 TABLE_FRIENDS + "(" + KEY_FRIEND_ID + "))";
         db.execSQL(createMembersTable);
 
@@ -181,9 +180,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(KEY_MEMBESR_ID, getMemberID()+1);
-        values.put(KEY_MEMBESR_GROUP_ID, gid);
-        values.put(KEY_MEMBESR_USER_ID, uid);
+        values.put(KEY_MEMBER_ID, getMemberID()+1);
+        values.put(KEY_MEMBER_GROUP_ID, gid);
+        values.put(KEY_MEMBER_USER_ID, uid);
 
         long id = db.insert(TABLE_MEMBERS, null, values);
 
@@ -246,7 +245,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,null);
+        Cursor cursor = db.rawQuery(selectQuery, null);
         // Move to first row
         cursor.moveToFirst();
         int i=0;
@@ -265,7 +264,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //getting members of group specified with id
     public List<HashMap<String, String>> getMembersDetails(String gid){
         List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + "WHERE " + KEY_MEMBESR_GROUP_ID + " = " + gid;
+        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + "WHERE " + KEY_MEMBER_GROUP_ID + " = " + gid;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
