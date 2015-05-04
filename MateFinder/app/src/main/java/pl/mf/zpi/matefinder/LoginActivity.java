@@ -151,7 +151,7 @@ public class LoginActivity extends Activity {
                         db.addLocation(location,"7","7");
                         // Create login session
                         session.setLogin(true);
-                        addFriendsList(userID);
+                        addFriendsList();
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
@@ -233,7 +233,12 @@ public class LoginActivity extends Activity {
         AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
 
-    private void addFriendsList(final String userID) {
+    protected void addFriendsList() {
+        db = new SQLiteHandler(getApplicationContext());
+        // final String [] friends = getMyFriendsId();
+
+        HashMap<String, String> user = db.getUserDetails();
+        final String userID = user.get("userID");
         // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
 
@@ -259,10 +264,11 @@ public class LoginActivity extends Activity {
                             // user successfully logged in
                        JSONObject u = user.getJSONObject(i);
                        String login = u.getString("login");
-                         //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
-                          //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
+                       String photo = u.getString("photo");
+                       String location = u.getString("location");
                             // Inserting row in users table
-                            db.addFriend("1", login, "a", "1", "a", "a", "a", "1");
+                       db.addFriend(location, login, null, photo, null, null, null, location);
+
                    //     }
                    /*} else {
                         // Error in login. Get the error message

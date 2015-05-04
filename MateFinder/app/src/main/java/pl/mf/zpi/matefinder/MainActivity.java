@@ -127,12 +127,7 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               try{ wyswietl();} catch(IOException e){}
-            }},1000);
+        
 
 
 }
@@ -156,7 +151,6 @@ public class MainActivity extends ActionBarActivity {
         session.setLogin(false);
 
         db.deleteUsers();
-        db.deleteFriends();
 
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -228,8 +222,7 @@ public class MainActivity extends ActionBarActivity {
             login.add(friends.get(i).get("login"));
             i++;
         }
-        Toast.makeText(getApplicationContext(),friends.toString(),Toast.LENGTH_LONG).show();
-        // Toast.makeText(getApplicationContext(), "użytkownik " + friends.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "użytkownik " + friends.size(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(getApplicationContext(), "użytkownik " + login.get(1), Toast.LENGTH_SHORT).show();
         //String lng = friend.getString("lng");
 
