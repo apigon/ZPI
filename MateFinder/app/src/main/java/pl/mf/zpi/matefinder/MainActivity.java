@@ -4,33 +4,49 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.TextView;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import pl.mf.zpi.matefinder.app.AppConfig;
+import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private TextView txtLogin;
     private TextView txtEmail;
@@ -127,10 +143,9 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-        
 
-
-}
+        getFriendsRequests();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -229,4 +244,171 @@ public class MainActivity extends ActionBarActivity {
         //String lng = friend.getString("lng");
 
     }
+
+    private void getFriendsRequests(){
+        String tag_string_req = "req_getFriendsRequests";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting friends requests Response: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        // user successfully logged in
+                        JSONObject u = user.getJSONObject(i);
+                        final String requestID = u.getString(("requestID"));
+                        final String userID = u.getString("userID");
+                        String content = u.getString("content");
+                        // Wyświetlanie dialogów
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Zaproszenie do grona znajomych")
+                                .setMessage(content)
+                                .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        removeFriendRequest(requestID);
+                                    }
+                                })
+                                .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        addFriend(requestID, userID);
+                                    }
+                                })
+                                .show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                HashMap<String, String> user = db.getUserDetails();
+                String userID = user.get("userID");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "getFriendRequest");
+                params.put("userID", userID);
+                params.put("type", "0");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void addFriend(final String requestID, final String user2ID){
+        String tag_string_req = "req_addFriend";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Adding friend Response: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        Toast.makeText(getApplicationContext(),
+                                "Użytkownik został dodany do grona znajomych.", Toast.LENGTH_LONG).show();
+                    } else {
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Adding friend ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                HashMap<String, String> user = db.getUserDetails();
+                String user1ID = user.get("userID");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "addFriend");
+                params.put("user1ID", user1ID);
+                params.put("user2ID", user2ID);
+                params.put("requestID", requestID);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void removeFriendRequest(final String requestID){
+        String tag_string_req = "req_removeFriendRequest";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Removing friend request Response: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        Toast.makeText(getApplicationContext(),
+                                "Zaproszenie zostało odrzucone.", Toast.LENGTH_LONG).show();
+                    } else {
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Removing friend request ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                HashMap<String, String> user = db.getUserDetails();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "removeFriendRequest");
+                params.put("requestID", requestID);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
 }

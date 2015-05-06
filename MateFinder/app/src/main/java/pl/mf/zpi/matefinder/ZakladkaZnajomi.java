@@ -1,43 +1,23 @@
 package pl.mf.zpi.matefinder;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +29,6 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  * Created by root on 12.04.15.
  */
 public class ZakladkaZnajomi extends Fragment{
-
 
     ListView friendslist;
     @Override
@@ -65,6 +44,8 @@ public class ZakladkaZnajomi extends Fragment{
         }, 5000);
         return v;
     }
+
+
 }
 
 class SingleFriend {

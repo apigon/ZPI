@@ -1,10 +1,9 @@
 package pl.mf.zpi.matefinder;
 
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +18,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -109,7 +107,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         // Tag used to cancel the request
         String tag_string_req = "addUserToFriends_req";
 
-        pDialog.setMessage("Dodawanie...");
+        pDialog.setMessage("Wysyłanie zaproszenia...");
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -117,16 +115,15 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                Log.d(TAG, "Adding friend Response: " + response.toString());
                 hideDialog();
 
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        addFriendsList();
                         Toast.makeText(getApplicationContext(),
-                                "Dodano użytkownika do bazy.", Toast.LENGTH_LONG).show();
+                                "Zaproszenie zostało wysłane.", Toast.LENGTH_LONG).show();
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -156,11 +153,13 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
                 SQLiteHandler db = new SQLiteHandler(getApplicationContext());
                 HashMap<String, String> user = db.getUserDetails();
                 // Posting params to register url
+                String content = "Użytkownik " + user.get("login") + " chce, abyś dodał go do listy znajomych.";
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "addUserToGroup");
-                params.put("ownerID", user.get("userID"));
-                params.put("groupName", "Znajomi");
-                params.put("userLogin",login);
+                params.put("tag", "sendMessage");
+                params.put("senderID", user.get("userID"));
+                params.put("recipentLogin", login);
+                params.put("content",content);
+                params.put("type", "0");
 
                 return params;
             }
@@ -169,80 +168,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-    protected void addFriendsList() {
-        db = new SQLiteHandler(getApplicationContext());
-        // final String [] friends = getMyFriendsId();
 
-        HashMap<String, String> user = db.getUserDetails();
-        final String userID = user.get("userID");
-        // Tag used to cancel the request
-        String tag_string_req = "req_getFriends";
-
-        pDialog.setMessage("Aktualizowanie listy znajomych...");
-        showDialog();
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_LOGIN, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    //    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    //   if (!error) {
-                    // JSONObject users = jObj.getJSONObject("users");
-                    JSONArray user = jObj.getJSONArray("users");
-                    for (int i = 0; i < user.length(); i++) {
-                        // user successfully logged in
-                        JSONObject u = user.getJSONObject(i);
-                        String login = u.getString("login");
-                        String photo = u.getString("photo");
-                        String location = u.getString("location");
-                        // Inserting row in users table
-                        db.addFriend(location, login, null, photo, null, null, null, location);
-
-                        //     }
-                   /*} else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login ERROR: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "friends");
-                params.put("userID",userID );
-                return params;
-            }
-
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
     private void backToMain(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
