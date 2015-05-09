@@ -84,4 +84,7 @@
     <string name="friend_login">Login znajomego</string>
     <string name="show_friends_button">Pokaż Znajomych</string>
     <string name="friends_list">Lista Znajomych</string>
+
+    <string name="dialog_yes">Akceptuj</string>
+    <string name="dialog_no">Odrzuć</string>
 </resources>

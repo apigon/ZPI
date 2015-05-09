@@ -244,7 +244,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                Log.d(TAG, "Getting friends list Response: " + response.toString());
                 // hideDialog();
 
                 try {
@@ -287,7 +287,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login ERROR: " + error.getMessage());
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
