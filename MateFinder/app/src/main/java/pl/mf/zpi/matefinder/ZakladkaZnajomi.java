@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +71,21 @@ public class ZakladkaZnajomi extends Fragment implements View.OnClickListener{
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         showFriends = (Button) v.findViewById(R.id.buttonPokazZnajomych);
         showFriends.setOnClickListener(this);
+        Handler handler = new Handler(); //wait 1 sec than try again set my location
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
+                //friendslist.invalidateViews();
+                Log.d("tag", "FRAGMENT TOMKA");
+            }},1000);
+
         return v;
     }
 
     @Override
     public void onClick(View v) {
-        friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
+        //friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
     }
     // @Override
 
@@ -96,8 +106,12 @@ class SingleFriend {
         DownloadBitmapTask dbt = new DownloadBitmapTask();
         dbt.execute(friendPhoto);
         // String tmp = new DownloadBitmapTask().execute(friendPhoto).toString();
-        byte[] decodedString = Base64.decode(friendPhoto, Base64.URL_SAFE);
-        this.friendPhoto = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+
+       // byte[] decodedString = Base64.decode(friendPhoto, Base64.URL_SAFE);
+        //this.friendPhoto = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+
         // DownloadBitmapTask dbt = new DownloadBitmapTask();
         // this.friendPhoto = dbt.doInBackground(friendPhoto);
         // new DownloadBitmapTask().execute(friendPhoto);
@@ -203,6 +217,7 @@ class FriendsAdapter extends BaseAdapter{
         SingleFriend tmp = listaZnajomych.get(position);
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
+
         return row;
     }
 }

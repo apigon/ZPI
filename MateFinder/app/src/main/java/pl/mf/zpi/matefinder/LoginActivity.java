@@ -148,7 +148,7 @@ public class LoginActivity extends Activity {
                         savePhotoToGallery(photo);
                         // Inserting row in users table
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
-                        db.addLocation(location,"7","7");
+                        db.addLocation(location,"0","0");
                         // Create login session
                         session.setLogin(true);
                         addFriendsList(userID);

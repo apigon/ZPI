@@ -149,9 +149,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
         getMyFriendsLocalization();
-        try {
-            showMyFriends();
-        }catch(IOException e){ e.printStackTrace();};
+
     }
     //aktualizacja danych na serwer oraz do bazy SQLite
     private void updateLocationDB(final String lat, final String lng)throws IOException {
@@ -199,7 +197,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Update Error: " + error.getMessage());
+                Log.e(TAG, "My Location Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
@@ -409,12 +407,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 hideDialog();
 
                 try {
+                    db.deleteFriendsLocations();
                     JSONObject jObj = new JSONObject(response);
-                    // boolean error = jObj.getBoolean("error");
-                    // if (!error) {
+                     boolean error = jObj.getBoolean("error");
+                     if (!error) {
                     // User successfully updated in MySQL
                     // Now store the user in sqlite
-                    db.deleteFriendsLocations();
+
                     JSONArray user = jObj.getJSONArray("users");
                     for (int i = 0; i < user.length(); i++) {
                         // user successfully logged in
@@ -430,15 +429,17 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
                     // Inserting row in users table
                     //db.deleteLocations();
-
+                         try {
+                             showMyFriends();
+                         }catch(IOException e){ e.printStackTrace();};
                     Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
-                      /*  } else {
-                            // Error occurred in registration. Get the error
-                            // message
-                            String errorMsg = jObj.getString("error_msg");
-                            Toast.makeText(getApplicationContext(),
-                                    errorMsg, Toast.LENGTH_LONG).show();*/
-
+                        } else {
+                         // Error occurred in registration. Get the error
+                         // message
+                         String errorMsg = jObj.getString("error_msg");
+                         Toast.makeText(getApplicationContext(),
+                                 errorMsg, Toast.LENGTH_LONG).show();
+                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -447,7 +448,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Update Error: " + error.getMessage());
+                Log.e(TAG, "Friends Locations Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
@@ -517,7 +518,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         // Fetching user details from sqlite
         LatLng lastLocation=null;
         HashMap<String, String> locations = db.getLocationDetails();
-        if(!(locations.get("lat")).equals(null) && !(locations.get("lng")).equals(null)) {
+        if(!(locations.get("lat")).equals("0") && !(locations.get("lng")).equals("0")) {
             String latString = locations.get("lat");
             String lngString = locations.get("lng");
             double lat = Double.parseDouble(latString.toString());
