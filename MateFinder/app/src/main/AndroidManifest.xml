@@ -10,7 +10,8 @@
     <permission
         android:name="pl.mf.zpi.matefinder.maps.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="pl.mf.zpi.matefinder.maps.permission.MAPS_RECEIVE"/>
+
+    <uses-permission android:name="pl.mf.zpi.matefinder.maps.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -57,8 +58,8 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_maps" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -74,6 +75,10 @@
         <activity
             android:name=".AddFriendActivity"
             android:label="@string/title_activity_add_friend" >
+        </activity>
+        <activity
+            android:name=".AddFriendToGroupActivity"
+            android:label="@string/title_activity_add_friend_to_group" >
         </activity>
     </application>
 
