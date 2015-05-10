@@ -91,5 +91,13 @@
     <!--Menu dla pojedynczego znajomego-->
     <string name="friend_menu_add_friend_to_group">Dodaj znajomego do grupy</string>
     <string name="friend_menu_delete">Usuń znajomego</string>
+
+    <!--Menu group-->
+    <string name="group_menu_edit">Edytuj grupę</string>
+    <string name="group_menu_add_friend">Dodaj znajomych</string>
+    <string name="group_menu_delete">Usuń grupę</string>
+
     <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
+
+
 </resources>
