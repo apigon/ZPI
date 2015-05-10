@@ -8,12 +8,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
@@ -35,7 +39,9 @@ public class ZakladkaZnajomi extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
-        friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
+        FriendsAdapter adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist);
+        friendslist.setAdapter(adapter);
+        friendslist.setOnItemClickListener(adapter);
         return v;
     }
 
@@ -68,13 +74,16 @@ class SingleFriend {
     }
 }
 
-class FriendsAdapter extends BaseAdapter{
+class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener,
+        PopupMenu.OnMenuItemClickListener{
 
     SQLiteHandler dbHandler;
     ArrayList<SingleFriend> listaZnajomych;
     Context context;
+    private ListView listView;
 
-    public FriendsAdapter(Context c){
+
+    public FriendsAdapter(Context c, ListView listView){
         dbHandler = new SQLiteHandler(c);
         List<HashMap<String, String>> friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
@@ -83,6 +92,7 @@ class FriendsAdapter extends BaseAdapter{
             listaZnajomych.add(sf);
         }
         context=c;
+        this.listView = listView;
     }
     @Override
     public int getCount() {
@@ -110,5 +120,18 @@ class FriendsAdapter extends BaseAdapter{
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
         return row;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        PopupMenu menu = new PopupMenu(context, listView.getChildAt(position));
+        menu.getMenuInflater().inflate(R.menu.friend_popup_menu, menu.getMenu());
+        menu.setOnMenuItemClickListener(this);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        //todo
+        return false;
     }
 }
