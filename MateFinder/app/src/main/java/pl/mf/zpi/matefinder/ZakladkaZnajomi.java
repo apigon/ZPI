@@ -35,13 +35,7 @@ public class ZakladkaZnajomi extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
-            }
-        }, 5000);
+        friendslist.setAdapter(new FriendsAdapter(getActivity().getApplicationContext()));
         return v;
     }
 
