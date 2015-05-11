@@ -187,7 +187,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         long id = db.insert(TABLE_MEMBERS, null, values);
 
-        Log.d(TAG, "New grop member inserted into SQLite: "+id);
+        Log.d(TAG, "New grop member inserted into SQLite: " + id);
 
         db.close();
     }
@@ -318,10 +318,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 friend.put("surname", cursor.getString(6));
                 friend.put("photo", cursor.getString(7));
                 friend.put("location", cursor.getString(8));
-                friends.add(friend);
-
-
-            }
+                friends.add(friend);            }
 
             while (cursor.moveToNext());
         }
@@ -474,10 +471,19 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void deleteSettings() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
-        db.delete(TABLE_LOCATIONS, null, null);
+        db.delete(TABLE_SETTINGS, null, null);
         db.close();
 
         Log.d(TAG, "Deleted all location info from sqlite");
+    }
+
+    public void deleteGroups() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete All Rows
+        db.delete(TABLE_GROUPS, null, null);
+        db.close();
+
+        Log.d(TAG, "Deleted all groups info from sqlite");
     }
 
     public void deleteFriends(){
@@ -530,6 +536,23 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         return id;
+    }
+
+    public void updateGroup(int gid, String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_GROUP_NAME, name);
+        long id = db.update(TABLE_GROUPS, values, KEY_GROUP_ID + "=" + gid, null);
+        db.close();
+
+        Log.d(TAG, "Updated group info in sqlite" + id);
+    }
+
+    public void removeFriend(String friendLogin){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_FRIENDS,KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
+        db.close();
     }
 
 }

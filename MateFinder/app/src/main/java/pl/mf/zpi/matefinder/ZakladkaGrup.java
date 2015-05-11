@@ -17,7 +17,10 @@ public class ZakladkaGrup extends Fragment {
         View v = inflater.inflate(R.layout.zakladka_grup, container, false);
 
         ListView groupList = (ListView)v.findViewById(R.id.groupList);
-        groupList.setAdapter(new GroupAdapter(getActivity()));
+        GroupAdapter adapter = new GroupAdapter(getActivity(), groupList);
+        groupList.setAdapter(adapter);
+        groupList.setOnItemLongClickListener(adapter);
+        groupList.setOnItemClickListener(adapter);
         return v;
     }
 }
