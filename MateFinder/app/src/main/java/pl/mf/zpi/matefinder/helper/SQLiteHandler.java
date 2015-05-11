@@ -532,4 +532,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return id;
     }
 
+    public void removeFriend(String friendLogin){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_FRIENDS,KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
+        db.close();
+    }
+
 }

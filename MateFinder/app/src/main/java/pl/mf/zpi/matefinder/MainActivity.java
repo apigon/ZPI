@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -143,7 +144,6 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-
         getFriendsRequests();
     }
 
