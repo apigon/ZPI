@@ -167,6 +167,8 @@ public class MainActivity extends ActionBarActivity {
 
         db.deleteUsers();
         db.deleteFriends();
+        db.deleteGroups();
+        db.deleteSettings();
 
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -227,6 +229,8 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+
+    //TODO czy ta metoda jest jeszcze po coś potrzebna?!?!?!?
     private void wyswietl() throws IOException
     {
         db = new SQLiteHandler(getApplicationContext());
