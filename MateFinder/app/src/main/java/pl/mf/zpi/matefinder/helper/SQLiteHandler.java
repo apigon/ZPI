@@ -318,8 +318,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 friend.put("surname", cursor.getString(6));
                 friend.put("photo", cursor.getString(7));
                 friend.put("location", cursor.getString(8));
-                friends.add(friend);
-            }
+                friends.add(friend);            }
 
             while (cursor.moveToNext());
         }
@@ -548,6 +547,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Updated group info in sqlite" + id);
+    }
+
+    public void removeFriend(String friendLogin){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_FRIENDS,KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
+        db.close();
     }
 
 }
