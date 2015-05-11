@@ -126,7 +126,7 @@ public class UpdateGroupActivity extends ActionBarActivity implements View.OnCli
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         Toast.makeText(getApplicationContext(), "Zaktualizowano grupę!", Toast.LENGTH_LONG);
-                        db.updateGroup(group.getID(), group.getName());
+                        db.updateGroup(group.getID(), nazwa);
                         // Launch login activity
                         backToMain();
                     } else {
