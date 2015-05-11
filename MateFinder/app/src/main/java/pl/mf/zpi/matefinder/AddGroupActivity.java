@@ -126,7 +126,8 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         Toast.makeText(getApplicationContext(),"Utworzono grupę!",Toast.LENGTH_LONG);
-                        db.addGroup(nazwa);
+                        int gid = jObj.getInt("groupID");
+                        db.addGroup(gid, nazwa);
                         // Launch login activity
                         backToMain();
                     } else {

@@ -187,15 +187,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         long id = db.insert(TABLE_MEMBERS, null, values);
 
-        Log.d(TAG, "New grop member inserted into SQLite: " + id);
+        Log.d(TAG, "New group member inserted into SQLite: " + id);
 
         db.close();
     }
-    public void addGroup(String name){
-        int gid = getGroupID();
+    public void addGroup(int gid,String name){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_GROUP_ID, gid + 1);
+        values.put(KEY_GROUP_ID, gid);
         values.put(KEY_GROUP_NAME, name);
         values.put(KEY_GROUP_VISIBLE, 1);
 
@@ -501,23 +500,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Deleted all friends locations info from sqlite");
-    }
-    private int getGroupID(){
-        int id = 1;
-
-        String selectQuery = "SELECT  * FROM " + TABLE_GROUPS;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        // Move to first row
-        cursor.moveToLast();
-        if (cursor.getCount() > 0) {
-            id = Integer.parseInt(cursor.getString(0));
-        }
-        cursor.close();
-        db.close();
-
-        return id;
     }
 
     private int getMemberID(){
