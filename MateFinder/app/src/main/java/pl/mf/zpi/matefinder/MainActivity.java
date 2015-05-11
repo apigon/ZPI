@@ -176,13 +176,13 @@ public class MainActivity extends ActionBarActivity {
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
-    private void createGroup(){
+    private void createGroup() {
         Intent intent = new Intent(this, AddGroupActivity.class);
         startActivity(intent);
     }
 
-    private void makeFriend(){
-        Intent intent = new Intent (this, AddFriendActivity.class);
+    private void makeFriend() {
+        Intent intent = new Intent(this, AddFriendActivity.class);
         startActivity(intent);
     }
 
@@ -231,25 +231,23 @@ public class MainActivity extends ActionBarActivity {
 
 
     //TODO czy ta metoda jest jeszcze po coś potrzebna?!?!?!?
-    private void wyswietl() throws IOException
-    {
+    private void wyswietl() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         List<HashMap<String, String>> friends = db.getFriendsDetails();
         List<String> login = new ArrayList();
-        int i=0;
-        while(i<friends.size())
-        {
+        int i = 0;
+        while (i < friends.size()) {
             login.add(friends.get(i).get("login"));
             i++;
         }
-        Toast.makeText(getApplicationContext(),friends.toString(),Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), friends.toString(), Toast.LENGTH_LONG).show();
         // Toast.makeText(getApplicationContext(), "użytkownik " + friends.size(), Toast.LENGTH_SHORT).show();
         //Toast.makeText(getApplicationContext(), "użytkownik " + login.get(1), Toast.LENGTH_SHORT).show();
         //String lng = friend.getString("lng");
 
     }
 
-    private void getFriendsRequests(){
+    private void getFriendsRequests() {
         String tag_string_req = "req_getFriendsRequests";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -260,35 +258,44 @@ public class MainActivity extends ActionBarActivity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    JSONArray user = jObj.getJSONArray("users");
-                    for (int i = 0; i < user.length(); i++) {
-                        // user successfully logged in
-                        JSONObject u = user.getJSONObject(i);
-                        final String requestID = u.getString(("requestID"));
-                        final String userID = u.getString("userID");
-                        String content = u.getString("content");
-                        // Wyświetlanie dialogów
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Zaproszenie do grona znajomych")
-                                .setMessage(content)
-                                .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        removeFriendRequest(requestID);
-                                    }
-                                })
-                                .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        addFriend(requestID, userID);
-                                    }
-                                })
-                                .show();
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        JSONArray user = jObj.getJSONArray("users");
+                        for (int i = 0; i < user.length(); i++) {
+                            // user successfully logged in
+                            JSONObject u = user.getJSONObject(i);
+                            final String requestID = u.getString(("requestID"));
+                            final String userID = u.getString("userID");
+                            String content = u.getString("content");
+                            // Wyświetlanie dialogów
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("Zaproszenie do grona znajomych")
+                                    .setMessage(content)
+                                    .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            removeFriendRequest(requestID);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            addFriend(requestID, userID);
+                                        }
+                                    })
+                                    .show();
+                        }
+                    } else {
+
+                       //NIE MA ZAPROSZEN DO ZNAJOMYCH
                     }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                }
 
+
+                }
             }
+
+
         }, new Response.ErrorListener() {
 
             @Override
@@ -315,7 +322,7 @@ public class MainActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void addFriend(final String requestID, final String user2ID){
+    private void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -367,7 +374,7 @@ public class MainActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void removeFriendRequest(final String requestID){
+    private void removeFriendRequest(final String requestID) {
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {

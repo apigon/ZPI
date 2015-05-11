@@ -67,6 +67,9 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD-gqRidN2XjywLAPJRU_AdmKWv1USzcQ0" />
+        <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true" />
 
         <activity
             android:name=".AddGroupActivity"
