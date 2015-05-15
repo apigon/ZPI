@@ -531,8 +531,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     public void removeFriend(String friendLogin){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_FRIENDS,KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
+        db.delete(TABLE_FRIENDS, KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
         db.close();
     }
 
+    public void setGRoupVisible(int gid, boolean visible) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_GROUP_VISIBLE, visible);
+        long id = db.update(TABLE_GROUPS, values, KEY_GROUP_ID + "=" + gid, null);
+        db.close();
+
+        Log.d(TAG, "Updated group visibility info in sqlite" + id);
+    }
 }

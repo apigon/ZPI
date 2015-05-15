@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
@@ -25,15 +23,15 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
-    protected SQLiteHandler dbHandler;
+    protected SQLiteHandler db;
     protected ArrayList<Group> groups;
     protected Context context;
     protected ListView listView;
     protected int index;
 
     public GroupAdapter(Context c, ListView list) {
-        dbHandler = new SQLiteHandler(c);
-        groups = dbHandler.getGroupsDetails();
+        db = new SQLiteHandler(c);
+        groups = db.getGroupsDetails();
         context = c;
         listView = list;
         index = -1;
@@ -90,10 +88,11 @@ public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Group group = groups.get(position);
-        boolean visible = group.getVisible();
-        group.setVisible(!visible);
-        String tekt = !visible?"Wybrana grupa będzie wyświetlana.":"Wybrana grupa nie będzie wyswietlana";
+        boolean visible = !group.getVisible();
+        group.setVisible(visible);
+        String tekt = visible?"Wybrana grupa będzie wyświetlana.":"Wybrana grupa nie będzie wyswietlana";
         Toast toas = Toast.makeText(context, tekt, Toast.LENGTH_SHORT);
         toas.show();
+        db.setGRoupVisible(group.getID(), visible);
     }
 }

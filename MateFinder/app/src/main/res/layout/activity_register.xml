@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:text="@string/btn_register"
-            android:textColor="@color/kol4"
+            android:textColor="#5ca1a1a1"
             android:textAlignment="center"
             android:textSize="22dp"
             android:minHeight="25dp" />
