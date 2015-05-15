@@ -32,10 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
@@ -175,13 +172,13 @@ public class MainActivity extends ActionBarActivity {
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
-    private void createGroup() {
+    private void createGroup(){
         Intent intent = new Intent(this, AddGroupActivity.class);
         startActivity(intent);
     }
 
-    private void makeFriend() {
-        Intent intent = new Intent(this, AddFriendActivity.class);
+    private void makeFriend(){
+        Intent intent = new Intent (this, AddFriendActivity.class);
         startActivity(intent);
     }
 
@@ -228,25 +225,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
-    //TODO czy ta metoda jest jeszcze po coś potrzebna?!?!?!?
-    private void wyswietl() throws IOException {
-        db = new SQLiteHandler(getApplicationContext());
-        List<HashMap<String, String>> friends = db.getFriendsDetails();
-        List<String> login = new ArrayList();
-        int i = 0;
-        while (i < friends.size()) {
-            login.add(friends.get(i).get("login"));
-            i++;
-        }
-        Toast.makeText(getApplicationContext(), friends.toString(), Toast.LENGTH_LONG).show();
-        // Toast.makeText(getApplicationContext(), "użytkownik " + friends.size(), Toast.LENGTH_SHORT).show();
-        //Toast.makeText(getApplicationContext(), "użytkownik " + login.get(1), Toast.LENGTH_SHORT).show();
-        //String lng = friend.getString("lng");
-
-    }
-
-    private void getFriendsRequests() {
+    private void getFriendsRequests(){
         String tag_string_req = "req_getFriendsRequests";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -258,12 +237,12 @@ public class MainActivity extends ActionBarActivity {
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        JSONArray user = jObj.getJSONArray("users");
+                    if(!error){
+                        JSONArray user = jObj.getJSONArray("messages");
                         for (int i = 0; i < user.length(); i++) {
                             // user successfully logged in
                             JSONObject u = user.getJSONObject(i);
-                            final String requestID = u.getString(("requestID"));
+                            final String requestID = u.getString(("messageID"));
                             final String userID = u.getString("userID");
                             String content = u.getString("content");
                             // Wyświetlanie dialogów
@@ -282,19 +261,13 @@ public class MainActivity extends ActionBarActivity {
                                     })
                                     .show();
                         }
-                    } else {
-
-                       //NIE MA ZAPROSZEN DO ZNAJOMYCH
                     }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-
-
                 }
+
             }
-
-
         }, new Response.ErrorListener() {
 
             @Override
@@ -310,7 +283,7 @@ public class MainActivity extends ActionBarActivity {
                 HashMap<String, String> user = db.getUserDetails();
                 String userID = user.get("userID");
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "getFriendRequest");
+                params.put("tag", "getMessages");
                 params.put("userID", userID);
                 params.put("type", "0");
                 return params;
@@ -321,7 +294,7 @@ public class MainActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void addFriend(final String requestID, final String user2ID) {
+    private void addFriend(final String requestID, final String user2ID){
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -373,7 +346,7 @@ public class MainActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void removeFriendRequest(final String requestID) {
+    private void removeFriendRequest(final String requestID){
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {

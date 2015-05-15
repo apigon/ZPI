@@ -86,7 +86,11 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
     public void onClick(View v) {
         String nazwa = ((EditText) findViewById(R.id.nazwa)).getText().toString();
         if (!nazwa.equals(""))
+        {
             addNewGroup(nazwa);
+            backToMain();
+        }
+
         else {
             Toast.makeText(getApplicationContext(),
                     "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
@@ -129,7 +133,7 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                         int gid = jObj.getInt("groupID");
                         db.addGroup(gid, nazwa);
                         // Launch login activity
-                        backToMain();
+                     //   backToMain();
                     } else {
 
                         // Error occurred in registration. Get the error

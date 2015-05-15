@@ -74,8 +74,9 @@
     <string name="title_activity_group_details">GroupDetailsActivity</string>
 
     <!--Edycja grupy-->
+    <string name="put_group_name">Wpisz nazwę grupy</string>
     <string name="edit_group_nazwa_grupy">Nazwa grupy</string>
-    <string name="edit_group_zapisz">Zapisz</string>
+    <string name="edit_group_zapisz">Dodaj grupę</string>
 
     <!--Dodawanie znajomego-->
     <string name="add_friend_login_znajomego">Login użytkownika</string>
@@ -83,6 +84,7 @@
     <string name="friend_login">Login znajomego</string>
     <string name="show_friends_button">Pokaż Znajomych</string>
     <string name="friends_list">Lista Znajomych</string>
+    <string name="put_friend_login">Wpisz login znajomego</string>
 
     <string name="dialog_yes">Akceptuj</string>
     <string name="dialog_no">Odrzuć</string>
@@ -95,6 +97,7 @@
     <string name="group_menu_edit">Edytuj grupę</string>
     <string name="group_menu_add_friend">Dodaj znajomych</string>
     <string name="group_menu_delete">Usuń grupę</string>
+
 
     <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
     <string name="title_activity_update_group">UpdateGroupActivity</string>

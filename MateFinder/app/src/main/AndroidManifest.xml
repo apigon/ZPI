@@ -87,6 +87,10 @@
             android:name=".UpdateGroupActivity"
             android:label="@string/title_activity_update_group" >
         </activity>
+
+        <service
+            android:name=".MessageService"
+            android:exported="false" />
     </application>
 
 </manifest>

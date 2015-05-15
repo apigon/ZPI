@@ -147,10 +147,19 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
+        Bundle bundle = getIntent().getExtras();
+        String groupName = "Znajomi";
+        if (bundle != null)
+        {
+            groupName = bundle.getString("groupName");
+        }
 
-        getMyFriendsLocalization();
+        getMyFriendsLocalization(groupName);
 
     }
+
+
+
     //aktualizacja danych na serwer oraz do bazy SQLite
     private void updateLocationDB(final String lat, final String lng)throws IOException {
         db = new SQLiteHandler(getApplicationContext());
@@ -390,7 +399,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    private void getMyFriendsLocalization() {
+    private void getMyFriendsLocalization(final String groupName) {
         db = new SQLiteHandler(getApplicationContext());
         // final String [] friends = getMyFriendsId();
 
@@ -462,6 +471,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "getFriendsLocations");
                 params.put("userID", userId);
+                params.put("groupName", groupName);
               /*  params.put("lat", lat);
                 params.put("lng", lng); */
 
