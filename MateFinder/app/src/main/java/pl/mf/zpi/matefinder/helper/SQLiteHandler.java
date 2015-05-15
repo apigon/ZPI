@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pl.mf.zpi.matefinder.Group;
+
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = SQLiteHandler.class.getSimpleName();
@@ -243,23 +245,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New friend inserted into sqlite: " + id);
     }
     //Getting groups details from db
-    public List<HashMap<String, String>> getGroupsDetails(){
-        List<HashMap<String, String>> groups = new ArrayList<HashMap<String, String>>();
+    public ArrayList<Group> getGroupsDetails(){
+        ArrayList<Group> groups = new ArrayList<Group>();
         String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // Move to first row
         cursor.moveToFirst();
-        int i=0;
         while(!cursor.isAfterLast()) {
-            HashMap<String, String> g = new HashMap<String, String>(3);
-            g.put("groupID", cursor.getString(0));
-            g.put("name", cursor.getString(1));
-            g.put("visible", cursor.getString(2));
+            Group g = new Group(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)));
             groups.add(g);
             cursor.moveToNext();
-            i++;
         }
         cursor.close();
         db.close();
@@ -267,6 +264,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Fetching groups from Sqlite: " + groups.toString());
         return groups;
     }
+
     //getting members of group specified with id
     public List<HashMap<String, String>> getMembersDetails(String gid){
         List<HashMap<String, String>> members = new ArrayList<HashMap<String, String>>();

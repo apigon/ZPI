@@ -3,6 +3,8 @@ package pl.mf.zpi.matefinder;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+
 /**
  * Created by root on 04.05.15.
  */

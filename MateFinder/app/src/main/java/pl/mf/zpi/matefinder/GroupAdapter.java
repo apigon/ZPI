@@ -25,20 +25,15 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
-    private SQLiteHandler dbHandler;
-    private ArrayList<Group> groups;
-    private Context context;
-    private ListView listView;
-    private int index;
+    protected SQLiteHandler dbHandler;
+    protected ArrayList<Group> groups;
+    protected Context context;
+    protected ListView listView;
+    protected int index;
 
     public GroupAdapter(Context c, ListView list) {
         dbHandler = new SQLiteHandler(c);
-        List<HashMap<String, String>> groupsDB = dbHandler.getGroupsDetails();
-        groups = new ArrayList<Group>();
-        for (int i = 0; i < groupsDB.size(); i++) {
-            Group group = new Group(Integer.parseInt(groupsDB.get(i).get("groupID")),groupsDB.get(i).get("name"), Integer.parseInt(groupsDB.get(i).get("visible")));
-            groups.add(group);
-        }
+        groups = dbHandler.getGroupsDetails();
         context = c;
         listView = list;
         index = -1;
@@ -94,7 +89,11 @@ public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast t = Toast.makeText(context, "onClick", Toast.LENGTH_SHORT);
-        t.show();
+        Group group = groups.get(position);
+        boolean visible = group.getVisible();
+        group.setVisible(!visible);
+        String tekt = !visible?"Wybrana grupa będzie wyświetlana.":"Wybrana grupa nie będzie wyswietlana";
+        Toast toas = Toast.makeText(context, tekt, Toast.LENGTH_SHORT);
+        toas.show();
     }
 }
