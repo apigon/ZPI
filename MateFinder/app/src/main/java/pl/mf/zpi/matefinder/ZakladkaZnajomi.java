@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -336,6 +338,17 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         if(item.getItemId()==R.id.usun) {
             removeFriend(listaZnajomych.get(klikniete).friendLogin);
             Toast.makeText(context, "Usunięto użytkownika ze znajomych", Toast.LENGTH_LONG).show();
+        }
+        if(item.getItemId()==R.id.pokazDane){
+            HashMap<String, String> temp = friends.get(klikniete);
+            String imie,nazwisko,mail,telefon;
+            imie = temp.get("name");
+            nazwisko = temp.get("surname");
+            mail = temp.get("email");
+            telefon = temp.get("phone");
+            Toast toast = new Toast(this.context);
+            toast = Toast.makeText(this.context,"Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon,Toast.LENGTH_LONG);
+            toast.show();
         }
         return false;
     }
