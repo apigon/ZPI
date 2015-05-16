@@ -150,16 +150,25 @@ public class LoginActivity extends Activity {
                         // Inserting row in users table
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
                         db.addLocation(location,"0","0");
-                        // Create login session
-                        session.setLogin(true);
                         addFriendsList(userID);
                         addGroupList(userID);
                         addMembersList(userID);
-                        // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
-                        finish();
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Create login session
+                                session.setLogin(true);
+                                // Launch main activity
+                                Intent intent = new Intent(LoginActivity.this,
+                                        MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                                // Do something after 5s = 5000ms
+                            }
+                        }, 1000);
+
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");

@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,18 +49,113 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class ZakladkaZnajomi extends Fragment{
 
+    private static final String TAG = ZakladkaZnajomi.class.getSimpleName();
+    FriendsAdapter adapter;
+    SQLiteHandler db;
     ListView friendslist;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
+        db = new SQLiteHandler(getActivity().getApplicationContext());
+        /*
         FriendsAdapter adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist);
         friendslist.setAdapter(adapter);
         friendslist.setOnItemClickListener(adapter);
+        */
         return v;
     }
 
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        updateFriendsList();
+    }
 
+    public void updateFriendsList(){
+        // db = new SQLiteHandler(getActivity().getApplicationContext());
+        // addFriendsList(db.getUserDetails().get("userID"));
+
+        adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist);
+        friendslist.setAdapter(adapter);
+        friendslist.setOnItemClickListener(adapter);
+    }
+
+    private void addFriendsList(final String userID) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_getFriends";
+
+        // pDialog.setMessage("Aktualizowanie listy znajomych...");
+        // showDialog();
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting friends list Response: " + response.toString());
+                // hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    //    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    //   if (!error) {
+                    // JSONObject users = jObj.getJSONObject("users");
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        // user successfully logged in
+                        JSONObject u = user.getJSONObject(i);
+                        String userID = u.getString("userID");
+                        String login = u.getString("login");
+                        String email = u.getString("email");
+                        String phone = u.getString("phone_number");
+                        String name = u.getString("name");
+                        String surname = u.getString("surname");
+                        String photo = u.getString("photo");
+                        String location = u.getString("location");
+                        //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
+                        //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
+                        // Inserting row in users table
+                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
+                        //     }
+                   /*} else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }*/ }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+                Toast.makeText(getActivity().getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                // hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "friends");
+                params.put("userID",userID );
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
 }
 
 class SingleFriend {
@@ -99,11 +195,13 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     Context context;
     private ListView listView;
     int klikniete=0;
+    List<HashMap<String, String>> friends;
 
 
     public FriendsAdapter(Context c, ListView listView){
         dbHandler = new SQLiteHandler(c);
-        List<HashMap<String, String>> friends = dbHandler.getFriendsDetails();
+        // fetching friends from sqlite:
+        friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
         for(int i=0;i<friends.size();i++){
             SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"));
@@ -111,6 +209,15 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         }
         context=c;
         this.listView = listView;
+    }
+
+    public void deleteFriendFromAdapter(String login){
+        for(int i=0;i<listaZnajomych.size();i++){
+            if(listaZnajomych.get(i).friendLogin.equals(login)){
+                listaZnajomych.remove(i);
+            }
+        }
+        notifyDataSetChanged();
     }
     @Override
     public int getCount() {
@@ -138,6 +245,14 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         final SingleFriend tmp = listaZnajomych.get(position);
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        },1000);
+
         // removeFriendButton.setImageResource(R.drawable.removeFriend);
         /*
         removeFriendButton.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +291,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             public void onResponse(String response) {
                 SQLiteHandler db = new SQLiteHandler(context);
                 db.removeFriend(login);
+                deleteFriendFromAdapter(login);
                 Log.d(TAG, "Removing response : " + response.toString());
             }
         }, new Response.ErrorListener() {
@@ -217,8 +333,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        removeFriend(listaZnajomych.get(klikniete).friendLogin);
-        Toast.makeText(context,"Usunięto użytkownika ze znajomych",Toast.LENGTH_LONG).show();
+        if(item.getItemId()==R.id.usun) {
+            removeFriend(listaZnajomych.get(klikniete).friendLogin);
+            Toast.makeText(context, "Usunięto użytkownika ze znajomych", Toast.LENGTH_LONG).show();
+        }
         return false;
     }
 }

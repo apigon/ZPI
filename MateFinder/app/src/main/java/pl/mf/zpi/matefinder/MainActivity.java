@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,13 +85,15 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
+        getFriendsRequests();
+
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
-
+        db = new SQLiteHandler(getApplicationContext());
         mAdapter = new MenuAdapter(this, db);       // Creating the Adapter of MenuAdapter class(which we are going to see in a bit)
         // And passing the titles,icons,header view name, header view email,
         // and header view profile picture
@@ -140,7 +144,6 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-        getFriendsRequests();
     }
 
     @Override
@@ -307,6 +310,14 @@ public class MainActivity extends ActionBarActivity {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
+                        db.deleteFriends();
+                        String tempUserID = db.getUserDetails().get("userID");
+                        addFriendsList(tempUserID);
+
+                        // db.deleteFriends();
+                        // addFriendsList(userID); + zaimplementować w tej klasie
+                        // sprawdzic w metodzie addfriend w php jaki response ustawiony
+                        // dodac add friend do sqlite i do listview
                         Toast.makeText(getApplicationContext(),
                                 "Użytkownik został dodany do grona znajomych.", Toast.LENGTH_LONG).show();
                     } else {
@@ -394,4 +405,79 @@ public class MainActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+
+    private void addFriendsList(final String userID) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_getFriends";
+
+        // pDialog.setMessage("Aktualizowanie listy znajomych...");
+        // showDialog();
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting friends list Response: " + response.toString());
+                // hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    //    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    //   if (!error) {
+                    // JSONObject users = jObj.getJSONObject("users");
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        // user successfully logged in
+                        JSONObject u = user.getJSONObject(i);
+                        String userID = u.getString("userID");
+                        String login = u.getString("login");
+                        String email = u.getString("email");
+                        String phone = u.getString("phone_number");
+                        String name = u.getString("name");
+                        String surname = u.getString("surname");
+                        String photo = u.getString("photo");
+                        String location = u.getString("location");
+                        //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
+                        //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
+                        // Inserting row in users table
+                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
+                        //     }
+                   /*} else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }*/ }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "friends");
+                params.put("userID",userID );
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
 }
