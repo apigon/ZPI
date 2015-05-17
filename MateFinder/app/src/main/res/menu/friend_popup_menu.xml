@@ -10,5 +10,9 @@
         android:id="@+id/usun"
         android:title="@string/friend_menu_delete"
         />
+    <item
+        android:id="@+id/pokazDane"
+        android:title="Pokaż informacje o znajomym"
+        />
 
 </menu>
