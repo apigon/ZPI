@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_FRIENDS_LOCATIONS_TABLE);
 
         String createGroupsTable = "CREATE TABLE " + TABLE_GROUPS + "(" + KEY_GROUP_ID + " INTEGER PRIMARY KEY, " +
-                KEY_GROUP_NAME + " TEXT, " + KEY_GROUP_VISIBLE + " INTEGER)" ;
+                KEY_GROUP_NAME + " TEXT, " + KEY_GROUP_VISIBLE + " TEXT)" ;
         db.execSQL(createGroupsTable);
 
         String createMembersTable = "CREATE TABLE " + TABLE_MEMBERS + " (" + KEY_MEMBER_ID + " INTEGER PRIMARY KEY, " + KEY_MEMBER_GROUP_ID
@@ -179,13 +180,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New location inserted into sqlite: " + id);
     }
-    private void addMember(int gid, int uid){
+    public void addMember(String groupID, String userID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(KEY_MEMBER_ID, getMemberID()+1);
-        values.put(KEY_MEMBER_GROUP_ID, gid);
-        values.put(KEY_MEMBER_USER_ID, uid);
+        //values.put(KEY_MEMBER_ID, getMemberID()+1);
+        values.put(KEY_MEMBER_GROUP_ID, groupID);
+        values.put(KEY_MEMBER_USER_ID, userID);
 
         long id = db.insert(TABLE_MEMBERS, null, values);
 
@@ -193,7 +194,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         db.close();
     }
-    public void addGroup(int gid,String name){
+    public void addGroup(String groupID, String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_GROUP_ID, groupID);
+        values.put(KEY_GROUP_NAME, name);
+        values.put(KEY_GROUP_VISIBLE, "1");
+
+        long id = db.insert(TABLE_GROUPS, null, values);
+        db.close();
+        Log.d(TAG, "New group inserted into SQLite: " + id);
+    }
+    public void addGroup(int gid, String name){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_GROUP_ID, gid);
@@ -378,7 +390,47 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return locations;
     }
+    public List<HashMap<String, String>> getFriendLocationsFromGroups() {
+        List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
+        /*java.lang.String selectQuery =
+                "SELECT l."+KEY_FRIEND_LOCATION_ID_DATABASE+",l."+KEY_FRIEND_LAT+",l."+KEY_FRIEND_LNG+" FROM "+ TABLE_MEMBERS +
+                " m INNER JOIN " + TABLE_LOCATIONS_FRIENDS +" l ON l."+ KEY_FRIEND_LOCATION_ID_DATABASE+
+                "=?";//+" INNER JOIN "+TABLE_GROUPS+" g WHERE g."+KEY_GROUP_VISIBLE +"= '1'";*/
 
+        String [] nameTab = {"1"};
+        SQLiteQueryBuilder _QB = new SQLiteQueryBuilder();
+
+        _QB.setTables(TABLE_LOCATIONS_FRIENDS +
+                " l LEFT OUTER JOIN " + TABLE_MEMBERS+ " m ON l." +
+                KEY_FRIEND_LOCATION_ID_DATABASE + " = m." + KEY_MEMBER_USER_ID
+                + " LEFT OUTER JOIN " + TABLE_GROUPS+" g ON m."+
+                KEY_MEMBER_GROUP_ID +"=g." + KEY_GROUP_ID);
+                //+" WHERE g."+ KEY_GROUP_NAME + "=?");
+
+        //db.rawQuery(MY_QUERY, new String[]{String.valueOf(propertyId)});
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = _QB.query(db,  null,null,null, null, null, null);
+//db.rawQuery(selectQuery, nameTab);
+        // Move to first row
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+            do {
+                HashMap<String,String> location = new HashMap<String,String>();
+                location.put("locationID", cursor.getString(1));
+                location.put("lat", cursor.getString(2));
+                location.put("lng", cursor.getString(3));
+                locations.add(location);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        // return user
+        Log.d(TAG, "MEMBERS Fetching friend location from Sqlite: " + locations.toString());
+
+        return locations;
+    }
     public List<HashMap<String, String>> getFriendLocationDetails() {
         List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
         java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS_FRIENDS;
@@ -499,6 +551,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all friends locations info from sqlite");
     }
+    public void deleteMembers(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Delete All Rows
+        db.delete(TABLE_MEMBERS,null,null);
+        db.close();
+
+        Log.d(TAG, "Deleted all members locations info from sqlite");
+    }
 
     private int getMemberID(){
         int id = 1;
@@ -534,12 +594,22 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_FRIENDS, KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
         db.close();
     }
-
-    public void setGRoupVisible(int gid, boolean visible) {
+/*
+    public void setGroupVisible(int gid, boolean visible) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_GROUP_VISIBLE, visible);
         long id = db.update(TABLE_GROUPS, values, KEY_GROUP_ID + "=" + gid, null);
+        db.close();
+
+        Log.d(TAG, "Updated group visibility info in sqlite" + id);
+    }*/
+    public void setGroupVisible(String name, String visible) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String [] nameTab = {name};
+        values.put(KEY_GROUP_VISIBLE, visible);
+        long id = db.update(TABLE_GROUPS, values, KEY_GROUP_NAME + "=?",nameTab);
         db.close();
 
         Log.d(TAG, "Updated group visibility info in sqlite" + id);

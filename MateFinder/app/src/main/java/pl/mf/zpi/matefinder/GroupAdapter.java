@@ -93,6 +93,7 @@ public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClick
         String tekt = visible?"Wybrana grupa będzie wyświetlana.":"Wybrana grupa nie będzie wyswietlana";
         Toast toas = Toast.makeText(context, tekt, Toast.LENGTH_SHORT);
         toas.show();
-        db.setGRoupVisible(group.getID(), visible);
+        String setValue = visible?"1":"0";
+        db.setGroupVisible(group.getName(), setValue);
     }
 }

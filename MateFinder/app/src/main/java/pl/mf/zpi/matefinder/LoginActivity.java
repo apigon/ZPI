@@ -313,10 +313,139 @@ public class LoginActivity extends Activity {
     }
 
     private void addGroupList(final String userID){
-        //TODO
+        String tag_string_req = "req_getGroups";
+
+
+        StringRequest strReq = new StringRequest(Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting groups list Response: " + response.toString());
+                // hideDialog();
+
+                try {
+                   // db.deleteMembers();
+                    JSONObject jObj = new JSONObject(response);
+                    //    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    //   if (!error) {
+                    // JSONObject users = jObj.getJSONObject("users");
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+
+                        JSONObject u = user.getJSONObject(i);
+                        String groupName = u.getString("groupName");
+                        String gid = u.getString("groupID");
+                        //String userID = u.getString("userID");
+
+                        db.addGroup(gid,groupName);
+
+                   /*} else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }*/ }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "groups");
+                params.put("userID",userID );
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
     }
 
     private void addMembersList(final String userID){
-        //TODO
+        String tag_string_req = "req_getMembers";
+
+        // pDialog.setMessage("Aktualizowanie listy znajomych...");
+        // showDialog();
+        StringRequest strReq = new StringRequest(Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting members list Response: " + response.toString());
+                // hideDialog();
+
+                try {
+                    db.deleteMembers();
+                    JSONObject jObj = new JSONObject(response);
+                    //    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    //   if (!error) {
+                    // JSONObject users = jObj.getJSONObject("users");
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+
+                        JSONObject u = user.getJSONObject(i);
+                        String groupID = u.getString("groupID");
+                        String userID = u.getString("userID");
+
+                        db.addMember(groupID,userID);
+
+                   /*} else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }*/ }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "members");
+                params.put("userID",userID );
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

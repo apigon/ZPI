@@ -487,11 +487,12 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     private void showMyFriends() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         markers =  new ArrayList<Marker>();
+        db.setGroupVisible("Znajomi1","1");
         Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation=null;
-        List<HashMap<String, String>> friends = db.getFriendLocationDetails();
-
+       // List<HashMap<String, String>> friends = db.getFriendLocationDetails();//todziala
+        List<HashMap<String, String>> friends = db.getFriendLocationsFromGroups();
         int i=0;
         while(i<friends.size()) {
             if (friends.get(i).get("lat") !=null && friends.get(i).get("lng") !=null) {
