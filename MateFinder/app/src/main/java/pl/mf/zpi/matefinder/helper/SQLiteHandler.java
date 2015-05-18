@@ -409,7 +409,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 KEY_FRIEND_LOCATION_ID_DATABASE + " = m." + KEY_MEMBER_USER_ID
                 + " LEFT OUTER JOIN " + TABLE_GROUPS+" g ON m."+
                 KEY_MEMBER_GROUP_ID +"=g." + KEY_GROUP_ID);
-                //+" WHERE g."+ KEY_GROUP_NAME + "=?");
+                //+" WHERE g."+ KEY_GROUP_NAME + "=?s");
 
         //db.rawQuery(MY_QUERY, new String[]{String.valueOf(propertyId)});
         SQLiteDatabase db = this.getReadableDatabase();

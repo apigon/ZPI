@@ -11,19 +11,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
-	signingConfigs {
-        release {
-            storeFile file("myreleasekey.keystore")
-            storePassword "password"
-            keyAlias "MyReleaseKey"
-            keyPassword "password"			
+    signingConfigs {
+        config {
+            keyAlias 'MateFinder'
+            keyPassword 'matefinder'
+            storeFile file('/MateFinder/matefinderkeystore.jks')
+            storePassword 'matefinder'
         }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-			signingConfig signingConfigs.release
+            signingConfig signingConfigs.config
         }
     }
 }
