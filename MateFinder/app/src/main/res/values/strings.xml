@@ -98,6 +98,16 @@
     <string name="group_menu_add_friend">Dodaj znajomych</string>
     <string name="group_menu_delete">Usuń grupę</string>
 
+    <!--Dodawanie do grupy-->
+    <string name="add_friend_to_group">Zapisz</string>
+    <string name="add_friend_to_groups">Wybierz grupy do których chcesz dodać znajomego</string>
+    <string name="add_friends_to_group">Wybierz znajomych którychc chcesz dodać do grupy</string>
+
+    <!--Usuwanie grupy-->
+    <string name="delete_group_title">Usuń grupę</string>
+    <string name="dlelete_group_confirm">Czy na pewno chcesz usunąć wybraną grupę?</string>
+    <string name="delete_group_yes">Tak</string>
+    <string name="delete_group_no">Nie</string>
 
     <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
     <string name="title_activity_update_group">UpdateGroupActivity</string>

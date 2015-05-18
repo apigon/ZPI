@@ -14,22 +14,20 @@ import pl.mf.zpi.matefinder.app.AppController;
  * Created by root on 06.05.15.
  */
 public class Friend {
-    String login, name, surname, email, phone;
-    Bitmap photo;
-    public Friend(String friendLogin,String friendPhoto, String name, String surname, String phone){
+    private int id;
+    private String login, name, surname, email, phone, photoS;
+    private Bitmap photo;
+
+    public Friend(int id, String friendLogin,String friendPhoto){
         this.login = friendLogin;
-        this.name=name;
-        this.surname=surname;
-        this.phone=phone;
-        getFriendPhoto(friendPhoto);
-        Log.d("setting singlefriend", "SingleFriend utworzony");
+        this.id = id;
+        photoS = friendPhoto;
     }
     public void setPhoto(Bitmap photo){
         this.photo = photo;
-        Log.d("setting photo","Bitmapa ustawiona");
     }
-    public void getFriendPhoto(String friendPhoto){
-        String url = "http://156.17.130.212/android_login_api/images/" + friendPhoto;
+    public void getFriendPhoto(){
+        String url = "http://156.17.130.212/android_login_api/images/" + photoS;
 
         ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
             @Override
@@ -51,5 +49,33 @@ public class Friend {
 
     public String getPhone(){
         return phone;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setName(String name){
+        this.name=name;
+    }
+
+    public void setSurname(String surname){
+        this.surname=surname;
+    }
+
+    public void setEmail(String email){
+        this.email=email;
+    }
+
+    public  void setPhone(String phone){
+        this.phone=phone;
+    }
+
+    public String getLogin(){
+        return login;
+    }
+
+    public String getEmail(){
+        return email;
     }
 }

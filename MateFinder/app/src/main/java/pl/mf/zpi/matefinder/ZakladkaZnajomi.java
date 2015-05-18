@@ -163,10 +163,13 @@ public class ZakladkaZnajomi extends Fragment{
 class SingleFriend {
     String friendLogin;
     Bitmap friendPhoto;
-    public SingleFriend(String friendLogin,String friendPhoto){
+    int id;
+
+    public SingleFriend(String friendLogin,String friendPhoto, int id){
         this.friendLogin = friendLogin;
         getFriendPhoto(friendPhoto);
         Log.d("setting singlefriend","SingleFriend utworzony");
+        this.id=id;
     }
     public void setFriendPhoto(Bitmap photo){
         this.friendPhoto = photo;
@@ -184,6 +187,10 @@ class SingleFriend {
             }
         }, 0, 0, null, null);
         AppController.getInstance().addToRequestQueue(ir, "image_request");
+    }
+
+    public int getID(){
+        return id;
     }
 }
 
@@ -206,7 +213,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
         for(int i=0;i<friends.size();i++){
-            SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"));
+            SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
             listaZnajomych.add(sf);
         }
         context=c;
@@ -335,20 +342,27 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if(item.getItemId()==R.id.usun) {
-            removeFriend(listaZnajomych.get(klikniete).friendLogin);
-            Toast.makeText(context, "Usunięto użytkownika ze znajomych", Toast.LENGTH_LONG).show();
-        }
-        if(item.getItemId()==R.id.pokazDane){
-            HashMap<String, String> temp = friends.get(klikniete);
-            String imie,nazwisko,mail,telefon;
-            imie = temp.get("name");
-            nazwisko = temp.get("surname");
-            mail = temp.get("email");
-            telefon = temp.get("phone");
-            Toast toast = new Toast(this.context);
-            toast = Toast.makeText(this.context,"Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon,Toast.LENGTH_LONG);
-            toast.show();
+        switch (item.getItemId()) {
+            case R.id.usun:
+                removeFriend(listaZnajomych.get(klikniete).friendLogin);
+                Toast.makeText(context, "Usunięto użytkownika ze znajomych", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.pokazDane:
+                HashMap<String, String> temp = friends.get(klikniete);
+                String imie, nazwisko, mail, telefon;
+                imie = temp.get("name");
+                nazwisko = temp.get("surname");
+                mail = temp.get("email");
+                telefon = temp.get("phone");
+                Toast toast = new Toast(this.context);
+                toast = Toast.makeText(this.context, "Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon, Toast.LENGTH_LONG);
+                toast.show();
+                break;
+            case R.id.do_grupy:
+                Intent intent = new Intent(context, AddFriendToGroupActivity.class);
+                intent.putExtra("adapter", 1);
+                intent.putExtra("id", listaZnajomych.get(klikniete).getID());
+                context.startActivity(intent);
         }
         return false;
     }
