@@ -17,6 +17,7 @@ android {
             keyPassword 'matefinder'
             storeFile file('matefinderkeystore.jks')
             storePassword 'matefinder'
+
         }
     }
     buildTypes {
