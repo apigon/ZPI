@@ -154,7 +154,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             groupName = bundle.getString("groupName");
         }
 
-        getMyFriendsLocalization(groupName);
+        getMyFriendsLocation(groupName);
 
     }
 
@@ -399,7 +399,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
-    private void getMyFriendsLocalization(final String groupName) {
+    private void getMyFriendsLocation(final String groupName) {
         db = new SQLiteHandler(getApplicationContext());
         // final String [] friends = getMyFriendsId();
 
@@ -427,12 +427,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     for (int i = 0; i < user.length(); i++) {
                         // user successfully logged in
                         JSONObject u = user.getJSONObject(i);
+                        int location = u.getInt("location");
                         String login = u.getString("login");
                         String lat = u.getString("lat");
                         String lng = u.getString("lng");
                         // Inserting row in users table
 
-                        db.addFriendLocation(login, lat, lng);
+                        db.addFriendLocation(location, login,lat, lng);
                     }
 
 
@@ -491,15 +492,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation=null;
-       // List<HashMap<String, String>> friends = db.getFriendLocationDetails();//todziala
+       // List<HashMap<String, String>> friends = db.getFriendLocationDetails();//
         List<HashMap<String, String>> friends = db.getFriendLocationsFromGroups();
         int i=0;
         while(i<friends.size()) {
             if (friends.get(i).get("lat") !=null && friends.get(i).get("lng") !=null) {
 
 
-                String friendID = friends.get(i).get("locationID");
-                String friendLogin= friends.get(i).get("locationID");
+
+                String friendLogin= friends.get(i).get("login");
                 String friendLat = friends.get(i).get("lat");
                 String friendLng = friends.get(i).get("lng");
                 if(!friendLat.equals("null") && !friendLng.equals("null")) {

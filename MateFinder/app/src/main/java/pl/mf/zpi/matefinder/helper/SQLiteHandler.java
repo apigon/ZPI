@@ -69,8 +69,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_FRIEND_SURNAME = "surname";
     private static final String KEY_FRIEND_PHOTO = "photo";
 
-    private static final String KEY_FRIEND_LOCATION_ID = "id";
-    private static final String KEY_FRIEND_LOCATION_ID_DATABASE = "locationID";
+    private static final String KEY_FRIEND_LOCATION_ID = "locationID";
     private static final String KEY_FRIEND_LAT = "lat";
     private static final String KEY_FRIEND_LNG = "lng";
 
@@ -106,13 +105,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_SETTINGS_TABLE);
 
         String CREATE_FRIENDS_TABLE = "CREATE TABLE " + TABLE_FRIENDS + "("
-                + KEY_FRIEND_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_ID_DATABASE + " TEXT," + KEY_FRIEND_LOGIN + " TEXT,"
+                + KEY_FRIEND_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_ID_DATABASE + " INTEGER," + KEY_FRIEND_LOGIN + " TEXT,"
                 + KEY_FRIEND_EMAIL + " TEXT," + KEY_FRIEND_PHONE + " TEXT," + KEY_FRIEND_NAME + " TEXT,"
                 + KEY_FRIEND_SURNAME + " TEXT," + KEY_FRIEND_PHOTO + " TEXT," + KEY_LOCATION + " TEXT" + ")";
         db.execSQL(CREATE_FRIENDS_TABLE);
 
         String CREATE_FRIENDS_LOCATIONS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS_FRIENDS + "("
-                + KEY_FRIEND_LOCATION_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_LOCATION_ID_DATABASE + " TEXT," + KEY_FRIEND_LAT
+                + KEY_FRIEND_LOCATION_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_LOGIN+" TEXT,"+ KEY_FRIEND_LAT
                 + " TEXT," + KEY_FRIEND_LNG + " TEXT" + ")";
         db.execSQL(CREATE_FRIENDS_LOCATIONS_TABLE);
 
@@ -156,10 +155,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New location inserted into sqlite: " + id);
     }
-    public void addFriendLocation(String locationID, String lat, String lng) {
+    public void addFriendLocation(int locationID,String login, String lat, String lng) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_FRIEND_LOCATION_ID_DATABASE, locationID);
+        values.put(KEY_FRIEND_LOCATION_ID, locationID);
+        values.put(KEY_FRIEND_LOGIN,login);
         values.put(KEY_FRIEND_LAT, lat);
         values.put(KEY_FRIEND_LNG, lng);
         long id = db.insert(TABLE_LOCATIONS_FRIENDS, null, values);
@@ -395,33 +395,28 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return locations;
     }
     public List<HashMap<String, String>> getFriendLocationsFromGroups() {
+        //pobierz wspolrzedne znajomych
         List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
-        /*java.lang.String selectQuery =
-                "SELECT l."+KEY_FRIEND_LOCATION_ID_DATABASE+",l."+KEY_FRIEND_LAT+",l."+KEY_FRIEND_LNG+" FROM "+ TABLE_MEMBERS +
-                " m INNER JOIN " + TABLE_LOCATIONS_FRIENDS +" l ON l."+ KEY_FRIEND_LOCATION_ID_DATABASE+
-                "=?";//+" INNER JOIN "+TABLE_GROUPS+" g WHERE g."+KEY_GROUP_VISIBLE +"= '1'";*/
+        java.lang.String selectQuery =
+                "SELECT l."+KEY_FRIEND_LOCATION_ID+",l."+KEY_FRIEND_LOGIN+",l."+KEY_FRIEND_LAT+",l."+KEY_FRIEND_LNG
+                        +" FROM "+ TABLE_MEMBERS
+                        +" m INNER JOIN " + TABLE_LOCATIONS_FRIENDS +" l ON l."+ KEY_FRIEND_LOCATION_ID+" =m."+KEY_MEMBER_USER_ID
+                        +" LEFT OUTER JOIN "+TABLE_GROUPS+" g ON m."+KEY_MEMBER_GROUP_ID +"=g." + KEY_GROUP_ID
+                        +" WHERE g."+KEY_GROUP_VISIBLE +"=?";
 
         String [] nameTab = {"1"};
-        SQLiteQueryBuilder _QB = new SQLiteQueryBuilder();
 
-        _QB.setTables(TABLE_LOCATIONS_FRIENDS +
-                " l LEFT OUTER JOIN " + TABLE_MEMBERS+ " m ON l." +
-                KEY_FRIEND_LOCATION_ID_DATABASE + " = m." + KEY_MEMBER_USER_ID
-                + " LEFT OUTER JOIN " + TABLE_GROUPS+" g ON m."+
-                KEY_MEMBER_GROUP_ID +"=g." + KEY_GROUP_ID);
-                //+" WHERE g."+ KEY_GROUP_NAME + "=?s");
 
-        //db.rawQuery(MY_QUERY, new String[]{String.valueOf(propertyId)});
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = _QB.query(db, null, null, null, null, null, null);
-//db.rawQuery(selectQuery, nameTab);
-        // Move to first row
+        Cursor cursor = db.rawQuery(selectQuery, nameTab);
+
         cursor.moveToFirst();
 
         if (cursor.getCount() > 0) {
             do {
                 HashMap<String,String> location = new HashMap<String,String>();
-                location.put("locationID", cursor.getString(1));
+                location.put("locationID", cursor.getString(0));
+                location.put("login",cursor.getString(1));
                 location.put("lat", cursor.getString(2));
                 location.put("lng", cursor.getString(3));
                 locations.add(location);
