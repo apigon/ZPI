@@ -21,7 +21,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 /**
  * Created by root on 04.05.15.
  */
-public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
+public class GroupAdapter extends BaseAdapter {
 
     protected SQLiteHandler db;
     protected ArrayList<Group> groups;
@@ -63,37 +63,5 @@ public class GroupAdapter extends BaseAdapter implements AdapterView.OnItemClick
         return row;
     }
 
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        index = position;
-        PopupMenu menu = new PopupMenu(context, listView.getChildAt(position));
-        menu.getMenuInflater().inflate(R.menu.group_popup_menu, menu.getMenu());
-        menu.setOnMenuItemClickListener(this);
-        menu.show();
-        return true;
-    }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        //TODO pozostałe funkcjonalności
-        if (item.getTitle().equals(context.getResources().getString(R.string.group_menu_edit))) {
-            Intent intent = new Intent(context, UpdateGroupActivity.class);
-            intent.putExtra("group", groups.get(index));
-            context.startActivity(intent);
-            ((Activity)context).finish();
-        }
-        return false;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Group group = groups.get(position);
-        boolean visible = !group.getVisible();
-        group.setVisible(visible);
-        String tekt = visible?"Wybrana grupa będzie wyświetlana.":"Wybrana grupa nie będzie wyswietlana";
-        Toast toas = Toast.makeText(context, tekt, Toast.LENGTH_SHORT);
-        toas.show();
-        String setValue = visible?"1":"0";
-        db.setGroupVisible(group.getName(), setValue);
-    }
 }
