@@ -16,8 +16,7 @@ android {
             storeFile file("myreleasekey.keystore")
             storePassword "password"
             keyAlias "MyReleaseKey"
-            keyPassword "password"
-			
+            keyPassword "password"			
         }
     }
     buildTypes {
