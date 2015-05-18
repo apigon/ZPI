@@ -15,7 +15,7 @@ android {
         config {
             keyAlias 'MateFinder'
             keyPassword 'matefinder'
-            storeFile file('/MateFinder/matefinderkeystore.jks')
+            storeFile file('matefinderkeystore.jks')
             storePassword 'matefinder'
         }
     }
