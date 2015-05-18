@@ -17,6 +17,7 @@ android {
             storePassword "password"
             keyAlias "MyReleaseKey"
             keyPassword "password"
+			
         }
     }
     buildTypes {
