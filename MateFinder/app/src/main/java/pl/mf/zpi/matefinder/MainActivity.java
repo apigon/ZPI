@@ -83,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
-        getFriendsRequests();
+        // getFriendsRequests();
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);

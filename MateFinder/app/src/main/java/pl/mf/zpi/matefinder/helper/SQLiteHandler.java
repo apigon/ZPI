@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -303,6 +304,22 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(selectQuery, null);
         Friend f = new Friend(c.getInt(1), c.getString(2), c.getString(7));
         return f;
+    }
+
+    public HashMap<String,String> getFriendLoginAndPhoto(String friendID){
+        HashMap<String, String> singlefriend = new HashMap<String, String>();
+        String selectQuery = "SELECT " + KEY_FRIEND_LOGIN + "," +  KEY_FRIEND_PHOTO + " FROM " + TABLE_FRIENDS + " WHERE " + KEY_FRIEND_ID_DATABASE + "="+friendID;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            singlefriend.put("login", cursor.getString(0));
+            singlefriend.put("photo", cursor.getString(1));
+        }
+        Log.d(TAG,"Fetching friend login and photo from database : cursor size + " + cursor.getCount());
+        cursor.close();
+        db.close();
+        return singlefriend;
     }
 
     /**

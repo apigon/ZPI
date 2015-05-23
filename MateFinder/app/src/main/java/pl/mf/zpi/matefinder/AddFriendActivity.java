@@ -87,7 +87,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         if (!login.equals(""))
         {
             addFriend(login);
-            backToMain();
+            finish();
         }
 
         else {
