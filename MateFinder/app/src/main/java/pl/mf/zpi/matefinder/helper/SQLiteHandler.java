@@ -446,6 +446,25 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return locations;
     }
+    public HashMap<String, String> getFriendLocation(int userID)
+    {
+        HashMap<String, String> location = new HashMap<String, String>();
+        String selectQuery = "SELECT  "+KEY_FRIEND_LAT+","+KEY_FRIEND_LNG+
+              " FROM " + TABLE_LOCATIONS_FRIENDS +" WHERE "+KEY_FRIEND_LOCATION_ID+"="+userID;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            location.put("lat", cursor.getString(0));
+            location.put("lng", cursor.getString(1));
+
+        }
+        cursor.close();
+        db.close();
+        Log.d(TAG, "Fetching single friend location from Sqlite: " + location.toString());
+        return location;
+    }
+
     public List<HashMap<String, String>> getFriendLocationsFromGroups() {
         //pobierz wspolrzedne znajomych
         List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
