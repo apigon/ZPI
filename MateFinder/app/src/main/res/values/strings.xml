@@ -122,6 +122,8 @@
     <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
     <string name="title_activity_update_group">UpdateGroupActivity</string>
     <string name="title_activity_add_friend">AddFriendActivity</string>
+    <string name="title_activity_show_friend_profile">ShowFriendProfileActivity</string>
+    <string name="showProfile_back">Cofnij</string>
 
     <!--Wiadomości-->
     <string name="message_content">Wiadomość</string>

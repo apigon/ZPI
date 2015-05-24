@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -510,14 +511,28 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 break;
             case R.id.pokazDane:
                 HashMap<String, String> temp = friends.get(klikniete);
+                String login = listaZnajomych.get(klikniete).friendLogin;
+                Bitmap photo = listaZnajomych.get(klikniete).friendPhoto;
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
                 String imie, nazwisko, mail, telefon;
                 imie = temp.get("name");
                 nazwisko = temp.get("surname");
                 mail = temp.get("email");
                 telefon = temp.get("phone");
-                Toast toast = new Toast(this.context);
+                Intent showProfile = new Intent(this.context,ShowFriendProfileActivity.class);
+                showProfile.putExtra("name",imie);
+                showProfile.putExtra("surname",nazwisko);
+                showProfile.putExtra("email",mail);
+                showProfile.putExtra("phone",telefon);
+                showProfile.putExtra("login",login);
+                showProfile.putExtra("photo",byteArray);
+                showProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(showProfile);
+                /*Toast toast = new Toast(this.context);
                 toast = Toast.makeText(this.context, "Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon, Toast.LENGTH_LONG);
-                toast.show();
+                toast.show();*/
                 break;
             case R.id.do_grupy:
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
