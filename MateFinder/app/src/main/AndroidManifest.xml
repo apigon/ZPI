@@ -67,6 +67,7 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD-gqRidN2XjywLAPJRU_AdmKWv1USzcQ0" />
+
         <uses-feature
             android:glEsVersion="0x00020000"
             android:required="true" />
@@ -95,6 +96,11 @@
         <service
             android:name=".MessageService"
             android:exported="false" />
+
+        <activity
+            android:name=".ShowFriendProfileActivity"
+            android:label="@string/title_activity_show_friend_profile" >
+        </activity>
     </application>
 
 </manifest>
