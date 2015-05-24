@@ -6,17 +6,22 @@
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:id="@+id/imageView_friend_photo" />
+        android:id="@+id/imageView_friend_photo"
+        android:src="@drawable/ic_action_notif"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/friend_login"
         android:id="@+id/textView_friend_login"
         android:layout_gravity="center"
         android:textColor="@color/kol2"
-        android:gravity="center"
-        android:layout_weight="1"/>
+        android:gravity="left|center"
+        android:layout_weight="1"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

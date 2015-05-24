@@ -97,6 +97,7 @@
 
     <string name="dialog_yes">Akceptuj</string>
     <string name="dialog_no">Odrzuć</string>
+    <string name="dialog_back">Powrót</string>
 
     <!--Menu dla pojedynczego znajomego-->
     <string name="friend_menu_add_friend_to_group">Dodaj znajomego do grupy</string>
@@ -121,6 +122,13 @@
     <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
     <string name="title_activity_update_group">UpdateGroupActivity</string>
     <string name="title_activity_add_friend">AddFriendActivity</string>
+
+    <!--Wiadomości-->
+    <string name="message_content">Wiadomość</string>
+    <string name="message_author">Nadawca</string>
+    <string name="title_messages">Wiadomości</string>
+    <string name="title_activity_messages">Wiadomości</string>
+    <string name="message_delete">Usuń wiadomość</string>
 
 
 

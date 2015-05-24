@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +18,7 @@ import java.util.List;
 
 import pl.mf.zpi.matefinder.Friend;
 import pl.mf.zpi.matefinder.Group;
+import pl.mf.zpi.matefinder.Message;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
@@ -38,6 +38,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_LOCATIONS_FRIENDS = "friends_locations";
     private static final String TABLE_GROUPS = "groups";
     private static final String TABLE_MEMBERS = "members";
+    private static final String TABLE_MESSAGES = "messages";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -75,6 +76,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_MEMBER_ID = "id";
     private static final String KEY_MEMBER_GROUP_ID = "groupID";
     private static final String KEY_MEMBER_USER_ID = "userID";
+
+    //Messages
+    private static final String KEY_MESSAGE_ID = "id";
+    private static final String KEY_MESSAGE_AUTHOR = "author_login";
+    private static final String KEY_MESSAGE_RECIPENT = "recipent_id";
+    private static final String KEY_MESSAGE_CONTENT = "content";
+    private static final String KEY_MESSAGE_READ = "read";
+    private static final String KEY_MESSAGE_TIME = "time";
+
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -114,6 +124,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 TABLE_FRIENDS + "(" + KEY_FRIEND_ID + "))";
         db.execSQL(createMembersTable);
 
+        String CREATE_MESSAGES_TABLE = "CREATE TABLE " + TABLE_MESSAGES + "(" + KEY_MESSAGE_ID + " INTEGER PRIMARY KEY," + KEY_MESSAGE_AUTHOR
+                + " TEXT," + KEY_MESSAGE_RECIPENT + " INTEGER," + KEY_MESSAGE_CONTENT + " TEXT," + KEY_MESSAGE_READ + " INTEGER,"
+                + KEY_MESSAGE_TIME + " DATETIME DEFAULT (DATETIME('NOW','LOCALTIME'))" + ")";
+        db.execSQL(CREATE_MESSAGES_TABLE);
 
         Log.d(TAG, "Database tables created");
     }
@@ -128,6 +142,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS_FRIENDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEMBERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GROUPS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         // Create tables again
         onCreate(db);
     }
@@ -192,6 +207,24 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
         Log.d(TAG, "New group inserted into SQLite: " + id);
     }
+
+    public void addMessage(String mess_id, String author, String content){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + KEY_ID_DATABASE + " FROM " + TABLE_LOGIN;
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        int user_id = Integer.parseInt(c.getString(0));
+        ContentValues values = new ContentValues();
+        values.put(KEY_MESSAGE_ID, Integer.parseInt(mess_id));
+        values.put(KEY_MESSAGE_AUTHOR, author);
+        values.put(KEY_MESSAGE_RECIPENT, user_id);
+        values.put(KEY_MESSAGE_CONTENT, content);
+        values.put(KEY_MESSAGE_READ, 0);
+
+        long id = db.insert(TABLE_MESSAGES, null, values);
+        db.close();
+        Log.d(TAG, "New message inserted into SQLite: " + id);
+    }
     /**
      * Storing user details in database
      */
@@ -251,6 +284,34 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         // return friends
         Log.d(TAG, "Fetching groups from Sqlite: " + groups.toString());
         return groups;
+    }
+
+    //Getting messages from db
+    public ArrayList<Message> getMessages(){
+        ArrayList<Message> messages = new ArrayList<Message>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " + KEY_ID_DATABASE + " FROM " + TABLE_LOGIN;
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        int user_id = Integer.parseInt(c.getString(0));
+        c.close();
+
+        String selectQuery = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + KEY_MESSAGE_RECIPENT
+                + " = " + user_id + " ORDER BY DATETIME(" + KEY_MESSAGE_TIME + ") DESC";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Message mess = new Message(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(3), Integer.parseInt(cursor.getString(4)), cursor.getString(5));
+            messages.add(mess);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        // return friends
+        Log.d(TAG, "Fetching messages from Sqlite: " + messages.toString() + "USER ID: " + user_id);
+        return messages;
     }
 
     //getting members of group specified with id
@@ -463,6 +524,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return rowCount;
     }
 
+    public boolean deleteMessage(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean deleted = db.delete(TABLE_MESSAGES, KEY_MESSAGE_ID + " = " + id, null) > 0;
+        db.close();
+
+        return deleted;
+    }
+
     public void deleteLocations() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
@@ -500,6 +569,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Deleted all friends info from sqlite");
+    }
+
+    public void deleteMessages(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Delete All Rows
+        db.delete(TABLE_MESSAGES,null,null);
+        db.close();
+
+        Log.d(TAG, "Deleted all messages info from sqlite");
     }
     public void deleteFriendsLocations(){
         SQLiteDatabase db = this.getWritableDatabase();
