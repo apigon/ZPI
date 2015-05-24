@@ -167,7 +167,6 @@ public class MainActivity extends ActionBarActivity {
         db.deleteUsers();
         db.deleteFriends();
         db.deleteGroups();
-        db.deleteSettings();
 
         // Launching the login activity
         //stopService(new Intent(this, MessageService.class));

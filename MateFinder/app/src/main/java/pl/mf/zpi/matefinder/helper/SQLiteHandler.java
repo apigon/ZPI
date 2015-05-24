@@ -33,7 +33,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     // Tables names
     private static final String TABLE_LOGIN = "login";
     private static final String TABLE_LOCATIONS = "locations";
-    private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_FRIENDS = "friends";
     private static final String TABLE_LOCATIONS_FRIENDS = "friends_locations";
     private static final String TABLE_GROUPS = "groups";
@@ -51,13 +50,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_LOCATION = "location";              // location table + login table + friends table
     private static final String KEY_LAT = "lat";                        // location table
     private static final String KEY_LNG = "lng";                        // location table
-
-    //settings table columns name
-    private static final String KEY_INTERNET_LIMIT = "internet";
-    private static final String KEY_NOTIFICATION_SOUND = "sound";
-    private static final String KEY_USER_NAVIGATION = "navigation";
-    private static final String KEY_LAYOUT = "layout";
-    private static final String KEY_SEARCH_RADIUS = "radius";
 
     // Friends table column names
     private static final String KEY_FRIEND_ID = "id";
@@ -100,10 +92,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + " TEXT," + KEY_LNG + " TEXT" + ")";
         db.execSQL(CREATE_LOCATIONS_TABLE);
 
-        String CREATE_SETTINGS_TABLE = "CREATE TABLE " + TABLE_SETTINGS + "(" + KEY_ID + " INTEGER PRIMARY KEY, " + KEY_INTERNET_LIMIT + " INTEGER, " +
-                KEY_NOTIFICATION_SOUND + " INTEGER, " + KEY_USER_NAVIGATION + " INTEGER, " + KEY_LAYOUT + " INTEGER, " + KEY_SEARCH_RADIUS + " INTEGER)";
-        db.execSQL(CREATE_SETTINGS_TABLE);
-
         String CREATE_FRIENDS_TABLE = "CREATE TABLE " + TABLE_FRIENDS + "("
                 + KEY_FRIEND_ID + " INTEGER PRIMARY KEY," + KEY_FRIEND_ID_DATABASE + " INTEGER," + KEY_FRIEND_LOGIN + " TEXT,"
                 + KEY_FRIEND_EMAIL + " TEXT," + KEY_FRIEND_PHONE + " TEXT," + KEY_FRIEND_NAME + " TEXT,"
@@ -134,7 +122,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FRIENDS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS_FRIENDS);
@@ -168,19 +155,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New friend location inserted into sqlite: " + id);
     }
 
-    public void addSettings(String internet, String notification, String navigation, String layout, String radius) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(KEY_INTERNET_LIMIT, internet);
-        values.put(KEY_NOTIFICATION_SOUND, notification);
-        values.put(KEY_USER_NAVIGATION, navigation);
-        values.put(KEY_LAYOUT, layout);
-        values.put(KEY_SEARCH_RADIUS, radius);
-        long id = db.insert(TABLE_LOCATIONS, null, values);
-        db.close(); // Closing database connection
-
-        Log.d(TAG, "New location inserted into sqlite: " + id);
-    }
     public void addMember(String groupID, String userID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -456,28 +430,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         return locations;
     }
-    public HashMap<String, String> getSettings() {
-        HashMap<String, String> settings = new HashMap<String, String>();
-        String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        // Move to first row
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            settings.put("internet", cursor.getString(1));
-            settings.put("notification", cursor.getString(2));
-            settings.put("navigation", cursor.getString(3));
-            settings.put("layout", cursor.getString(4));
-            settings.put("radius", cursor.getString(5));
-        }
-        cursor.close();
-        db.close();
-        // return user
-        Log.d(TAG, "Fetching user from Sqlite: " + settings.toString());
-
-        return settings;
-    }
 
     /**
      * Getting user login status return true if rows are there in table
@@ -513,16 +465,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.close();
 
         Log.d(TAG, "Deleted all user info from sqlite");
-    }
-
-
-    public void deleteSettings() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        // Delete All Rows
-        db.delete(TABLE_SETTINGS, null, null);
-        db.close();
-
-        Log.d(TAG, "Deleted all location info from sqlite");
     }
 
     public void deleteGroups() {

@@ -67,6 +67,15 @@
         <item>Nocny</item>
     </string-array>
 
+    <!--Ustawienia zapis-->
+    <string name="settings_save_file">pl.mf.zpi.matefinder.Settings</string>
+    <string name="settings_save_key_sounds">sounds</string>
+    <string name="settings_save_key_transfer">transfer</string>
+    <string name="settings_save_key_navigation">navigation</string>
+    <string name="settings_save_key_radius">radius</string>
+    <string name="settings_save_key_motive">motive</string>
+
+
     <!-- Mapy -->
     <string name="title_activity_maps">Mapy</string>
 

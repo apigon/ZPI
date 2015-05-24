@@ -1,6 +1,7 @@
 package pl.mf.zpi.matefinder;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -22,7 +23,6 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 public class SettingsActivity extends ActionBarActivity implements View.OnClickListener {
 
-    private NumberPicker picker;
     private Button zapisz;
 
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
@@ -36,6 +36,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -43,8 +44,24 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        picker = (NumberPicker)findViewById(R.id.radius);
-        picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+
+        CheckBox notification = (CheckBox)findViewById(R.id.notification);
+        notification.setChecked(settings.getBoolean(getString(R.string.settings_save_key_sounds), false));
+
+        CheckBox internet = (CheckBox)findViewById(R.id.internet);
+        internet.setChecked(settings.getBoolean(getString(R.string.settings_save_key_transfer), false));
+
+        Spinner navigation = (Spinner)findViewById(R.id.navigation);
+        navigation.setSelection(settings.getInt(getString(R.string.settings_save_key_navigation), 0));
+
+        Spinner layout = (Spinner)findViewById(R.id.layout);
+        layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
+
+        NumberPicker radius = (NumberPicker)findViewById(R.id.radius);
+        radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        int n = settings.getInt(getString(R.string.settings_save_key_radius), 0);
+        radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
 
         zapisz = (Button) findViewById(R.id.button);
         zapisz.setOnClickListener(this);
@@ -129,18 +146,23 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         if (v.equals(zapisz)) {
-            db.deleteSettings();
             CheckBox internet = (CheckBox)findViewById(R.id.internet);
-            String internetS=""+(internet.isChecked()?1:0);
             CheckBox soudS=(CheckBox)findViewById(R.id.notification);
-            String soundS =""+(soudS.isChecked()?1:0);
             Spinner navigation = (Spinner)findViewById(R.id.navigation);
-            String navigationS =""+navigation.getSelectedItemPosition();
             Spinner layout =(Spinner)findViewById(R.id.layout);
-            String layoutS =""+layout.getSelectedItemPosition();
             NumberPicker radius = (NumberPicker)findViewById(R.id.radius);
-            String radiusS =""+radius.getValue();
-            db.addSettings(internetS, soundS, navigationS, layoutS, radiusS);
+
+            SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+
+            editor.putBoolean(getString(R.string.settings_save_key_transfer), internet.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_sounds), soudS.isChecked());
+            editor.putInt(getString(R.string.settings_save_key_navigation), navigation.getSelectedItemPosition());
+            editor.putInt(getString(R.string.settings_save_key_motive), layout.getSelectedItemPosition());
+            editor.putInt(getString(R.string.settings_save_key_radius), radius.getValue());
+
+            editor.commit();
+
             Toast toast = Toast.makeText(this, "Zapisano zmiany", Toast.LENGTH_SHORT);
             toast.show();
             backToMain();
