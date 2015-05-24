@@ -60,7 +60,6 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
         NumberPicker radius = (NumberPicker)findViewById(R.id.radius);
         radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        int n = settings.getInt(getString(R.string.settings_save_key_radius), 0);
         radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
 
         zapisz = (Button) findViewById(R.id.button);

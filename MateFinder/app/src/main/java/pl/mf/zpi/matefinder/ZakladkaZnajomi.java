@@ -363,7 +363,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
                 intent.putExtra("adapter", 1);
                 intent.putExtra("id", listaZnajomych.get(klikniete).getID());
-                context.startActivity(intent);
+//                context.startActivity(intent);
         }
         return false;
     }

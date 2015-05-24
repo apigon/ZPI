@@ -574,6 +574,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_GROUPS, KEY_GROUP_ID + " = ? ", new String[]{gid+""});
         deleteMemers(gid, db);
         db.close();
+        //
     }
 
     private void deleteMemers(int gid, SQLiteDatabase db){
