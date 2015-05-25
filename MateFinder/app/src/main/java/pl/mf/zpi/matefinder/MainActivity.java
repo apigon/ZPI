@@ -510,7 +510,7 @@ public class MainActivity extends ActionBarActivity {
                 });
             };
         };
-        timer.schedule(doAsynchronousTask, 0, 20000);
+        timer.schedule(doAsynchronousTask, 0, 60000);
     }
 
     public static void refreshMenuIcon(boolean new_messages){
