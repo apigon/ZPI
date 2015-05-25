@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -57,6 +58,14 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
     }
 
     @Override
+    public View getView(int position, View convertView, ViewGroup parent){
+        View row = super.getView(position, convertView, parent);
+        if(!groups.get(position).getVisible())
+            row.setAlpha(0.4f);
+        return row;
+    }
+
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
@@ -102,7 +111,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        delete(g.getID());
+                        delete(g);
                     }
 
                 })
@@ -111,7 +120,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
 
     }
 
-    private void delete(final int gid){
+    private void delete(final Group gid){
         // Tag used to cancel the request
         //db = new SQLiteHandler(getApplicationContext());
         showDialog();
@@ -130,7 +139,8 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        db.deleteGroup(gid);
+                        db.deleteGroup(gid.getID());
+                        groups.remove(gid);
                         notifyDataSetChanged();
                     } else {
 
@@ -163,7 +173,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "deleteGroup");
-                params.put("groupID", ""+gid);
+                params.put("groupID", ""+gid.getID());
 
                 return params;
             }
