@@ -75,7 +75,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
 
         if (id == android.R.id.home)
         {
-            backToMain();
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

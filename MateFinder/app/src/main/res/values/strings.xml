@@ -81,7 +81,7 @@
     <string name="title_activity_maps">Mapy</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_group_details">GroupDetailsActivity</string>
+    <string name="title_activity_group_details">Dodaj grupę</string>
 
     <!--Edycja grupy-->
     <string name="put_group_name">Wpisz nazwę grupy</string>
@@ -120,10 +120,10 @@
     <string name="delete_group_yes">Tak</string>
     <string name="delete_group_no">Nie</string>
 
-    <string name="title_activity_add_friend_to_group">AddFriendToGroupActivity</string>
-    <string name="title_activity_update_group">UpdateGroupActivity</string>
-    <string name="title_activity_add_friend">AddFriendActivity</string>
-    <string name="title_activity_show_friend_profile">ShowFriendProfileActivity</string>
+    <string name="title_activity_add_friend_to_group">Dodaj znajomego do grupy</string>
+    <string name="title_activity_update_group">Edytuj grupę</string>
+    <string name="title_activity_add_friend">Dodaj znajomego</string>
+    <string name="title_activity_show_friend_profile">Profil znajomego</string>
     <string name="showProfile_back">Cofnij</string>
 
     <!--Wiadomości-->

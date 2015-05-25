@@ -87,12 +87,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     break;
                 case 2:
                     maps();
+                    // ((Activity) context).finish();
                     break;
                 case 3:
                     editProfile();
+                    // ((Activity) context).finish();
                     break;
                 case 4:
                     settings();
+                    // ((Activity) context).finish();
             }
 
         }

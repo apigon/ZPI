@@ -76,7 +76,8 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
 
         if (id == android.R.id.home)
         {
-            backToMain();
+            finish();
+            // backToMain();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -88,7 +89,8 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
         if (!nazwa.equals(""))
         {
             addNewGroup(nazwa);
-            backToMain();
+            finish();
+            // backToMain();
         }
 
         else {

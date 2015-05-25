@@ -109,7 +109,8 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                backToMain();
+                //backToMain();
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

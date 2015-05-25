@@ -72,8 +72,8 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
             }
         }
         hideDialog();
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
+        // Intent intent = new Intent(context, MainActivity.class);
+        // context.startActivity(intent);
         ((Activity)context).finish();
     }
 
