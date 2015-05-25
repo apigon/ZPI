@@ -29,7 +29,6 @@
     <item
         android:id="@+id/action_notification"
         android:title="@string/action_notification"
-        android:icon="@drawable/ic_action_notif"
         app:showAsAction="always" />
 
     <item

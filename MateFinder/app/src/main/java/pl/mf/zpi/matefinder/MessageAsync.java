@@ -1,7 +1,9 @@
 package pl.mf.zpi.matefinder;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -31,25 +33,26 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
     private Context context;
     private String userID;
 
-    private boolean running = true;
-
     private SQLiteHandler db;
+    public static boolean running;
 
     public MessageAsync(Context context){
         Log.d(TAG, "Uruchomiono ASYNC");
         this.context = context;
         db = new SQLiteHandler(context);
+        running = true;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        getMessages();
+        while(running)
+            getMessages();
+        Log.d(TAG, "Zatrzymano ASYNC");
         return null;
     }
 
     private void getMessages(){
-        while(running) {
-            Log.d(TAG, "Co 10 sek.");
+            Log.d(TAG, "Sprawdzanie wiadomości...");
 
             String tag_string_req = "req_getMessages";
             StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -67,18 +70,33 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
                                 // user successfully logged in
                                 JSONObject u = user.getJSONObject(i);
                                 final String requestID = u.getString(("messageID"));
-                                final String userID = u.getString("userID");
-                                String content = u.getString("content");
+                                final String authorLogin = u.getString(("authorLogin"));
+                                final String content = u.getString("content");
 
-                                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-                                mBuilder.setSmallIcon(R.drawable.ic_action_notif);
-                                mBuilder.setContentTitle("MateFinder");
-                                mBuilder.setContentText(content);
-                                int mNotificationId = i;
-                                NotificationManager mNotifyMgr =
-                                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                                db.addMessage(requestID, authorLogin, content);
                             }
+                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+                            mBuilder.setSmallIcon(R.drawable.ic_app);
+                            mBuilder.setContentTitle("MateFinder");
+                            mBuilder.setContentText("Masz nowe powiadomienia.");
+                            mBuilder.setVibrate(new long[]{ 200, 200, 200, 200, 200 });
+
+                            Intent resultIntent = new Intent(context, MessageActivity.class);
+                            PendingIntent resultPendingIntent =
+                                    PendingIntent.getActivity(
+                                            context,
+                                            0,
+                                            resultIntent,
+                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                    );
+                            mBuilder.setContentIntent(resultPendingIntent);
+
+                            int mNotificationId = 001;
+                            NotificationManager mNotifyMgr =
+                                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+                            MainActivity.messages = true;
                         }
                     } catch (JSONException e) {
                         // JSON error
@@ -90,7 +108,7 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "Login ERROR: " + error.getMessage());
+                    Log.e(TAG, "Message ERROR: " + error.getMessage());
                 }
             }) {
                 @Override
@@ -109,14 +127,9 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
             AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
             try {
-                Thread.sleep(10000);
+                Thread.sleep(60000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void stop(){
-        running = false;
     }
 }

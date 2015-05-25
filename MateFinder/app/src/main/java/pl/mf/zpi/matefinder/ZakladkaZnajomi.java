@@ -33,12 +33,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -514,31 +516,157 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 break;
             case R.id.pokazDane:
                 HashMap<String, String> temp = friends.get(klikniete);
+                String login = listaZnajomych.get(klikniete).friendLogin;
+                Bitmap photo = listaZnajomych.get(klikniete).friendPhoto;
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
                 String imie, nazwisko, mail, telefon;
                 imie = temp.get("name");
                 nazwisko = temp.get("surname");
                 mail = temp.get("email");
                 telefon = temp.get("phone");
-                Toast toast = new Toast(this.context);
+                Intent showProfile = new Intent(this.context,ShowFriendProfileActivity.class);
+                showProfile.putExtra("name",imie);
+                showProfile.putExtra("surname",nazwisko);
+                showProfile.putExtra("email",mail);
+                showProfile.putExtra("phone",telefon);
+                showProfile.putExtra("login",login);
+                showProfile.putExtra("photo",byteArray);
+                showProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(showProfile);
+                /*Toast toast = new Toast(this.context);
                 toast = Toast.makeText(this.context, "Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon, Toast.LENGTH_LONG);
-                toast.show();
+                toast.show();*/
                 break;
             case R.id.do_grupy:
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
                 intent.putExtra("adapter", 1);
                 intent.putExtra("id", listaZnajomych.get(klikniete).getID());
                 activity.startActivity(intent);
+                break;
+            case R.id.wyznaczTrase:
+                getMyFriendsLocation("Znajomi");
+                break;
+
         }
         return false;
     }
-}
+    public LatLng getFriendLocation(int userID)
+    {
+        dbHandler = new SQLiteHandler(context);
+        HashMap<String, String> user = dbHandler.getFriendLocation(userID);
+        LatLng loc=null;
+        if(user!=null)
+        {
+            String lat = user.get("lat");
+            String lng = user.get("lng");
+            if(lat!=null && lng !=null)
+            {
+                double friendLat = Double.parseDouble(lat);
+                double friendLng = Double.parseDouble(lng);
+                loc = new LatLng(friendLat,friendLng);
+            }
 
-/*
-       final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        }
+
+        return loc;
+    }
+    public void goToMapActivity()
+    {
+        HashMap<String, String> list = friends.get(klikniete);
+        String friendID = list.get("location");
+        LatLng friendLoc = getFriendLocation(Integer.parseInt(friendID));
+        if(friendLoc != null)
+        {
+            Bundle args = new Bundle();
+            args.putParcelable("friendLoc", friendLoc);
+            Intent mapIntent = new Intent(context, MapsActivity.class);
+            mapIntent.putExtra("friendID", args);
+            mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //mapIntent.putExtra("id", listaZnajomych.get(klikniete).getID());
+            context.startActivity(mapIntent);
+        }
+        else
+            Toast.makeText(context,"Użytkownik nie jest aktywny", Toast.LENGTH_LONG).show();
+    }
+   ;
+
+    private void getMyFriendsLocation(final String groupName) {
+        dbHandler = new SQLiteHandler(context);
+        // final String [] friends = getMyFriendsId();
+
+        HashMap<String, String> user = dbHandler.getUserDetails();
+        final String userId = user.get("userID");
+        String tag_string_req = "update_req";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
             @Override
-            public void run() {
+            public void onResponse(String response) {
+                Log.d(TAG, "Update Response: " + response.toString());
+
+
+                try {
+                    dbHandler.deleteFriendsLocations();
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully updated in MySQL
+                        // Now store the user in sqlite
+
+                        JSONArray user = jObj.getJSONArray("users");
+                        for (int i = 0; i < user.length(); i++) {
+                            // user successfully logged in
+                            JSONObject u = user.getJSONObject(i);
+                            int location = u.getInt("location");
+                            String login = u.getString("login");
+                            String lat = u.getString("lat");
+                            String lng = u.getString("lng");
+                            // Inserting row in users table
+
+                            dbHandler.addFriendLocation(location, login, lat, lng);
+                        }
+                             goToMapActivity();
+
+
+
+                    } else {
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(context,errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Friends Locations Error: " + error.getMessage());
+                Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
-        },2000);
- */
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "getFriendsLocations");
+                params.put("userID", userId);
+                params.put("groupName", groupName);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+    }
+}
+

@@ -14,5 +14,9 @@
         android:id="@+id/pokazDane"
         android:title="Pokaż informacje o znajomym"
         />
+    <item
+        android:id="@+id/wyznaczTrase"
+        android:title="Wyznacz trasę"
+        />
 
 </menu>

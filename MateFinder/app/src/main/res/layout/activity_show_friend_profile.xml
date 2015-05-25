@@ -1,0 +1,170 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="pl.mf.zpi.matefinder.ShowFriendProfileActivity">
+
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar" />
+
+    <ImageView
+        android:id="@+id/showProfile_photo"
+        android:layout_width="@dimen/editProfile_photoWidth"
+        android:layout_height="@dimen/editProfile_photoHeight"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/app_bar"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/white" />
+
+    <Button
+        android:id="@+id/showProfile_btn_accept"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/showProfile_back" />
+
+    <TableRow
+        android:id="@+id/showProfile_row_login"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/showProfile_photo"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            android:id="@+id/showProfile_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_login"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <TextView
+            android:id="@+id/showProfile_login_content"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="20dp"
+            android:textSize="@dimen/editProfile_fontSize" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/showProfile_row_email"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/showProfile_row_surname"
+        android:layout_alignRight="@+id/showProfile_row_surname"
+        android:layout_below="@+id/showProfile_row_login"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/showProfile_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/editProfile_email"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/showProfile_email_content"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="20dp"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/showProfile_row_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/showProfile_row_surname"
+        android:layout_alignRight="@+id/showProfile_row_surname"
+        android:layout_below="@+id/showProfile_row_email"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+
+        <TextView
+            android:id="@+id/showProfile_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_phone"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/showProfile_phone_content"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="20dp"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginTop="10dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/showProfile_row_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/showProfile_photo"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_toEndOf="@+id/showProfile_photo"
+        android:layout_toRightOf="@+id/showProfile_photo">
+
+        <TextView
+            android:id="@+id/showProfile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_name"
+            android:textSize="@dimen/editProfile_fontSize"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/showProfile_name_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="49dp"
+            android:ems="10"
+            android:textSize="@dimen/editProfile_fontSize" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/showProfile_row_surname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/showProfile_row_name"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_toEndOf="@+id/showProfile_photo"
+        android:layout_toRightOf="@+id/showProfile_photo">
+
+        <TextView
+            android:id="@+id/showProfile_surname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editProfile_surname"
+            android:textSize="@dimen/editProfile_fontSize" />
+
+        <TextView
+            android:id="@+id/showProfile_surname_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:ems="10"
+            android:textSize="@dimen/editProfile_fontSize" />
+    </TableRow>
+
+</RelativeLayout>
