@@ -175,13 +175,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             myLocation = getMyLastLocation();
         } catch (IOException e) {Log.e("Error with you","s");
         };
-       // if(myLocation!=null)
-        Log.e("moja",Double.toString(myLocation.latitude)+" "+Double.toString(friendLocation.latitude));
-            String url= makeURL(myLocation.latitude,myLocation.longitude, friendLocation.latitude,friendLocation.longitude);
-            new connectAsyncTask(url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        //else
-       //     Toast.makeText(getApplicationContext(), "Brak historii Twojej lokalizacji!", Toast.LENGTH_LONG).show();
+       if(myLocation!=null) {
+           Log.e("moja", Double.toString(myLocation.latitude) + " " + Double.toString(friendLocation.latitude));
+           String url = makeURL(myLocation.latitude, myLocation.longitude, friendLocation.latitude, friendLocation.longitude);
+           new connectAsyncTask(url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+       }
+        else
+            Toast.makeText(getApplicationContext(), "Brak historii Twojej lokalizacji!", Toast.LENGTH_LONG).show();
 
     }
 

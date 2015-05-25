@@ -45,7 +45,7 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        while(running)
+        //while(running)
             getMessages();
         Log.d(TAG, "Zatrzymano ASYNC");
         return null;
@@ -126,10 +126,10 @@ public class MessageAsync extends AsyncTask<Void, Void, Void> {
             // Adding request to request queue
             AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
-            try {
+            /*try {
                 Thread.sleep(60000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
     }
 }
