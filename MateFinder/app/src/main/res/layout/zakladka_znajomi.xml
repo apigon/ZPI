@@ -11,7 +11,7 @@
         android:id="@+id/textView4"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="20dp" />
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
@@ -28,5 +28,5 @@
         android:id="@+id/ListaZnajomych"
         android:layout_below="@+id/buttonPokazZnajomych"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="50dp" />
 </RelativeLayout>
