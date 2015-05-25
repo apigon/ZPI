@@ -202,10 +202,6 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.home:
                 return true;
-            case R.id.action_change_view:
-                toast = Toast.makeText(this, "Przepraszamy, zmiana widoku jeszcze nie gotowa", Toast.LENGTH_SHORT);
-                toast.show();
-                return true;
             case R.id.action_send_notification:
                 toast = Toast.makeText(this, "Przepraszamy, wysyłanie powiadomień jeszcze nie gotowe", Toast.LENGTH_SHORT);
                 toast.show();
@@ -226,8 +222,16 @@ public class MainActivity extends ActionBarActivity {
                 Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
                 editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
                 editor.commit();
-                toast = Toast.makeText(this,visible?"Lokalizacja bedzie wyświetlana":"Lokalizacja nie będzie wyświetlana", Toast.LENGTH_SHORT);
-                toast.show();
+                if(visible){
+                    toast = Toast.makeText(this, "Lokalizacja bedzie udostępniana", Toast.LENGTH_SHORT);
+                    toast.show();
+                    item.setIcon(R.drawable.ic_action_location_on);
+                }
+                else {
+                    toast = Toast.makeText(this, "Lokalizacja nie bedzie udostępniana", Toast.LENGTH_SHORT);
+                    toast.show();
+                    item.setIcon(R.drawable.ic_action_location_off);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
