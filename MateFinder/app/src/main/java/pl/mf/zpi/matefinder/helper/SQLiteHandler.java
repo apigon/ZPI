@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,7 +153,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_LAT, lat);
         values.put(KEY_LNG, lng);
         long id = db.insert(TABLE_LOCATIONS, null, values);
-        db.close(); // Closing database connection
+        //db.close(); // Closing database connection
 
         Log.d(TAG, "New location inserted into sqlite: " + id);
     }
@@ -166,7 +165,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_FRIEND_LAT, lat);
         values.put(KEY_FRIEND_LNG, lng);
         long id = db.insert(TABLE_LOCATIONS_FRIENDS, null, values);
-        db.close(); // Closing database connection
+        //db.close(); // Closing database connection
 
         Log.d(TAG, "New friend location inserted into sqlite: " + id);
     }
@@ -183,7 +182,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New group member inserted into SQLite: " + id);
 
-        db.close();
+        //db.close();
     }
     public void addGroup(String groupID, String name){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -193,7 +192,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_GROUP_VISIBLE, "1");
 
         long id = db.insert(TABLE_GROUPS, null, values);
-        db.close();
+        //db.close();
         Log.d(TAG, "New group inserted into SQLite: " + id);
     }
     public void addGroup(int gid, String name){
@@ -204,7 +203,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_GROUP_VISIBLE, 1);
 
         long id = db.insert(TABLE_GROUPS, null, values);
-        db.close();
+        //db.close();
         Log.d(TAG, "New group inserted into SQLite: " + id);
     }
 
@@ -222,7 +221,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_MESSAGE_READ, 0);
 
         long id = db.insert(TABLE_MESSAGES, null, values);
-        db.close();
+        //db.close();
         Log.d(TAG, "New message inserted into SQLite: " + id);
     }
     /**
@@ -242,7 +241,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_LOCATION, location);
         // Inserting Row
         long id = db.insert(TABLE_LOGIN, null, values);
-        db.close(); // Closing database connection
+        //db.close(); // Closing database connection
 
         Log.d(TAG, "New user inserted into sqlite: " + id);
     }
@@ -261,7 +260,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_LOCATION, location);
         // Inserting Row
         long id = db.insert(TABLE_FRIENDS, null, values);
-        db.close(); // Closing database connection
+        //db.close(); // Closing database connection
 
         Log.d(TAG, "New friend inserted into sqlite: " + id);
     }
@@ -280,7 +279,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return friends
         Log.d(TAG, "Fetching groups from Sqlite: " + groups.toString());
         return groups;
@@ -308,10 +307,32 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return friends
         Log.d(TAG, "Fetching messages from Sqlite: " + messages.toString() + "USER ID: " + user_id);
         return messages;
+    }
+
+    //Checking if all read
+    public boolean allMessagesRead(){
+        boolean all_read = true;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT " + KEY_ID_DATABASE + " FROM " + TABLE_LOGIN;
+        Cursor c = db.rawQuery(query, null);
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+            int user_id = Integer.parseInt(c.getString(0));
+
+            String selectQuery = "SELECT * FROM " + TABLE_MESSAGES + " WHERE " + KEY_MESSAGE_RECIPENT
+                    + " = " + user_id + " AND " + KEY_MESSAGE_READ + " = " + 0;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if (cursor.getCount() > 0)
+                all_read = false;
+            cursor.close();
+            //db.close();
+        }
+        c.close();
+        return all_read;
     }
 
     //getting members of group specified with id
@@ -328,7 +349,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return friends
         Log.d(TAG, "Fetching members from Sqlite: " + members.toString());
         return members;
@@ -354,7 +375,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
         Log.d(TAG,"Fetching friend login and photo from database : cursor size + " + cursor.getCount());
         cursor.close();
-        db.close();
+        //db.close();
         return singlefriend;
     }
 
@@ -391,7 +412,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
         cursor.close();
-        db.close();
+        //db.close();
         // return friends
         Log.d(TAG, "Fetching friends from Sqlite: " + friends.toString());
         return friends;
@@ -419,7 +440,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             user.put("location", cursor.getString(8));
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return user
         Log.d(TAG, "Fetching user from Sqlite: " + user.toString());
 
@@ -441,7 +462,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return user
         Log.d(TAG, "Fetching user from Sqlite: " + locations.toString());
 
@@ -461,7 +482,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         }
         cursor.close();
-        db.close();
+        //db.close();
         Log.d(TAG, "Fetching single friend location from Sqlite: " + location.toString());
         return location;
     }
@@ -496,7 +517,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return user
         Log.d(TAG, "MEMBERS Fetching friend location from Sqlite: " + locations.toString());
 
@@ -522,7 +543,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        //db.close();
         // return user
         Log.d(TAG, "Fetching friend location from Sqlite: " + locations.toString());
 
@@ -537,7 +558,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int rowCount = cursor.getCount();
-        db.close();
+        //db.close();
         cursor.close();
 
         // return row count
@@ -547,7 +568,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public boolean deleteMessage(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         boolean deleted = db.delete(TABLE_MESSAGES, KEY_MESSAGE_ID + " = " + id, null) > 0;
-        db.close();
+        //db.close();
 
         return deleted;
     }
@@ -556,7 +577,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         db.delete(TABLE_LOCATIONS, null, null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all location info from sqlite");
     }
@@ -577,7 +598,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         db.delete(TABLE_GROUPS, null, null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all groups info from sqlite");
     }
@@ -586,7 +607,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
         db.delete(TABLE_FRIENDS,null,null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all friends info from sqlite");
     }
@@ -595,7 +616,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
         db.delete(TABLE_MESSAGES,null,null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all messages info from sqlite");
     }
@@ -603,7 +624,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
         db.delete(TABLE_LOCATIONS_FRIENDS,null,null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all friends locations info from sqlite");
     }
@@ -611,7 +632,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
         db.delete(TABLE_MEMBERS,null,null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Deleted all members locations info from sqlite");
     }
@@ -629,9 +650,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             id = Integer.parseInt(cursor.getString(0));
         }
         cursor.close();
-        db.close();
+        //db.close();
 
         return id;
+    }
+
+    public void setMessageRead(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_MESSAGE_READ,1);
+        db.update(TABLE_MESSAGES, cv, KEY_MESSAGE_ID + " = " + id, null);
+        //db.close();
+        Log.d(TAG, "Updated message read in sqlite" + id);
     }
 
     public void updateGroup(int gid, String name){
@@ -640,7 +670,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_GROUP_NAME, name);
         long id = db.update(TABLE_GROUPS, values, KEY_GROUP_ID + "=" + gid, null);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Updated group info in sqlite" + id);
     }
@@ -648,7 +678,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void removeFriend(String friendLogin){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_FRIENDS, KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
-        db.close();
+        //db.close();
     }
 /*
     public void setGroupVisible(int gid, boolean visible) {
@@ -666,7 +696,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String [] nameTab = {name};
         values.put(KEY_GROUP_VISIBLE, visible);
         long id = db.update(TABLE_GROUPS, values, KEY_GROUP_NAME + "=?", nameTab);
-        db.close();
+        //db.close();
 
         Log.d(TAG, "Updated group visibility info in sqlite" + id);
     }
@@ -679,7 +709,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db.insert(TABLE_MEMBERS, null, values);
 
-        db.close();
+        //db.close();
 
         Log.d(TAG, "New Member added in sqlite " + id);
     }
@@ -710,7 +740,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_GROUPS, KEY_GROUP_ID + " = ? ", new String[]{gid+""});
         deleteMemers(gid, db);
-        db.close();
+        //db.close();
         //
     }
 

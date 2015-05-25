@@ -25,6 +25,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         View message_view = inflater.inflate(R.layout.message_row, parent, false);
 
         Message single_message = getItem(position);
+
         TextView message_text = (TextView)message_view.findViewById(R.id.message_text);
         TextView message_author = (TextView)message_view.findViewById(R.id.message_author);
         TextView message_date = (TextView)message_view.findViewById(R.id.message_date);
@@ -33,7 +34,11 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         message_text.setText(single_message.getText());
         message_author.setText(single_message.getAuthor());
         message_date.setText(single_message.getDate());
-        message_image.setImageResource(R.drawable.ic_message);
+
+        if(single_message.isRead())
+            message_image.setImageResource(R.drawable.ic_message);
+        else
+            message_image.setImageResource(R.drawable.ic_new_message);
         return message_view;
     }
 }

@@ -131,7 +131,8 @@
     <string name="message_author">Nadawca</string>
     <string name="title_messages">Wiadomości</string>
     <string name="title_activity_messages">Wiadomości</string>
-    <string name="message_delete">Usuń wiadomość</string>
+    <string name="message_delete">Usuń</string>
+    <string name="message_delete_all">Usuń wszystkie</string>
 
 
 

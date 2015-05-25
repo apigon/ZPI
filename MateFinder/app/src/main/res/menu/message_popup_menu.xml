@@ -5,5 +5,8 @@
         android:id="@+id/delete_message"
         android:title="@string/message_delete"
         />
-
+    <item
+        android:id="@+id/delete_all_messages"
+        android:title="@string/message_delete_all"
+        />
 </menu>

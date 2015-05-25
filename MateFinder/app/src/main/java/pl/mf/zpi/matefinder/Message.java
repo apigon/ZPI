@@ -34,4 +34,8 @@ public class Message {
     public String getDate(){
         return date;
     }
+
+    public boolean isRead(){
+        return read == 1;
+    }
 }

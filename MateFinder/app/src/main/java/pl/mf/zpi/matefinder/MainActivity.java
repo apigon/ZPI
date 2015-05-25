@@ -68,8 +68,8 @@ public class MainActivity extends ActionBarActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
-    public static boolean messages;
-    private static boolean async = false;
+    private static Menu menu;
+    private static TimerTask doAsynchronousTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +135,6 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.kol3);
             }
         });
-
-        if(!async) {
-            callAsynchronousTask();
-        }
     }
 
     @Override
@@ -146,19 +142,12 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_notification);
-        if(messages)
-            item.setIcon(R.drawable.ic_action_new_email);
-        else
-            item.setIcon(R.drawable.ic_action_email);
-
-        return super.onPrepareOptionsMenu(menu);
+        this.menu = menu;
+        refreshMenuIcon(db.allMessagesRead());
+        if(doAsynchronousTask == null) {
+            callAsynchronousTask();
+        }
+        return true;
     }
 
     /**
@@ -170,11 +159,12 @@ public class MainActivity extends ActionBarActivity {
     private void logoutUser() {
         session.setLogin(false);
 
-        db.deleteUsers();
+        doAsynchronousTask.cancel();
+        doAsynchronousTask = null;
+
         db.deleteFriends();
         db.deleteGroups();
-        async = false;
-        MessageAsync.running = false;
+        db.deleteUsers();
 
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -500,7 +490,7 @@ public class MainActivity extends ActionBarActivity {
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
+        doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
                 handler.post(new Runnable() {
@@ -514,8 +504,16 @@ public class MainActivity extends ActionBarActivity {
                         }
                     }
                 });
-            }
+            };
         };
-        timer.schedule(doAsynchronousTask, 0, 50000); //execute in every 50000 ms
+        timer.schedule(doAsynchronousTask, 0, 20000);
+    }
+
+    public static void refreshMenuIcon(boolean new_messages){
+        MenuItem item = menu.findItem(R.id.action_notification);
+        if(!new_messages)
+            item.setIcon(R.drawable.ic_action_new_email);
+        else
+            item.setIcon(R.drawable.ic_action_email);
     }
 }

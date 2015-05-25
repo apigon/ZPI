@@ -2,7 +2,6 @@ package pl.mf.zpi.matefinder;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +35,7 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
         setContentView(R.layout.activity_messages);
 
         db = new SQLiteHandler(getApplicationContext());
-        ArrayList<Message> messages = db.getMessages();;
+        ArrayList<Message> messages = db.getMessages();
 
         ListAdapter messages_adapter = new MessageAdapter(this, messages);
         ListView messages_list_view = (ListView) findViewById(R.id.list_messages);
@@ -51,22 +50,24 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
 
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
-
-        MainActivity.messages = false;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Message mess = (Message) parent.getItemAtPosition(position);
+        db.setMessageRead(mess.getId());
         new AlertDialog.Builder(MessageActivity.this)
                 .setTitle("Wiadomość z\n" + mess.getDate())
                 .setMessage("Użytkownik " + mess.getAuthor() + " jest w Twoim promieniu wyszukiwania.").
                 setNeutralButton(R.string.dialog_back, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        finish();
+                        startActivity(getIntent());
                     }
                 })
                 .show();
+        MainActivity.refreshMenuIcon(db.allMessagesRead());
     }
 
     @Override
@@ -93,6 +94,12 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
                 else
                     Toast.makeText(getApplicationContext(), "Wystąpił błąd.", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.delete_all_messages:
+                db.deleteMessages();
+                Toast.makeText(getApplicationContext(), "Wiadomości zostały usunięte.", Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(getIntent());
+                break;
         }
         return false;
     }
@@ -109,18 +116,10 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
-                backToMain();
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    // Powrót do ekranu głównego
-    private void backToMain() {
-        // Launching the login activity
-        Intent intent = new Intent(MessageActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
     }
 }
