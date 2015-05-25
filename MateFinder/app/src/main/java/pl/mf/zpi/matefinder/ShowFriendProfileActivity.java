@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,10 +20,16 @@ public class ShowFriendProfileActivity extends ActionBarActivity {
     TextView imie,nazwisko,frlogin,telefon,mail;
     ImageView zdjecie;
     Bitmap bmp;
+    private  Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_friend_profile);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         imie = (TextView) findViewById(R.id.showProfile_name_content);
         nazwisko = (TextView) findViewById(R.id.showProfile_surname_content);
         frlogin = (TextView) findViewById(R.id.showProfile_login_content);
@@ -61,16 +68,14 @@ public class ShowFriendProfileActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //backToMain();
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

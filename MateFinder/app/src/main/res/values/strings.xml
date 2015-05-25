@@ -101,7 +101,7 @@
     <string name="dialog_back">Powrót</string>
 
     <!--Menu dla pojedynczego znajomego-->
-    <string name="friend_menu_add_friend_to_group">Dodaj znajomego do grupy</string>
+    <string name="friend_menu_add_friend_to_group">Dodaj znajomego do grup</string>
     <string name="friend_menu_delete">Usuń znajomego</string>
 
     <!--Menu group-->
@@ -112,7 +112,7 @@
     <!--Dodawanie do grupy-->
     <string name="add_friend_to_group">Zapisz</string>
     <string name="add_friend_to_groups">Wybierz grupy do których chcesz dodać znajomego</string>
-    <string name="add_friends_to_group">Wybierz znajomych którychc chcesz dodać do grupy</string>
+    <string name="add_friends_to_group">Wybierz znajomych których chcesz dodać do grupy</string>
 
     <!--Usuwanie grupy-->
     <string name="delete_group_title">Usuń grupę</string>
@@ -120,7 +120,7 @@
     <string name="delete_group_yes">Tak</string>
     <string name="delete_group_no">Nie</string>
 
-    <string name="title_activity_add_friend_to_group">Dodaj znajomego do grupy</string>
+    <string name="title_activity_add_friend_to_group">Dodaj znajomego do grup</string>
     <string name="title_activity_update_group">Edytuj grupę</string>
     <string name="title_activity_add_friend">Dodaj znajomego</string>
     <string name="title_activity_show_friend_profile">Profil znajomego</string>

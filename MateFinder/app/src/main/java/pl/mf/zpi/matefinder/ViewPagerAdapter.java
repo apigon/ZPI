@@ -9,14 +9,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private CharSequence tutuly[];
+    private CharSequence tytuly[];
     private int iloscZakladek;
 
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int n) {
         super(fm);
 
-        this.tutuly = mTitles;
+        this.tytuly = mTitles;
         this.iloscZakladek = n;
 
     }
@@ -42,7 +42,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int n) {
-        return tutuly[n];
+        return tytuly[n];
     }
 
     //Pobieranie ilości zakładek
