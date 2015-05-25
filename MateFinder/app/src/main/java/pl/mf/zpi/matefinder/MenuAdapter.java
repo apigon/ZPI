@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.io.File;
@@ -99,7 +101,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     }
 
 
-    MenuAdapter(Context appContext, SQLiteHandler db) { // MenuAdapter Constructor with titles and icons parameter
+    public MenuAdapter(Context appContext, SQLiteHandler db) { // MenuAdapter Constructor with titles and icons parameter
         // titles, icons, name, email, profile pic are passed from the main activity as we
         String[] titles = {"Grupy", "Mapa", "Konto", "Ustawienia"};
         mNavTitles = titles;
@@ -232,10 +234,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     }
 
     private static void maps() {
-        if (!(context instanceof MapsActivity)) {
-            Intent intent = new Intent(context, MapsActivity.class);
-            context.startActivity(intent);
-            ((Activity) context).finish(); //tutaj ma byc
+        SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.settings_save_file), Context.MODE_PRIVATE);
+        if (settings.getBoolean(context.getString(R.string.settings_save_key_visible_localization), true)) {
+            if (!(context instanceof MapsActivity)) {
+                Intent intent = new Intent(context, MapsActivity.class);
+                context.startActivity(intent);
+                ((Activity) context).finish(); //tutaj ma byc
+            }
+        } else {
+            Toast toast = Toast.makeText(context, "Włącz udostępnianie lokalizacji!", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
@@ -245,5 +253,4 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             context.startActivity(intent);
         }
     }
-
 }

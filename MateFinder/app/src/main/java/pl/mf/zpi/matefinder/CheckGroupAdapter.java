@@ -79,68 +79,66 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
 
     private void addToGroup(final int gid, final int mid){
         //TODO dodać json'a (odkomentować i wywalić dodawanie do sqlite)
-        db.addMember(gid, mid);
         // Tag used to cancel the request
-        //db = new SQLiteHandler(getApplicationContext());
-//        String tag_string_req = "addMember_req";
-//
-//
-//        StringRequest strReq = new StringRequest(Request.Method.POST,
-//                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-//
-//            @Override
-//            public void onResponse(String response) {
-//                Log.d(TAG, "Add Member Response: " + response.toString());
-//                hideDialog();
-//
-//                try {
-//                    JSONObject jObj = new JSONObject(response);
-//                    boolean error = jObj.getBoolean("error");
-//                    if (!error) {
-//                        int gid = jObj.getInt("groupID");
-//                        db.addMember(gid, mid);
-//                        // Launch login activity
-//                        //   backToMain();
-//                    } else {
-//
-//                        // Error occurred in registration. Get the error
-//                        // message
-//                        String errorMsg = jObj.getString("error_msg");
-//                        Toast.makeText(context,
-//                                errorMsg, Toast.LENGTH_LONG).show();
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e(TAG, "Adding member Error: " + error.getMessage());
-//                Toast.makeText(context,
-//                        error.getMessage(), Toast.LENGTH_LONG).show();
-//                hideDialog();
-//            }
-//        }) {
-//
-//            @Override
-//            protected Map<String, String> getParams() {
-//                SQLiteHandler db = new SQLiteHandler(context);
-//                HashMap<String, String> user = db.getUserDetails();
-//                // Posting params to register url
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("tag", "addMember");
-//                params.put("groupID", ""+gid);
-//                params.put("friendID", ""+mid);
-//
-//                return params;
-//            }
-//        };
-//
-//        // Adding request to request queue
-//        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        db = new SQLiteHandler(context);
+        String tag_string_req = "addMember_req";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Add Member Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        db.addMember(gid, mid);
+                        // Launch login activity
+                        //   backToMain();
+                    } else {
+
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(context,
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Adding member Error: " + error.getMessage());
+                Toast.makeText(context,
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                SQLiteHandler db = new SQLiteHandler(context);
+                HashMap<String, String> user = db.getUserDetails();
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "addFriendToGroup");
+                params.put("groupID", ""+gid);
+                params.put("memberID", ""+mid);
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
     private void showDialog() {

@@ -91,6 +91,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
                 super.onDrawerOpened(drawerView);
                 // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
                 // open I am not going to put anything here)
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override

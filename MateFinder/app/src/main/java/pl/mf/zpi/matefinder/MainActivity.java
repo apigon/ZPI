@@ -7,6 +7,7 @@ package pl.mf.zpi.matefinder;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -219,7 +220,12 @@ public class MainActivity extends ActionBarActivity {
                 toast.show();
                 return true;
             case R.id.action_share_location:
-                toast = Toast.makeText(this, "Przepraszamy, udostępnianie lokalizacji jeszcze nie gotowe", Toast.LENGTH_SHORT);
+                SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+                editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
+                editor.commit();
+                toast = Toast.makeText(this,visible?"Lokalizacja bedzie wyświetlana":"Lokalizacja nie będzie wyświetlana", Toast.LENGTH_SHORT);
                 toast.show();
                 return true;
             default:

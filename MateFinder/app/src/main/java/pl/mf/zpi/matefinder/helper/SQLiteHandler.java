@@ -256,7 +256,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //getting members of group specified with id
     public ArrayList<Friend> getMembersDetails(int gid){
         ArrayList<Friend> members = new ArrayList<Friend>();
-        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + "WHERE " + KEY_MEMBER_GROUP_ID + " = " + gid;
+        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + " WHERE " + KEY_MEMBER_GROUP_ID + " = " + gid;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
@@ -276,6 +276,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private Friend getFriendDetails(int fid, SQLiteDatabase db){
         String selectQuery = "SELECT * FROM " + TABLE_FRIENDS + " WHERE "+ KEY_FRIEND_ID_DATABASE + " = " + fid;
         Cursor c = db.rawQuery(selectQuery, null);
+        c.moveToFirst();
         Friend f = new Friend(c.getInt(1), c.getString(2), c.getString(7));
         return f;
     }
@@ -574,16 +575,38 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public void addMember(int gid, int mid){
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_MEMBER_ID, getMemberID()+1);
-        values.put(KEY_MEMBER_GROUP_ID, gid);
-        values.put(KEY_MEMBER_USER_ID, mid);
+        values.put(KEY_MEMBER_ID, ""+(getMemberID()+1));
+        values.put(KEY_MEMBER_GROUP_ID, ""+gid);
+        values.put(KEY_MEMBER_USER_ID, ""+mid);
+        SQLiteDatabase db = this.getWritableDatabase();
         long id = db.insert(TABLE_MEMBERS, null, values);
 
         db.close();
 
         Log.d(TAG, "New Member added in sqlite " + id);
+    }
+
+    public ArrayList<Friend> getFriends(int gid){
+        ArrayList<Friend> friends = new ArrayList<Friend>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_FRIENDS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+            // cursor.moveToFirst();
+            do {
+                Friend friend = new Friend(cursor.getInt(1), cursor.getString(2), cursor.getString(7));
+                friends.add(friend);
+            }
+            while (cursor.moveToNext());
+        }
+
+        return friends;
     }
 
     public void deleteGroup(int gid){

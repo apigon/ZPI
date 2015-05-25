@@ -18,7 +18,7 @@ public class Friend {
     private String login, name, surname, email, phone, photoS;
     private Bitmap photo;
 
-    public Friend(int id, String friendLogin,String friendPhoto){
+    public Friend(int id, String friendLogin, String friendPhoto){
         this.login = friendLogin;
         this.id = id;
         photoS = friendPhoto;
@@ -40,11 +40,11 @@ public class Friend {
     }
 
     public String getName(){
-        return name;
+        return name!=null?name:"";
     }
 
     public String getSurname(){
-        return surname;
+        return surname!=null?surname:"";
     }
 
     public String getPhone(){

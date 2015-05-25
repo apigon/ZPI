@@ -36,11 +36,13 @@ public class AddFriendToGroupActivity extends ActionBarActivity {
         if (extras.getInt("adapter") == 1){
             CheckGroupAdapter adapter = new CheckGroupAdapter(this, list, id);
             list.setAdapter(adapter);
-            findViewById(R.id.zapisz).setOnClickListener(adapter);
+            findViewById(R.id.save).setOnClickListener(adapter);
         } else {
+            TextView title = (TextView) findViewById(R.id.title);
+            title.setText(getString(R.string.add_friends_to_group));
             FriendCheckAdapter adapter = new FriendCheckAdapter(this, list, id);
             list.setAdapter(adapter);
-            findViewById(R.id.zapisz).setOnClickListener(adapter);
+            findViewById(R.id.save).setOnClickListener(adapter);
         }
 
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -56,12 +57,13 @@ public class ZakladkaZnajomi extends Fragment{
     FriendsAdapter adapter;
     SQLiteHandler db;
     ListView friendslist;
+    private Context activity;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         db = new SQLiteHandler(getActivity().getApplicationContext());
-        adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist);
+        adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());//czy tu konieczny jest context jako pierwszy argument?nie wystarczy aktywność?
         return v;
     }
 
@@ -123,11 +125,13 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     private ListView listView;
     int klikniete=0;
     List<HashMap<String, String>> friends;
+    private Activity activity;
 
 
-    public FriendsAdapter(Context c, ListView listView){
+    public FriendsAdapter(Context c, ListView listView, Activity activity){
         dbHandler = new SQLiteHandler(c);
         // fetching friends from sqlite:
+        this.activity=activity;
         friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
         for(int i=0;i<friends.size();i++){
@@ -523,7 +527,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
                 intent.putExtra("adapter", 1);
                 intent.putExtra("id", listaZnajomych.get(klikniete).getID());
-//                context.startActivity(intent);
+                activity.startActivity(intent);
         }
         return false;
     }

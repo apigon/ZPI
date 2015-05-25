@@ -74,6 +74,7 @@
     <string name="settings_save_key_navigation">navigation</string>
     <string name="settings_save_key_radius">radius</string>
     <string name="settings_save_key_motive">motive</string>
+    <string name="settings_save_key_visible_localization">visible localization</string>
 
 
     <!-- Mapy -->
@@ -85,7 +86,7 @@
     <!--Edycja grupy-->
     <string name="put_group_name">Wpisz nazwę grupy</string>
     <string name="edit_group_nazwa_grupy">Nazwa grupy</string>
-    <string name="edit_group_zapisz">Dodaj grupę</string>
+    <string name="edit_group_zapisz">Zapisz</string>
 
     <!--Dodawanie znajomego-->
     <string name="add_friend_login_znajomego">Login użytkownika</string>

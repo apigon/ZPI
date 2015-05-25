@@ -41,6 +41,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
         super(context, listView);
         pDialog = new ProgressDialog(context);
         pDialog.setCancelable(false);
+        pDialog.setMessage("Zapisywaie...");
     }
 
     //TODO do rozwoju wyświetlanie znajomych dla każdej grupy.
@@ -57,7 +58,6 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        //TODO pozostałe funkcjonalności
         Intent intent;
         switch (item.getItemId()) {
             case R.id.edit:
@@ -89,6 +89,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
         toas.show();
         String setValue = visible?"1":"0";
         db.setGroupVisible(group.getName(), setValue);
+        listView.getChildAt(position).setAlpha(visible?1f:0.4f);
     }
 
     private void deleteGroup(){
@@ -113,6 +114,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
     private void delete(final int gid){
         // Tag used to cancel the request
         //db = new SQLiteHandler(getApplicationContext());
+        showDialog();
         String tag_string_req = "deleteGroup_req";
 
 
@@ -128,10 +130,8 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        int gid = jObj.getInt("groupID");
                         db.deleteGroup(gid);
-                        // Launch login activity
-                        //   backToMain();
+                        notifyDataSetChanged();
                     } else {
 
                         // Error occurred in registration. Get the error
