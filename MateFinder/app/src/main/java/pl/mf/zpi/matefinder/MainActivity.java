@@ -134,7 +134,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         if(!async) {
-           // new MessageAsync(MainActivity.this).execute(); //KOD ADAMA ZAKOMENTOWANY NA PROBE!
+            new MessageAsync(MainActivity.this).execute(); //KOD ADAMA ZAKOMENTOWANY NA PROBE!
             async = true;
         }
     }
