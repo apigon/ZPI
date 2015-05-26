@@ -75,14 +75,12 @@ public class EditPasswordActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit_password, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case android.R.id.home:
                 backToEditProfile();
@@ -92,7 +90,6 @@ public class EditPasswordActivity extends ActionBarActivity {
         }
     }
 
-    // Powrót do edycji profilu
     private void backToEditProfile() {
         // Launching the login activity
         Intent intent = new Intent(EditPasswordActivity.this, EditProfileActivity.class);
@@ -101,7 +98,6 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     private void changePassword() {
-        // Fetching user details from sqlite
         HashMap<String, String> user = db.getUserDetails();
 
         String login = user.get("login");
@@ -146,10 +142,8 @@ public class EditPasswordActivity extends ActionBarActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Registration Error: " + error.getMessage());
@@ -158,7 +152,6 @@ public class EditPasswordActivity extends ActionBarActivity {
                 hideDialog();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting params to register url
@@ -171,7 +164,6 @@ public class EditPasswordActivity extends ActionBarActivity {
                 return params;
             }
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }

@@ -6,16 +6,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +33,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -47,7 +55,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
@@ -114,10 +121,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) { // jesli wylaczony GPS wyswietl ALERT
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { // jesli wylaczony GPS wyswietl ALERT
             buildAlertMessageNoGps();
         }
-
 
 
         //baza danych
@@ -163,40 +169,37 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
         bundle = getIntent().getParcelableExtra("friendID");
-        if (bundle != null)
-        {
-           friendLoc = bundle.getParcelable("friendLoc");
-            if (friendLoc!=null)
-            {
+        if (bundle != null) {
+            friendLoc = bundle.getParcelable("friendLoc");
+            if (friendLoc != null) {
                 fetchRouteToFriend(friendLoc); // wyznacz trase
             }
         }
 
-        getMyFriendsLocation("Znajomi");
+        if (connChecker())
+            getMyFriendsLocation("Znajomi");
 
     }
 
 
-    public void fetchRouteToFriend(LatLng friendLocation)
-    {
+    public void fetchRouteToFriend(LatLng friendLocation) {
         LatLng myLocation = null;
         try {
             myLocation = getMyLastLocation();
-        } catch (IOException e) {Log.e("Error with you","s");
-        };
-       if(myLocation!=null) {
-           Log.e("moja", Double.toString(myLocation.latitude) + " " + Double.toString(friendLocation.latitude));
-           String url = makeURL(myLocation.latitude, myLocation.longitude, friendLocation.latitude, friendLocation.longitude);
-           new connectAsyncTask(url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-       }
-        else
+        } catch (IOException e) {
+            Log.e("Error with you", "s");
+        }
+        ;
+        if (myLocation != null) {
+            Log.e("moja", Double.toString(myLocation.latitude) + " " + Double.toString(friendLocation.latitude));
+            String url = makeURL(myLocation.latitude, myLocation.longitude, friendLocation.latitude, friendLocation.longitude);
+            new connectAsyncTask(url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else
             Toast.makeText(getApplicationContext(), "Brak historii Twojej lokalizacji!", Toast.LENGTH_LONG).show();
-
     }
 
-
     //aktualizacja danych na serwer oraz do bazy SQLite
-    private void updateLocationDB(final String lat, final String lng)throws IOException {
+    private void updateLocationDB(final String lat, final String lng) throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         HashMap<String, String> user = db.getUserDetails();
         final String userId = user.get("userID");
@@ -310,20 +313,17 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
             moveCameraOnMe();
             googleMap.animateCamera(zoom);
-        } else
-        {
+        } else {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
             Log.e("mapApp", "Problem z lokalizacją!");
             try {
 
-                if(getMyLastLocation()!=null)
-                {
+                if (getMyLastLocation() != null) {
                     CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
                     CameraUpdate lastLocation = CameraUpdateFactory.newLatLng(getMyLastLocation());
                     googleMap.moveCamera(lastLocation);
                     googleMap.animateCamera(zoom);
-                }
-                else
+                } else
                     addWroclawMarker();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -336,24 +336,23 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
 
-    public void moveCameraOnMe()
-    {
-        if(me!=null)
-        {
+    public void moveCameraOnMe() {
+        if (me != null) {
             me.remove();
-            me=null;
+            me = null;
         }
 
 
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         LatLng coordinate = new LatLng(lat, lng);
-        me =googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
+        me = googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
                 .draggable(false));
         CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
         googleMap.moveCamera(center);
 
     }
+
     public void refresh() {
         provider = locationManager.getBestProvider(criteria, false);
         //location = locationManager.getLastKnownLocation(provider);
@@ -361,21 +360,24 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         location = locationManager.getLastKnownLocation(locationProvider);
         if (location != null)
             try {
-                updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
-
+                if (connChecker()) {
+                    updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+                }
                 moveCameraOnMe();
             } catch (IOException e) {
                 e.printStackTrace();
             }
     }
+
     private SessionManager session;
+
     //private static TimerTask doAsynchronousTask;
     // Wyloguj
     private void logoutUser() {
         session.setLogin(false);
 
 //        doAsynchronousTask.cancel();
-     //   doAsynchronousTask = null;
+        //   doAsynchronousTask = null;
 
         db.deleteFriends();
         db.deleteGroups();
@@ -403,7 +405,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         switch (id) {
             case R.id.action_logout:
-               logoutUser();
+                logoutUser();
                 Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.home:
@@ -439,7 +441,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     private void addWroclawMarker() {
-
         /** Make sure that the map has been initialised **/
         if (null != googleMap) {
             LatLng wroclaw = new LatLng(51.107885, 17.038538);
@@ -470,38 +471,41 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 try {
                     db.deleteFriendsLocations();
                     JSONObject jObj = new JSONObject(response);
-                     boolean error = jObj.getBoolean("error");
-                     if (!error) {
-                    // User successfully updated in MySQL
-                    // Now store the user in sqlite
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully updated in MySQL
+                        // Now store the user in sqlite
 
-                    JSONArray user = jObj.getJSONArray("users");
-                    for (int i = 0; i < user.length(); i++) {
-                        // user successfully logged in
-                        JSONObject u = user.getJSONObject(i);
-                        int location = u.getInt("location");
-                        String login = u.getString("login");
-                        String lat = u.getString("lat");
-                        String lng = u.getString("lng");
+                        JSONArray user = jObj.getJSONArray("users");
+                        for (int i = 0; i < user.length(); i++) {
+                            // user successfully logged in
+                            JSONObject u = user.getJSONObject(i);
+                            int location = u.getInt("location");
+                            String login = u.getString("login");
+                            String lat = u.getString("lat");
+                            String lng = u.getString("lng");
+                            // Inserting row in users table
+
+                            db.addFriendLocation(location, login, lat, lng);
+                        }
+
+
                         // Inserting row in users table
-
-                        db.addFriendLocation(location, login,lat, lng);
+                        //db.deleteLocations();
+                        try {
+                            showMyFriends();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ;
+                        Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
                     }
-
-
-                    // Inserting row in users table
-                    //db.deleteLocations();
-                         try {
-                             showMyFriends();
-                         }catch(IOException e){ e.printStackTrace();};
-                    Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
-                        } else {
-                         // Error occurred in registration. Get the error
-                         // message
-                         String errorMsg = jObj.getString("error_msg");
-                         Toast.makeText(getApplicationContext(),
-                                 errorMsg, Toast.LENGTH_LONG).show();
-                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -525,7 +529,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 params.put("tag", "getFriendsLocations");
                 params.put("userID", userId);
                 params.put("groupName", groupName);
-             return params;
+                return params;
             }
         };
 
@@ -536,23 +540,22 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     private void showMyFriends() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
-        markers =  new ArrayList<Marker>();
-        db.setGroupVisible("Znajomi1","1");
+        markers = new ArrayList<Marker>();
+        db.setGroupVisible("Znajomi1", "1");
         Marker marker;
         // Fetching user details from sqlite
-        LatLng friendLocation=null;
-       // List<HashMap<String, String>> friends = db.getFriendLocationDetails();//
+        LatLng friendLocation = null;
+        // List<HashMap<String, String>> friends = db.getFriendLocationDetails();//
         List<HashMap<String, String>> friends = db.getFriendLocationsFromGroups();
-        int i=0;
-        while(i<friends.size()) {
-            if (friends.get(i).get("lat") !=null && friends.get(i).get("lng") !=null) {
+        int i = 0;
+        while (i < friends.size()) {
+            if (friends.get(i).get("lat") != null && friends.get(i).get("lng") != null) {
 
 
-
-                String friendLogin= friends.get(i).get("login");
+                String friendLogin = friends.get(i).get("login");
                 String friendLat = friends.get(i).get("lat");
                 String friendLng = friends.get(i).get("lng");
-                if(!friendLat.equals("null") && !friendLng.equals("null")) {
+                if (!friendLat.equals("null") && !friendLng.equals("null")) {
                     double lat = Double.parseDouble(friendLat.toString());
                     double lng = Double.parseDouble(friendLng.toString());
                     friendLocation = new LatLng(lat, lng);
@@ -566,10 +569,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     marker.showInfoWindow();
                     markers.add(marker);
                 }
-                Log.e(TAG, "friend "+friendLogin+" "+friends.get(i).get("locationID"));
-            }
-            else
-                Log.e(TAG, "NULL FRIEND LOCATION"+friends.get(i).get("locationID"));
+                Log.e(TAG, "friend " + friendLogin + " " + friends.get(i).get("locationID"));
+            } else
+                Log.e(TAG, "NULL FRIEND LOCATION" + friends.get(i).get("locationID"));
             i++;
         }
     }
@@ -577,9 +579,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     private LatLng getMyLastLocation() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
         // Fetching user details from sqlite
-        LatLng lastLocation=null;
+        LatLng lastLocation = null;
         HashMap<String, String> locations = db.getLocationDetails();
-        if(!(locations.get("lat")).equals("0") && !(locations.get("lng")).equals("0")) {
+        if (!(locations.get("lat")).equals("0") && !(locations.get("lng")).equals("0")) {
             String latString = locations.get("lat");
             String lngString = locations.get("lng");
             double lat = Double.parseDouble(latString.toString());
@@ -603,13 +605,14 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
 
-           finish();
+            finish();
         }
 
     }
 
 
     Polyline line;
+
     public void drawPath(String result) {
         if (line != null) {
             googleMap.clear();
@@ -671,6 +674,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         return poly;
     }
+
     public String makeURL(double sourcelat, double sourcelog, double destlat,
                           double destlog) {
         StringBuilder urlString = new StringBuilder();
@@ -686,10 +690,12 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         urlString.append("&sensor=false&mode=driving&alternatives=true");
         return urlString.toString();
     }
+
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Twój GPS wygląda na wyłączony, chcesz go włączyć?")
@@ -707,6 +713,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         final AlertDialog alert = builder.create();
         alert.show();
     }
+
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
@@ -715,9 +722,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             @Override
             public void run() {
                 setMyLocation();
-            }},1500);
+            }
+        }, 1500);
 
     }
+
     @Override
     public void onBackPressed() {
         backToMain();
@@ -725,7 +734,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-        this.location=location;
+        this.location = location;
         refresh();
     }
 
@@ -745,7 +754,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
 
-   private class connectAsyncTask extends AsyncTask<Void, Void, String> {
+    private class connectAsyncTask extends AsyncTask<Void, Void, String> {
         private ProgressDialog progressDialog;
         String url;
 
@@ -757,10 +766,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Fetching route, Please wait...");
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Fetching route, Please wait...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
         }
 
         @Override
@@ -780,5 +789,17 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
     }
 
-
+    public boolean connChecker() {
+        boolean conn_ok = false;
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+        boolean transfer = settings.getBoolean("transfer", true);
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo internet = connManager.getActiveNetworkInfo();
+        Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
+        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
+            conn_ok = true;
+        }
+        return conn_ok;
+    }
 }

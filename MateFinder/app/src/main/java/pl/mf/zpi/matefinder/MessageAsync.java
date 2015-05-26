@@ -34,16 +34,13 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
     private Context context;
 
     private SQLiteHandler db;
-    SessionManager session;
+    private SessionManager session;
 
-    private boolean new_mess;
-
-    public MessageAsync(Context context){
+    public MessageAsync(Context context) {
         Log.d(TAG, "Uruchomiono ASYNC");
         this.context = context;
         db = new SQLiteHandler(context);
         session = new SessionManager(context);
-        new_mess = false;
     }
 
     @Override
@@ -52,65 +49,64 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         return true;
     }
 
-    private void getMessages(){
-            Log.d(TAG, "Sprawdzanie wiadomości...");
-            if(session.isLoggedIn()) {
-                String tag_string_req = "req_getMessages";
-                StringRequest strReq = new StringRequest(Request.Method.POST,
-                        AppConfig.URL_REGISTER, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "Getting messages Response: " + response.toString());
+    private void getMessages() {
+        Log.d(TAG, "Sprawdzanie wiadomości...");
+        if (session.isLoggedIn()) {
+            String tag_string_req = "req_getMessages";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Getting messages Response: " + response.toString());
 
-                        try {
-                            JSONObject jObj = new JSONObject(response);
-                            boolean error = jObj.getBoolean("error");
-                            if (!error) {
-                                JSONArray user = jObj.getJSONArray("messages");
-                                for (int i = 0; i < user.length(); i++) {
-                                    // user successfully logged in
-                                    JSONObject u = user.getJSONObject(i);
-                                    final String requestID = u.getString(("messageID"));
-                                    final String authorLogin = u.getString(("authorLogin"));
-                                    final String content = u.getString("content");
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        if (!error) {
+                            JSONArray user = jObj.getJSONArray("messages");
+                            for (int i = 0; i < user.length(); i++) {
+                                // user successfully logged in
+                                JSONObject u = user.getJSONObject(i);
+                                final String requestID = u.getString(("messageID"));
+                                final String authorLogin = u.getString(("authorLogin"));
+                                final String content = u.getString("content");
 
-                                    db.addMessage(requestID, authorLogin, content);
-                                    new_mess = true;
-                                    makeNotification();
-                                }
-                                MainActivity.refreshMenuIcon(db.allMessagesRead());
+                                db.addMessage(requestID, authorLogin, content);
+                                makeNotification();
                             }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
+                            MainActivity.refreshMenuIcon(db.allMessagesRead());
                         }
-
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Message ERROR: " + error.getMessage());
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<String, String>();
-                        HashMap<String, String> user = db.getUserDetails();
-                        String userID = user.get("userID");
-                        params.put("tag", "getMessages");
-                        params.put("userID", userID);
-                        params.put("type", "1");
-                        return params;
-                    }
-                };
+                }
+            }, new Response.ErrorListener() {
 
-                // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-            }
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Message ERROR: " + error.getMessage());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    HashMap<String, String> user = db.getUserDetails();
+                    String userID = user.get("userID");
+                    params.put("tag", "getMessages");
+                    params.put("userID", userID);
+                    params.put("type", "1");
+                    return params;
+                }
+            };
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
     }
 
-    private void makeNotification(){
+    private void makeNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_app);
         mBuilder.setContentTitle("MateFinder");
@@ -133,4 +129,6 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
+
+
 }

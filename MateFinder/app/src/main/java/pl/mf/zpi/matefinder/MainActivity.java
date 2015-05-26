@@ -5,10 +5,12 @@ package pl.mf.zpi.matefinder;
  */
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -87,7 +89,8 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
-        getFriendsRequests();
+        if (connChecker())
+            getFriendsRequests();
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -110,6 +113,7 @@ public class MainActivity extends ActionBarActivity {
                 // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
                 // open I am not going to put anything here)
             }
+
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -145,9 +149,9 @@ public class MainActivity extends ActionBarActivity {
         inflater.inflate(R.menu.menu_main, menu);
         this.menu = menu;
         refreshMenuIcon(db.allMessagesRead());
-        if(doAsynchronousTask == null) {
+        if (doAsynchronousTask == null)
             callAsynchronousTask();
-        }
+
         return true;
     }
 
@@ -173,17 +177,17 @@ public class MainActivity extends ActionBarActivity {
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
-    private void createGroup(){
+    private void createGroup() {
         Intent intent = new Intent(this, AddGroupActivity.class);
         startActivity(intent);
     }
 
-    private void makeFriend(){
-        Intent intent = new Intent (this, AddFriendActivity.class);
+    private void makeFriend() {
+        Intent intent = new Intent(this, AddFriendActivity.class);
         startActivity(intent);
     }
 
-    private void openMessages(){
+    private void openMessages() {
         Intent intent = new Intent(this, MessageActivity.class);
         startActivity(intent);
     }
@@ -223,12 +227,11 @@ public class MainActivity extends ActionBarActivity {
                 Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
                 editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
                 editor.commit();
-                if(visible){
+                if (visible) {
                     toast = Toast.makeText(this, "Lokalizacja bedzie udostępniana", Toast.LENGTH_SHORT);
                     toast.show();
                     item.setIcon(R.drawable.ic_action_location_on);
-                }
-                else {
+                } else {
                     toast = Toast.makeText(this, "Lokalizacja nie bedzie udostępniana", Toast.LENGTH_SHORT);
                     toast.show();
                     item.setIcon(R.drawable.ic_action_location_off);
@@ -239,7 +242,54 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void getFriendsRequests(){
+    public void callAsynchronousTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (connChecker())
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+                                MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this);
+                                // PerformBackgroundTask this class is the class that extends AsynchTask
+                                performBackgroundTask.execute();
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                    });
+            }
+
+            ;
+        };
+        timer.schedule(doAsynchronousTask, 0, 60000);
+    }
+
+    public boolean connChecker() {
+        boolean conn_ok = false;
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+        boolean transfer = settings.getBoolean("transfer", true);
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo internet = connManager.getActiveNetworkInfo();
+        Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
+        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
+            conn_ok = true;
+        }
+        return conn_ok;
+    }
+
+    public static void refreshMenuIcon(boolean new_messages) {
+        MenuItem item = menu.findItem(R.id.action_notification);
+        if (!new_messages)
+            item.setIcon(R.drawable.ic_action_new_email);
+        else
+            item.setIcon(R.drawable.ic_action_email);
+    }
+
+    private void getFriendsRequests() {
         String tag_string_req = "req_getFriendsRequests";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -251,7 +301,7 @@ public class MainActivity extends ActionBarActivity {
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-                    if(!error){
+                    if (!error) {
                         JSONArray user = jObj.getJSONArray("messages");
                         for (int i = 0; i < user.length(); i++) {
                             // user successfully logged in
@@ -280,10 +330,8 @@ public class MainActivity extends ActionBarActivity {
                     // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login ERROR: " + error.getMessage());
@@ -303,20 +351,17 @@ public class MainActivity extends ActionBarActivity {
                 return params;
             }
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void addFriend(final String requestID, final String user2ID){
+    private void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Adding friend Response: " + response.toString());
-
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
@@ -324,7 +369,6 @@ public class MainActivity extends ActionBarActivity {
                         db.deleteFriends();
                         String tempUserID = db.getUserDetails().get("userID");
                         addFriendsList(tempUserID);
-
                         // db.deleteFriends();
                         // addFriendsList(userID); + zaimplementować w tej klasie
                         // sprawdzic w metodzie addfriend w php jaki response ustawiony
@@ -339,10 +383,8 @@ public class MainActivity extends ActionBarActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Adding friend ERROR: " + error.getMessage());
@@ -363,16 +405,14 @@ public class MainActivity extends ActionBarActivity {
                 return params;
             }
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void removeFriendRequest(final String requestID){
+    private void removeFriendRequest(final String requestID) {
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Removing friend request Response: " + response.toString());
@@ -403,7 +443,6 @@ public class MainActivity extends ActionBarActivity {
         }) {
             @Override
             protected Map<String, String> getParams() {
-                // Posting parameters to login url
                 HashMap<String, String> user = db.getUserDetails();
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "removeFriendRequest");
@@ -411,36 +450,21 @@ public class MainActivity extends ActionBarActivity {
                 return params;
             }
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-
     private void addFriendsList(final String userID) {
-        // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
-
-        // pDialog.setMessage("Aktualizowanie listy znajomych...");
-        // showDialog();
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Getting friends list Response: " + response.toString());
-                // hideDialog();
-
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    //    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    //   if (!error) {
-                    // JSONObject users = jObj.getJSONObject("users");
                     JSONArray user = jObj.getJSONArray("users");
                     for (int i = 0; i < user.length(); i++) {
-                        // user successfully logged in
                         JSONObject u = user.getJSONObject(i);
                         String userID = u.getString("userID");
                         String login = u.getString("login");
@@ -450,25 +474,14 @@ public class MainActivity extends ActionBarActivity {
                         String surname = u.getString("surname");
                         String photo = u.getString("photo");
                         String location = u.getString("location");
-                        //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
-                        //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
-                        // Inserting row in users table
                         db.addFriend(userID, login, email, phone, name, surname, photo, location);
-                        //     }
-                   /*} else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
+                    }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
@@ -476,49 +489,17 @@ public class MainActivity extends ActionBarActivity {
                         error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "friends");
-                params.put("userID",userID );
+                params.put("userID", userID);
                 return params;
             }
 
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    public void callAsynchronousTask() {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        try {
-                            MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this);
-                            // PerformBackgroundTask this class is the class that extends AsynchTask
-                            performBackgroundTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                        }
-                    }
-                });
-            };
-        };
-        timer.schedule(doAsynchronousTask, 0, 60000);
-    }
-
-    public static void refreshMenuIcon(boolean new_messages){
-        MenuItem item = menu.findItem(R.id.action_notification);
-        if(!new_messages)
-            item.setIcon(R.drawable.ic_action_new_email);
-        else
-            item.setIcon(R.drawable.ic_action_email);
     }
 }

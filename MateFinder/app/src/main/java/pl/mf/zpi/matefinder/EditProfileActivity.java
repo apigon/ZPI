@@ -65,10 +65,10 @@ public class EditProfileActivity extends ActionBarActivity {
 
     private SQLiteHandler db;
 
-    RecyclerView mRecyclerView;                           // Declaring RecyclerView
-    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    RecyclerView mRecyclerView;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
+    DrawerLayout Drawer;
 
     ActionBarDrawerToggle mDrawerToggle;
 
@@ -130,31 +130,27 @@ public class EditProfileActivity extends ActionBarActivity {
         }
 
         //Boczne menu
-        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
-        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
-        mAdapter = new MenuAdapter(this, db);       // Creating the Adapter of MenuAdapter class(which we are going to see in a bit)
-        // And passing the titles,icons,header view name, header view email,
-        // and header view profile picture
-        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new MenuAdapter(this, db);
+        mRecyclerView.setAdapter(mAdapter);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);
         mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
             }
+
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
             }
-        }; // Drawer Toggle Object Made
-        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
-        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+        };
+        Drawer.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -190,7 +186,6 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     private void actionUpdate() {
-
         String up_login = login.getText().toString();
         String up_email = email.getText().toString();
         String up_phone = phone_number.getText().toString();
@@ -200,93 +195,6 @@ public class EditProfileActivity extends ActionBarActivity {
         savePhotoToGallery();
 
         updateUserDB(up_login, up_email, up_phone, up_name, up_surname);
-    }
-
-    private void updateUserDB(final String login, final String email, final String phone,
-                              final String name, final String surname) {
-        // Tag used to cancel the request
-        String tag_string_req = "update_req";
-
-        pDialog.setMessage("Aktualizowanie informacji...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Update Response: " + response.toString());
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        // User successfully updated in MySQL
-                        // Now store the user in sqlite
-                        JSONObject user = jObj.getJSONObject("user");
-                        String userID = user.getString("userID");
-                        String login = user.getString("login");
-                        String email = user.getString("email");
-                        String phone = user.getString("phone_number");
-                        String name = user.getString("name");
-                        String surname = user.getString("surname");
-                        String photo = user.getString("photo");
-                        String location = user.getString("location");
-                        // Inserting row in users table
-                        db.deleteUsers();
-                        db.addUser(userID, login, email, phone, name, surname, photo, location);
-                        Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
-                    } else {
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Update Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "update");
-                params.put("login", login);
-                params.put("email", email);
-                params.put("phone_number", phone);
-                params.put("name", name);
-                params.put("surname", surname);
-                params.put("image", image_data);
-
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
     }
 
     // Wycinanie zdjęcia, żeby rozmiar pasował
@@ -325,20 +233,16 @@ public class EditProfileActivity extends ActionBarActivity {
     private void setImage(Bitmap image) {
         image = Bitmap.createScaledBitmap(image, 80, 80, false);
         profile_photo.setImageBitmap(image);
-
         //upload
         image_data = encodeToBase64(image);
     }
 
     private static String encodeToBase64(Bitmap image) {
         System.gc();
-
         if (image == null)
             return null;
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
@@ -358,5 +262,83 @@ public class EditProfileActivity extends ActionBarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateUserDB(final String login, final String email, final String phone,
+                              final String name, final String surname) {
+        String tag_string_req = "update_req";
+
+        pDialog.setMessage("Aktualizowanie informacji...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Update Response: " + response.toString());
+                hideDialog();
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        JSONObject user = jObj.getJSONObject("user");
+                        String userID = user.getString("userID");
+                        String login = user.getString("login");
+                        String email = user.getString("email");
+                        String phone = user.getString("phone_number");
+                        String name = user.getString("name");
+                        String surname = user.getString("surname");
+                        String photo = user.getString("photo");
+                        String location = user.getString("location");
+                        // Inserting row in users table
+                        db.deleteUsers();
+                        db.addUser(userID, login, email, phone, name, surname, photo, location);
+                        Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Update Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "update");
+                params.put("login", login);
+                params.put("email", email);
+                params.put("phone_number", phone);
+                params.put("name", name);
+                params.put("surname", surname);
+                params.put("image", image_data);
+
+                return params;
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }

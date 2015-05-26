@@ -78,7 +78,6 @@ public class LoginActivity extends Activity {
             startActivity(intent);
             finish();
         }
-
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
@@ -99,7 +98,6 @@ public class LoginActivity extends Activity {
             }
 
         });
-
         // Link to Register Screen
         btnLinkToRegister.setOnClickListener(new View.OnClickListener() {
 
@@ -112,9 +110,6 @@ public class LoginActivity extends Activity {
         });
     }
 
-    /**
-     * function to verify login details in mysql db
-     */
     private void checkLogin(final String login, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -149,7 +144,7 @@ public class LoginActivity extends Activity {
                         savePhotoToGallery(photo);
                         // Inserting row in users table
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
-                        db.addLocation(location,"0","0");
+                        db.addLocation(location, "0", "0");
                         addFriendsList(userID);
                         addGroupList(userID);
                         addMembersList(userID);
@@ -168,7 +163,6 @@ public class LoginActivity extends Activity {
                                 // Do something after 5s = 5000ms
                             }
                         }, 1000);
-
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");
@@ -179,10 +173,8 @@ public class LoginActivity extends Activity {
                     // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login ERROR: " + error.getMessage());
@@ -191,7 +183,6 @@ public class LoginActivity extends Activity {
                 hideDialog();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
@@ -202,9 +193,7 @@ public class LoginActivity extends Activity {
 
                 return params;
             }
-
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
@@ -248,55 +237,32 @@ public class LoginActivity extends Activity {
     private void addFriendsList(final String userID) {
         // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
-
-        // pDialog.setMessage("Aktualizowanie listy znajomych...");
-        // showDialog();
         StringRequest strReq = new StringRequest(Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Getting friends list Response: " + response.toString());
-                // hideDialog();
-
                 try {
                     JSONObject jObj = new JSONObject(response);
-                //    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                 //   if (!error) {
-                       // JSONObject users = jObj.getJSONObject("users");
-                        JSONArray user = jObj.getJSONArray("users");
-                        for (int i = 0; i < user.length(); i++) {
-                            // user successfully logged in
-                               JSONObject u = user.getJSONObject(i);
-                               String userID = u.getString("userID");
-                               String login = u.getString("login");
-                               String email = u.getString("email");
-                               String phone = u.getString("phone_number");
-                               String name = u.getString("name");
-                               String surname = u.getString("surname");
-                               String photo = u.getString("photo");
-                               String location = u.getString("location");
-                         //   String photo = user.getJSONArray(Integer.toString(i)).getString("photo");
-                          //  String location = user.getJSONArray(Integer.toString(i)).getString("location");
-                            // Inserting row in users table
-                            db.addFriend(userID, login, email, phone, name, surname, photo, location);
-                   //     }
-                   /*} else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        JSONObject u = user.getJSONObject(i);
+                        String userID = u.getString("userID");
+                        String login = u.getString("login");
+                        String email = u.getString("email");
+                        String phone = u.getString("phone_number");
+                        String name = u.getString("name");
+                        String surname = u.getString("surname");
+                        String photo = u.getString("photo");
+                        String location = u.getString("location");
+                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
+                    }
                 } catch (JSONException e) {
-                    // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
@@ -305,26 +271,22 @@ public class LoginActivity extends Activity {
                 hideDialog();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "friends");
-                params.put("userID",userID );
+                params.put("userID", userID);
                 return params;
             }
 
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void addGroupList(final String userID){
+    private void addGroupList(final String userID) {
         String tag_string_req = "req_getGroups";
-
-
         StringRequest strReq = new StringRequest(Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
 
@@ -332,39 +294,23 @@ public class LoginActivity extends Activity {
             public void onResponse(String response) {
                 Log.d(TAG, "Getting groups list Response: " + response.toString());
                 // hideDialog();
-
                 try {
-                   // db.deleteMembers();
+                    // db.deleteMembers();
                     JSONObject jObj = new JSONObject(response);
-                    //    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    //   if (!error) {
-                    // JSONObject users = jObj.getJSONObject("users");
                     JSONArray user = jObj.getJSONArray("users");
                     for (int i = 0; i < user.length(); i++) {
-
                         JSONObject u = user.getJSONObject(i);
                         String groupName = u.getString("groupName");
                         String gid = u.getString("groupID");
                         //String userID = u.getString("userID");
-
-                        db.addGroup(gid,groupName);
-
-                   /*} else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
+                        db.addGroup(gid, groupName);
+                    }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
@@ -373,44 +319,31 @@ public class LoginActivity extends Activity {
                 hideDialog();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "groups");
-                params.put("userID",userID );
+                params.put("userID", userID);
                 return params;
             }
 
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-
     }
 
-    private void addMembersList(final String userID){
+    private void addMembersList(final String userID) {
         String tag_string_req = "req_getMembers";
-
-        // pDialog.setMessage("Aktualizowanie listy znajomych...");
-        // showDialog();
         StringRequest strReq = new StringRequest(Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
-
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Getting members list Response: " + response.toString());
                 // hideDialog();
-
                 try {
                     db.deleteMembers();
                     JSONObject jObj = new JSONObject(response);
-                    //    boolean error = jObj.getBoolean("error");
-
-                    // Check for error node in json
-                    //   if (!error) {
-                    // JSONObject users = jObj.getJSONObject("users");
                     JSONArray user = jObj.getJSONArray("users");
                     for (int i = 0; i < user.length(); i++) {
 
@@ -418,19 +351,12 @@ public class LoginActivity extends Activity {
                         String groupID = u.getString("groupID");
                         String userID = u.getString("userID");
 
-                        db.addMember(groupID,userID);
-
-                   /*} else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
+                        db.addMember(groupID, userID);
+                    }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
 
@@ -442,18 +368,15 @@ public class LoginActivity extends Activity {
                 hideDialog();
             }
         }) {
-
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "members");
-                params.put("userID",userID );
+                params.put("userID", userID);
                 return params;
             }
-
         };
-
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
