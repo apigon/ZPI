@@ -108,7 +108,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         // titles, icons, name, email, profile pic are passed from the main activity as we
         String[] titles = {"Grupy", "Mapa", "Konto", "Ustawienia"};
         mNavTitles = titles;
-        int[] icons = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+        int[] icons = {R.drawable.groups_icon, R.drawable.maps_icon, R.drawable.user_icon, R.drawable.settings_icon};
         mIcons = icons;
 
         HashMap<String, String> user = db.getUserDetails();
@@ -168,7 +168,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             holder.textView.setText(mNavTitles[position - 1]); // Setting the Text with the array of our Titles
             holder.imageView.setImageResource(mIcons[position - 1]);// Settimg the image with array of our icons
             if (position == i)
-                holder.item.setBackgroundColor(context.getResources().getColor(R.color.kol6));
+                //holder.item.setBackgroundColor(context.getResources().getColor(R.color.grey));
+            holder.item.setBackgroundResource(R.drawable.button_style);
         } else {
 
             holder.profile.setImageBitmap(readProfileImage());           // Similarly we set the resources for header view

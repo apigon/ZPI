@@ -19,6 +19,9 @@
     <color name="kol7">#FFFFFFFF</color>
     <color name="kol8">#A0E3E4E2</color>
     <color name="opacueGrey">#5CA1A1A1</color>
+    <color name="grey">#ff727272</color>
+    <color name="darkGrey">#ff474747</color>
+
 
     <color name="btn_grey">#EEEEEE</color>
 </resources>

@@ -8,6 +8,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/groupName"
         android:textStyle="bold"
-        android:textSize="20sp"/>
+        android:textSize="@dimen/abc_text_size_title_material_toolbar"
+        android:padding="10dp"
+        android:text="Nazwa grupy"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp" />
 
 </LinearLayout>

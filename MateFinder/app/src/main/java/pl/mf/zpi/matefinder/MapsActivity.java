@@ -47,11 +47,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.JSONParser;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
 public class MapsActivity extends ActionBarActivity implements LocationListener {
@@ -100,7 +102,14 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         //pobiera lokalizacje i ustawia na nas kamere
         setMyLocation();
-//
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
         //actionbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -359,6 +368,24 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 e.printStackTrace();
             }
     }
+    private SessionManager session;
+    //private static TimerTask doAsynchronousTask;
+    // Wyloguj
+    private void logoutUser() {
+        session.setLogin(false);
+
+//        doAsynchronousTask.cancel();
+     //   doAsynchronousTask = null;
+
+        db.deleteFriends();
+        db.deleteGroups();
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish(); //tylko tutaj finish() ma uzasadnienie !!!
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -374,11 +401,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (id) {
+            case R.id.action_logout:
+               logoutUser();
+                Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.home:
+                onBackPressed();
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -571,7 +602,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         } else {
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
-            finish();
+
+           finish();
         }
 
     }

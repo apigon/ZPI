@@ -39,12 +39,18 @@
 
         <Button
             android:id="@+id/btnLogin"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:text="@string/btn_login"
             android:textSize="20dp"
-            android:minHeight="25dp" />
+            android:minHeight="25dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:elegantTextHeight="false" />
 
         <!-- Link to Login Screen -->
 
@@ -56,7 +62,8 @@
             android:background="@null"
             android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
-            android:textSize="15dp" />
+            android:textSize="15dp"
+            android:textColor="@color/grey" />
     </LinearLayout>
 
 </LinearLayout>

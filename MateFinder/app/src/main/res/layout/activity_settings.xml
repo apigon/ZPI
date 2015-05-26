@@ -57,15 +57,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1">
-                    <TextView
-                        android:layout_width="151dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/settings_nav"
-                        android:id="@+id/textView"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_gravity="left" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -104,18 +96,7 @@
                     android:gravity="left"
                     android:layout_marginBottom="10dp"
                     android:layout_alignParentTop="false">
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/navigation"
-                        android:spinnerMode="dropdown"
-                        android:entries="@array/settings_choose_nav"
 
-                        android:minWidth="300dp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_gravity="left"
-                        android:layout_marginTop="5dp"
-                        android:gravity="left" />
                     <Spinner
                         android:id="@+id/layout"
                         android:layout_width="wrap_content"

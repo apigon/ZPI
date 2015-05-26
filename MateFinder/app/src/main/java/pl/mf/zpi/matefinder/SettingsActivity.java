@@ -67,9 +67,6 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         CheckBox internet = (CheckBox)findViewById(R.id.internet);
         internet.setChecked(settings.getBoolean(getString(R.string.settings_save_key_transfer), false));
 
-        Spinner navigation = (Spinner)findViewById(R.id.navigation);
-        navigation.setSelection(settings.getInt(getString(R.string.settings_save_key_navigation), 0));
-
         Spinner layout = (Spinner)findViewById(R.id.layout);
         layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
 
@@ -148,7 +145,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         if (v.equals(zapisz)) {
             CheckBox internet = (CheckBox)findViewById(R.id.internet);
             CheckBox soudS=(CheckBox)findViewById(R.id.notification);
-            Spinner navigation = (Spinner)findViewById(R.id.navigation);
+
             Spinner layout =(Spinner)findViewById(R.id.layout);
             NumberPicker radius = (NumberPicker)findViewById(R.id.radius);
 
@@ -157,7 +154,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
             editor.putBoolean(getString(R.string.settings_save_key_transfer), internet.isChecked());
             editor.putBoolean(getString(R.string.settings_save_key_sounds), soudS.isChecked());
-            editor.putInt(getString(R.string.settings_save_key_navigation), navigation.getSelectedItemPosition());
+
             editor.putInt(getString(R.string.settings_save_key_motive), layout.getSelectedItemPosition());
             editor.putInt(getString(R.string.settings_save_key_radius), radius.getValue());
 

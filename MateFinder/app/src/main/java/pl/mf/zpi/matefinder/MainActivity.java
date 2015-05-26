@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -132,7 +133,7 @@ public class MainActivity extends ActionBarActivity {
         zakladki.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.kol3);
+                return getResources().getColor(R.color.black);
             }
         });
     }
@@ -502,7 +503,7 @@ public class MainActivity extends ActionBarActivity {
                         try {
                             MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this);
                             // PerformBackgroundTask this class is the class that extends AsynchTask
-                            performBackgroundTask.execute();
+                            performBackgroundTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                         }

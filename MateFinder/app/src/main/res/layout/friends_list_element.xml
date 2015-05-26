@@ -13,15 +13,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="80dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/friend_login"
         android:id="@+id/textView_friend_login"
         android:layout_gravity="center"
-        android:textColor="@color/kol2"
         android:gravity="left|center"
         android:layout_weight="1"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp" />
+        android:layout_marginLeft="20dp"
+        android:textSize="@dimen/abc_text_size_title_material_toolbar"
+        android:textColor="@color/grey" />
 
 </LinearLayout>

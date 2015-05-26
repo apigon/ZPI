@@ -1,43 +1,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:background">@color/kol5</item>
-        <item name="android:buttonStyle">@style/DarkButton</item>
-        <item name="android:textViewStyle">@style/TextView</item>
-    </style>
-
-    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+       <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:buttonStyle">@style/LightButton</item>
         <item name="android:textViewStyle">@style/TextView</item>
     </style>
 
-    <style name="DarkButton" parent="android:style/Widget.Button">
-        <item name="android:background">@color/kol1</item>
-    </style>
-
-    <style name="TextView" prent="android:style/Widget.TextView">
-        <item name="android:textColor">@color/kol2</item>
+       <style name="TextView" parent="android:style/Widget.TextView">
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="EditText" parent="android:style/Widget.EditText">
-        <item name="android:textColor">@color/kol2</item>
-        <item name="android:textColorHint">@color/kol2</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/grey</item>
     </style>
 
     <style name="LightButton" parent="android:style/Widget.Button">
-        <item name="android:background">@color/kol6</item>
-        <item name="android:textColor">@color/kol2</item>
+        <item name="android:background">@drawable/button_style</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+
     </style>
 
-    <style name="ActionBar" parent="android:style/Widget.Toolbar">
-        <item name="android:background">@color/kol2</item>
-        <item name="android:textColor">@color/kol1</item>
-    </style>
 
-    <style name="AB" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/kol2</item>
-        <item name="android:textColor">@color/kol1</item>
-    </style>
+
 
 </resources>
