@@ -252,7 +252,7 @@ public class MainActivity extends ActionBarActivity {
                     handler.post(new Runnable() {
                         public void run() {
                             try {
-                                MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this);
+                                MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this, notifManager());
                                 // PerformBackgroundTask this class is the class that extends AsynchTask
                                 performBackgroundTask.execute();
                             } catch (Exception e) {
@@ -264,18 +264,30 @@ public class MainActivity extends ActionBarActivity {
 
             ;
         };
-        timer.schedule(doAsynchronousTask, 0, 60000);
+        timer.schedule(doAsynchronousTask, 0, 10000);
     }
 
-    public boolean connChecker() {
+    private boolean[] notifManager() {
+        boolean[] notif_settings = new boolean[3];
+
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+        notif_settings[0] = settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false);
+        notif_settings[1] = settings.getBoolean(getString(R.string.settings_save_key_notification_sound), false);
+        notif_settings[2] = settings.getBoolean(getString(R.string.settings_save_key_notification_vibrate), false);
+
+        return notif_settings;
+    }
+
+    private boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
-        boolean transfer = settings.getBoolean("transfer", true);
+        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
+        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo internet = connManager.getActiveNetworkInfo();
         Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
-        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
+        if (visible == true && (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected())) {
             conn_ok = true;
         }
         return conn_ok;

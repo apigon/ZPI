@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -36,11 +37,14 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
     private SQLiteHandler db;
     private SessionManager session;
 
-    public MessageAsync(Context context) {
+    private boolean[] notif_settings;
+
+    public MessageAsync(Context context, boolean[] notif_settings) {
         Log.d(TAG, "Uruchomiono ASYNC");
         this.context = context;
         db = new SQLiteHandler(context);
         session = new SessionManager(context);
+        this.notif_settings = notif_settings;
     }
 
     @Override
@@ -80,7 +84,6 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                         // JSON error
                         e.printStackTrace();
                     }
-
                 }
             }, new Response.ErrorListener() {
 
@@ -111,8 +114,15 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         mBuilder.setSmallIcon(R.drawable.ic_app);
         mBuilder.setContentTitle("MateFinder");
         mBuilder.setContentText("Masz nowe powiadomienia.");
-        mBuilder.setVibrate(new long[]{200, 200, 200, 200, 200});
         mBuilder.setAutoCancel(true);
+
+        if (!notif_settings[0] && notif_settings[1]) {
+            mBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        }
+
+        if (!notif_settings[0] && notif_settings[2]) {
+            mBuilder.setVibrate(new long[]{200, 200, 200, 200, 200});
+        }
 
         Intent resultIntent = new Intent(context, MessageActivity.class);
         PendingIntent resultPendingIntent =

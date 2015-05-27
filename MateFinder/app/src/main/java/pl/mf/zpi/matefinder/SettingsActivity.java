@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,7 +35,7 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 
-public class SettingsActivity extends ActionBarActivity implements View.OnClickListener {
+public class SettingsActivity extends ActionBarActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
@@ -59,8 +61,23 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
 
-        CheckBox notification = (CheckBox) findViewById(R.id.notification);
-        notification.setChecked(settings.getBoolean(getString(R.string.settings_save_key_sounds), false));
+        RadioGroup notification_group = (RadioGroup) findViewById(R.id.notification_radios);
+        notification_group.setOnCheckedChangeListener(this);
+        RadioButton notification_silent = (RadioButton) findViewById(R.id.notification_silent);
+        notification_silent.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false));
+        RadioButton notification_loud = (RadioButton) findViewById(R.id.notification_loud);
+        notification_loud.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_loud), false));
+        CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+        notification_sound.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_sound), false));
+        CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
+        notification_vibrate.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_vibrate), false));
+
+        boolean some_checked = settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false) || settings.getBoolean(getString(R.string.settings_save_key_notification_loud), false);
+        if (!some_checked) {
+            notification_loud.setChecked(true);
+            notification_sound.setChecked(true);
+            notification_vibrate.setChecked(true);
+        }
 
         CheckBox internet = (CheckBox) findViewById(R.id.internet);
         internet.setChecked(settings.getBoolean(getString(R.string.settings_save_key_transfer), false));
@@ -114,10 +131,31 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     }
 
     @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+        CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
+        switch (checkedId) {
+            case R.id.notification_silent:
+                notification_sound.setChecked(false);
+                notification_sound.setEnabled(false);
+                notification_vibrate.setChecked(false);
+                notification_vibrate.setEnabled(false);
+                break;
+            case R.id.notification_loud:
+                notification_sound.setEnabled(true);
+                notification_vibrate.setEnabled(true);
+                break;
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         if (v.equals(zapisz)) {
             CheckBox internet = (CheckBox) findViewById(R.id.internet);
-            CheckBox soudS = (CheckBox) findViewById(R.id.notification);
+            RadioButton notification_silent = (RadioButton) findViewById(R.id.notification_silent);
+            RadioButton notification_loud = (RadioButton) findViewById(R.id.notification_loud);
+            CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+            CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
 
             Spinner layout = (Spinner) findViewById(R.id.layout);
             NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
@@ -126,10 +164,14 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             SharedPreferences.Editor editor = settings.edit();
 
             editor.putBoolean(getString(R.string.settings_save_key_transfer), internet.isChecked());
-            editor.putBoolean(getString(R.string.settings_save_key_sounds), soudS.isChecked());
 
             editor.putInt(getString(R.string.settings_save_key_motive), layout.getSelectedItemPosition());
             editor.putInt(getString(R.string.settings_save_key_radius), radius.getValue());
+
+            editor.putBoolean(getString(R.string.settings_save_key_notification_silent), notification_silent.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_loud), notification_loud.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_sound), notification_sound.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_vibrate), notification_vibrate.isChecked());
 
             editor.commit();
 

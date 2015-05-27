@@ -67,8 +67,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == android.R.id.home)
-        {
+        if (id == android.R.id.home) {
             finish();
             return true;
         }
@@ -78,15 +77,12 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         String login = ((EditText) findViewById(R.id.login)).getText().toString();
-        if (!login.equals(""))
-        {
+        if (!login.equals("")) {
             addFriend(login);
             finish();
-        }
-
-        else {
+        } else {
             Toast.makeText(getApplicationContext(),
-                    "Proszę podać login użytkownika dodawanego do znajomych !", Toast.LENGTH_LONG)
+                    "Proszę podać login użytkownika dodawanego do znajomych!", Toast.LENGTH_LONG)
                     .show();
         }
     }
@@ -101,7 +97,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
             pDialog.dismiss();
     }
 
-    private void addFriend(final String login){
+    private void addFriend(final String login) {
         // Tag used to cancel the request
         String tag_string_req = "addUserToFriends_req";
 
@@ -156,7 +152,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
                 params.put("tag", "sendMessage");
                 params.put("senderID", user.get("userID"));
                 params.put("recipentLogin", login);
-                params.put("content",content);
+                params.put("content", content);
                 params.put("type", "0");
 
                 return params;
@@ -167,7 +163,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void backToMain(){
+    private void backToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

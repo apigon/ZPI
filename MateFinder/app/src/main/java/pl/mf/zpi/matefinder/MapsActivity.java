@@ -789,10 +789,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
     }
 
-    public boolean connChecker() {
+    private boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
-        boolean transfer = settings.getBoolean("transfer", true);
+        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo internet = connManager.getActiveNetworkInfo();

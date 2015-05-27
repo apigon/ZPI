@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.mf.zpi.matefinder"
     android:installLocation="auto"
-    android:configChanges="keyboardHidden|orientation|screenLayout">
+    android:configChanges="keyboardHidden|orientation|screenSize">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -27,12 +27,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/friends_icon"
         android:label="@string/app_name"
-        android:theme="@style/LightTheme" >
+        android:theme="@style/LightTheme">
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,25 +43,29 @@
             android:name=".RegisterActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="locked" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:screenOrientation="locked" />
         <activity
             android:name=".EditProfileActivity"
-            android:label="@string/title_activity_edit_profile" />
+            android:label="@string/title_activity_edit_profile"
+            android:screenOrientation="locked" />
         <activity
             android:name=".EditPasswordActivity"
-            android:label="@string/title_activity_edit_password" />
+            android:label="@string/title_activity_edit_password"
+            android:screenOrientation="locked" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="locked" />
         <activity
             android:name=".MapsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_maps" />
-
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -76,32 +80,28 @@
 
         <activity
             android:name=".AddGroupActivity"
-            android:label="@string/title_activity_group_details" >
-        </activity>
+            android:label="@string/title_activity_group_details"
+            android:screenOrientation="locked"></activity>
         <activity
             android:name=".AddFriendActivity"
-            android:label="@string/title_activity_add_friend" >
-        </activity>
+            android:label="@string/title_activity_add_friend"
+            android:screenOrientation="locked"></activity>
         <activity
             android:name=".AddFriendToGroupActivity"
-            android:label="@string/title_activity_add_friend_to_group" >
-        </activity>
+            android:label="@string/title_activity_add_friend_to_group"
+            android:screenOrientation="locked"></activity>
         <activity
             android:name=".ShowFriendProfileActivity"
-            android:label="@string/title_activity_show_friend_profile" >
-        </activity>
+            android:label="@string/title_activity_show_friend_profile"
+            android:screenOrientation="locked"></activity>
         <activity
             android:name=".UpdateGroupActivity"
-            android:label="@string/title_activity_update_group" >
-        </activity>
+            android:label="@string/title_activity_update_group"
+            android:screenOrientation="locked"></activity>
         <activity
             android:name=".MessageActivity"
-            android:label="@string/title_activity_messages" >
-        </activity>
-
-        <service
-            android:name=".MessageService"
-            android:exported="false" />
+            android:label="@string/title_activity_messages"
+            android:screenOrientation="locked"></activity>
     </application>
 
 </manifest>
