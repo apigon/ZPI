@@ -236,6 +236,9 @@ public class MainActivity extends ActionBarActivity {
                     toast.show();
                     item.setIcon(R.drawable.ic_action_location_off);
                 }
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -513,5 +516,14 @@ public class MainActivity extends ActionBarActivity {
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    @Override
+    public void onBackPressed() {
+        backToMain();
+    }
+    private void backToMain() {
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -20,6 +20,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -158,6 +159,19 @@ public class EditProfileActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit_profile, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void updateUserInfo() throws IOException {
@@ -340,5 +354,14 @@ public class EditProfileActivity extends ActionBarActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+    @Override
+    public void onBackPressed() {
+        backToMain();
+    }
+    private void backToMain() {
+        Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

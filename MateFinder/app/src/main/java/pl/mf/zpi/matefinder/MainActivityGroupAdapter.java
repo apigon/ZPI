@@ -73,7 +73,6 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
                 intent = new Intent(context, UpdateGroupActivity.class);
                 intent.putExtra("group", groups.get(index));
                 context.startActivity(intent);
-                ((Activity) context).finish();
                 break;
             case R.id.add:
                 intent = new Intent(context, AddFriendToGroupActivity.class);

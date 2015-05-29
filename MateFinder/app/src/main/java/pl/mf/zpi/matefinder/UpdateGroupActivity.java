@@ -78,8 +78,6 @@ public class UpdateGroupActivity extends ActionBarActivity implements View.OnCli
         switch (item.getItemId()) {
             case android.R.id.home:
                 //backToMain();
-                Intent intent = new Intent(this.getApplicationContext(),MainActivity.class);
-                startActivity(intent);
                 finish();
                 return true;
             default:

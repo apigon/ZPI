@@ -604,7 +604,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         } else {
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
-
             finish();
         }
 
