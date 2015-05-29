@@ -4,7 +4,9 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
+import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -47,7 +50,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -55,13 +58,13 @@ public class MainActivity extends ActionBarActivity {
     private SessionManager session;
 
     private Toolbar toolbar;
-
+    private ActionBar actionBar;
     private static boolean location_shared;
 
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout zakladki;
-    private CharSequence tytuly[] = {"Grupy", "Znajomi"};
+    private CharSequence tytuly[] = {"Znajomi", "Grupy"};
     private int n = 2;
 
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
@@ -94,7 +97,9 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), tytuly, n);
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
         db = new SQLiteHandler(getApplicationContext());
@@ -122,14 +127,6 @@ public class MainActivity extends ActionBarActivity {
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), tytuly, n);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
         // Assiging the Sliding Tab Layout View
         zakladki = (SlidingTabLayout) findViewById(R.id.tabs);
         zakladki.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -137,9 +134,10 @@ public class MainActivity extends ActionBarActivity {
         zakladki.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.black);
+                return getResources().getColor(R.color.black); // sprawdzic kolor jak nie dziala
             }
         });
+        zakladki.setViewPager(pager);
     }
 
     @Override
@@ -236,6 +234,7 @@ public class MainActivity extends ActionBarActivity {
                     toast.show();
                     item.setIcon(R.drawable.ic_action_location_off);
                 }
+                return true;
             case android.R.id.home:
                 //backToMain();
                 onBackPressed();

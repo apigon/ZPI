@@ -27,12 +27,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if (position == 0) // dla 0 zwracamy zkładkę grup
         {
-            ZakladkaGrup grupy = new ZakladkaGrup();
-            return grupy;
-        } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
-        {
             ZakladkaZnajomi znajomi = new ZakladkaZnajomi();
             return znajomi;
+        } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
+        {
+            ZakladkaGrup grupy = new ZakladkaGrup();
+            return grupy;
         }
 
 

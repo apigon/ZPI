@@ -42,6 +42,8 @@ import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +64,7 @@ public class ZakladkaZnajomi extends Fragment{
     private Context activity;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
+        View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         db = new SQLiteHandler(getActivity().getApplicationContext());
         adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());//czy tu konieczny jest context jako pierwszy argument?nie wystarczy aktywność?
@@ -140,6 +142,17 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
             listaZnajomych.add(sf);
         }
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Collections.sort(listaZnajomych, new Comparator<SingleFriend>() {
+                    public int compare(SingleFriend result1, SingleFriend result2) {
+                        return result1.friendLogin.compareTo(result2.friendLogin);
+                    }
+                });
+            }
+        }, 2000);
         context=c;
         this.listView = listView;
     }
@@ -157,6 +170,17 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         HashMap<String, String> singlefriend = dbHandler.getFriendLoginAndPhoto(friendid);
         SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"),singlefriend.get("photo"),Integer.parseInt(friendid));
         listaZnajomych.add(singleFriend);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Collections.sort(listaZnajomych, new Comparator<SingleFriend>() {
+                    public int compare(SingleFriend result1, SingleFriend result2) {
+                        return result1.friendLogin.compareTo(result2.friendLogin);
+                    }
+                });
+            }
+        }, 2000);
         notifyDataSetChanged();
     }
     @Override
