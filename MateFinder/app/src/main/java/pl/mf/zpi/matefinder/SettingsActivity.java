@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -37,6 +38,7 @@ import java.util.Map;
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
 public class SettingsActivity extends ActionBarActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
@@ -90,11 +92,21 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
 
         NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
+        radius.setOrientation(LinearLayout.HORIZONTAL);
         radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
 
         zapisz = (Button) findViewById(R.id.button);
         zapisz.setOnClickListener(this);
+
+
+        //wyloguj
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
 
         //Boczne menu
         db = new SQLiteHandler(this);
@@ -131,6 +143,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         np.setMaxValue(5);
         np.setMinValue(1);
 
+
         return true;
     }
 
@@ -138,6 +151,10 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+            case R.id.action_logout:
+                logoutUser();
+                Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
+                return true;
             case android.R.id.home:
                 //backToMain();
                 onBackPressed();
@@ -198,6 +215,26 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             toast.show();
             finish();
         }
+    }
+
+    private SessionManager session;
+    // private static TimerTask doAsynchronousTask;
+    //private static TimerTask doAsynchronousTask;
+    // Wyloguj
+    private void logoutUser() {
+        session.setLogin(false);
+
+        //  doAsynchronousTask.cancel();
+        //  doAsynchronousTask = null;
+
+        db.deleteFriends();
+        db.deleteGroups();
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
     private void updateRadius(final String radius) {
