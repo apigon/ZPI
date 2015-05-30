@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -570,9 +571,6 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 showProfile.putExtra("photo",byteArray);
                 showProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(showProfile);
-                /*Toast toast = new Toast(this.context);
-                toast = Toast.makeText(this.context, "Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon, Toast.LENGTH_LONG);
-                toast.show();*/
                 break;
             case R.id.do_grupy:
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
@@ -583,8 +581,9 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             case R.id.wyznaczTrase:
                 getMyFriendsLocation("Znajomi");
                 break;
-
-        }
+            default:
+                break;
+                }
         return false;
     }
     public LatLng getFriendLocation(int userID)
