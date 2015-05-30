@@ -83,19 +83,27 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
             switch (getPosition()) {
                 case 1:
-                    main();
-                    ((Activity) context).finish();
+                    if(!(context instanceof MainActivity)) {
+                        main();
+                        ((Activity) context).finish();
+                    }
                     break;
                 case 2:
-                    maps();
+                    if(!(context instanceof MapsActivity)) {
+                        maps();
+                    }
                     break;
                 case 3:
-                    editProfile();
-                    ((Activity) context).finish();
+                    if(!(context instanceof EditProfileActivity)) {
+                        editProfile();
+                        ((Activity) context).finish();
+                    }
                     break;
                 case 4:
-                    settings();
-                    ((Activity) context).finish();
+                    if(!(context instanceof SettingsActivity)) {
+                        settings();
+                        ((Activity) context).finish();
+                    }
             }
 
         }
@@ -219,20 +227,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     // Edytuj profil
     private static void editProfile() {
         // Launching the login activity
-        if (!(context instanceof EditProfileActivity)) {
             Intent intent = new Intent(context, EditProfileActivity.class);
             context.startActivity(intent);
-        }
 
     }
 
     // Ustawienia
     private static void settings() {
         // Launching the login activity
-        if (!(context instanceof SettingsActivity)) {
             Intent intent = new Intent(context, SettingsActivity.class);
             context.startActivity(intent);
-        }
         //finish(); NIE DAWAJCIE TEGO FINISH() bo potem przy przycisku powrotu
         // wychodzi z aplikacji zamiast wracac do poprzedniego ekranu!!!
     }
@@ -240,11 +244,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private static void maps() {
         SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.settings_save_file), Context.MODE_PRIVATE);
         if (settings.getBoolean(context.getString(R.string.settings_save_key_visible_localization), true)) {
-            if (!(context instanceof MapsActivity)) {
                 Intent intent = new Intent(context, MapsActivity.class);
                 context.startActivity(intent);
                 ((Activity) context).finish(); //tutaj ma byc
-            }
         } else {
             Toast toast = Toast.makeText(context, "Włącz udostępnianie lokalizacji!", Toast.LENGTH_SHORT);
             toast.show();
@@ -252,9 +254,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     }
 
     private static void main() {
-        if (!(context instanceof MainActivity)) {
             Intent intent = new Intent(context, MainActivity.class);
             context.startActivity(intent);
-        }
     }
 }
