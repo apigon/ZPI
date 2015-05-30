@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import java.io.Serializable;
+
 /**
  * Created by root on 12.04.15.
  */
@@ -11,6 +13,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private CharSequence tytuly[];
     private int iloscZakladek;
+    private ZakladkaGrup grupy;
+    private ZakladkaZnajomi znajomi;
 
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int n) {
@@ -18,7 +22,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         this.tytuly = mTitles;
         this.iloscZakladek = n;
-
     }
 
     //Zwraca fragment dla kazdej zakładkir
@@ -27,11 +30,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if (position == 0) // dla 0 zwracamy zkładkę grup
         {
-            ZakladkaGrup grupy = new ZakladkaGrup();
+            grupy = new ZakladkaGrup();
             return grupy;
         } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
         {
-            ZakladkaZnajomi znajomi = new ZakladkaZnajomi();
+            znajomi = new ZakladkaZnajomi();
             return znajomi;
         }
 
@@ -49,5 +52,13 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return iloscZakladek;
+    }
+
+    public void refresh(){
+        grupy.refresh();
+    }
+
+    public MainActivityGroupAdapter getGroupAdapter(){
+        return grupy.getAdapter();
     }
 }

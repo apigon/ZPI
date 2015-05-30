@@ -23,6 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,8 +73,7 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
             case R.id.edit:
                 intent = new Intent(context, UpdateGroupActivity.class);
                 intent.putExtra("group", groups.get(index));
-                context.startActivity(intent);
-                ((Activity) context).finish();
+                ((Activity)context).startActivityForResult(intent, 1);
                 break;
             case R.id.add:
                 intent = new Intent(context, AddFriendToGroupActivity.class);
@@ -191,5 +191,11 @@ public class MainActivityGroupAdapter extends GroupAdapter implements AdapterVie
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    public void refresh(){
+        groups.clear();
+        groups.addAll(db.getGroupsDetails());
+        notifyDataSetChanged();
     }
 }

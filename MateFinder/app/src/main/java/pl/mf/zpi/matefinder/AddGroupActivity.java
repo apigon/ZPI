@@ -84,16 +84,20 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
         if (!nazwa.equals(""))
         {
             addNewGroup(nazwa);
-            finish();
             // backToMain();
         }
 
         else {
             Toast.makeText(getApplicationContext(),
-                    "Proszę wprowadzić swoje dane!", Toast.LENGTH_LONG)
+                    "Proszę wprowadzić nazwę grupy!", Toast.LENGTH_LONG)
                     .show();
         }
 
+    }
+
+    private void end(){
+        setResult(1);
+        finish();
     }
 
     private void showDialog() {
@@ -129,8 +133,7 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                         Toast.makeText(getApplicationContext(),"Utworzono grupę!",Toast.LENGTH_LONG);
                         int gid = jObj.getInt("groupID");
                         db.addGroup(gid, nazwa);
-                        // Launch login activity
-                     //   backToMain();
+                        end();
                     } else {
 
                         // Error occurred in registration. Get the error

@@ -74,6 +74,9 @@ public class MainActivity extends ActionBarActivity {
     private static Menu menu;
     private static TimerTask doAsynchronousTask;
 
+    private int request;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +143,9 @@ public class MainActivity extends ActionBarActivity {
                 return getResources().getColor(R.color.black);
             }
         });
+
+        request = 1;
+
     }
 
     @Override
@@ -149,10 +155,26 @@ public class MainActivity extends ActionBarActivity {
         inflater.inflate(R.menu.menu_main, menu);
         this.menu = menu;
         refreshMenuIcon(db.allMessagesRead());
+        setLocationIcon();
+//        MenuItem location = menu.getItem(R.id.action_share_location);
+//        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+//        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+//
+//        if(visible)
+//            location.setIcon(R.drawable.ic_action_location_on);
+//        else
+//            location.setIcon(R.drawable.ic_action_location_off);
+
         if (doAsynchronousTask == null)
             callAsynchronousTask();
 
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == 1)
+            adapter.refresh();
     }
 
     /**
@@ -179,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void createGroup() {
         Intent intent = new Intent(this, AddGroupActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, request);
     }
 
     private void makeFriend() {
@@ -501,5 +523,17 @@ public class MainActivity extends ActionBarActivity {
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void setLocationIcon() {
+        MenuItem location = menu.findItem(R.id.action_share_location);
+
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+
+        if (visible)
+            location.setIcon(R.drawable.ic_action_location_on);
+        else
+            location.setIcon(R.drawable.ic_action_location_off);
     }
 }
