@@ -134,7 +134,7 @@ public class MainActivity extends ActionBarActivity{
         zakladki.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.black); // sprawdzic kolor jak nie dziala
+                return getResources().getColor(R.color.darkGrey); // sprawdzic kolor jak nie dziala
             }
         });
         zakladki.setViewPager(pager);

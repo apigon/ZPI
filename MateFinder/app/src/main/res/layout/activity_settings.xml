@@ -148,7 +148,7 @@
                         android:spinnerMode="dropdown"
                         android:entries="@array/settings_choose_motive"
                         android:minWidth="300dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_gravity="left"
                         android:layout_marginTop="5dp"
                         android:gravity="left" />
@@ -157,11 +157,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/radius"
-                        android:minWidth="50dp"
-                        android:minHeight="60dp"
-                        android:maxHeight="120dp"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical|center_horizontal" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:padding="5dp" />
                 </LinearLayout>
 
                 <include

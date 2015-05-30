@@ -47,6 +47,7 @@ import java.util.Map;
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 public class EditProfileActivity extends ActionBarActivity {
 
@@ -130,6 +131,14 @@ public class EditProfileActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
+        //wyloguj
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
+
         //Boczne menu
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -165,6 +174,10 @@ public class EditProfileActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+            case R.id.action_logout:
+                logoutUser();
+                Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
+                return true;
             case android.R.id.home:
                 //backToMain();
                 onBackPressed();
@@ -363,5 +376,24 @@ public class EditProfileActivity extends ActionBarActivity {
         Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+    private SessionManager session;
+    // private static TimerTask doAsynchronousTask;
+    //private static TimerTask doAsynchronousTask;
+    // Wyloguj
+    private void logoutUser() {
+        session.setLogin(false);
+
+        //  doAsynchronousTask.cancel();
+        //  doAsynchronousTask = null;
+
+        db.deleteFriends();
+        db.deleteGroups();
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(EditProfileActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 }
