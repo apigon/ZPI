@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,13 +56,13 @@ public class MainActivity extends ActionBarActivity {
     private SessionManager session;
 
     private Toolbar toolbar;
-
+    private ActionBar actionBar;
     private static boolean location_shared;
 
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout zakladki;
-    private CharSequence tytuly[] = {"Grupy", "Znajomi"};
+    private CharSequence tytuly[] = {"Znajomi", "Grupy"};
     private int n = 2;
 
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
@@ -97,7 +98,9 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
-
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), tytuly, n);
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
         db = new SQLiteHandler(getApplicationContext());
@@ -125,14 +128,6 @@ public class MainActivity extends ActionBarActivity {
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), tytuly, n);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
         // Assiging the Sliding Tab Layout View
         zakladki = (SlidingTabLayout) findViewById(R.id.tabs);
         zakladki.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -140,9 +135,10 @@ public class MainActivity extends ActionBarActivity {
         zakladki.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.black);
+                return getResources().getColor(R.color.darkGrey); // sprawdzic kolor jak nie dziala
             }
         });
+        zakladki.setViewPager(pager);
 
         request = 1;
 
@@ -259,6 +255,10 @@ public class MainActivity extends ActionBarActivity {
                     item.setIcon(R.drawable.ic_action_location_off);
                 }
                 return true;
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -274,7 +274,7 @@ public class MainActivity extends ActionBarActivity {
                     handler.post(new Runnable() {
                         public void run() {
                             try {
-                                MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this);
+                                MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this, notifManager());
                                 // PerformBackgroundTask this class is the class that extends AsynchTask
                                 performBackgroundTask.execute();
                             } catch (Exception e) {
@@ -289,15 +289,27 @@ public class MainActivity extends ActionBarActivity {
         timer.schedule(doAsynchronousTask, 0, 60000);
     }
 
-    public boolean connChecker() {
+    private boolean[] notifManager() {
+        boolean[] notif_settings = new boolean[3];
+
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+        notif_settings[0] = settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false);
+        notif_settings[1] = settings.getBoolean(getString(R.string.settings_save_key_notification_sound), false);
+        notif_settings[2] = settings.getBoolean(getString(R.string.settings_save_key_notification_vibrate), false);
+
+        return notif_settings;
+    }
+
+    private boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
-        boolean transfer = settings.getBoolean("transfer", true);
+        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
+        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo internet = connManager.getActiveNetworkInfo();
         Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
-        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
+        if (visible == true && (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected())) {
             conn_ok = true;
         }
         return conn_ok;
@@ -535,5 +547,16 @@ public class MainActivity extends ActionBarActivity {
             location.setIcon(R.drawable.ic_action_location_on);
         else
             location.setIcon(R.drawable.ic_action_location_off);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backToMain();
+    }
+
+    private void backToMain() {
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

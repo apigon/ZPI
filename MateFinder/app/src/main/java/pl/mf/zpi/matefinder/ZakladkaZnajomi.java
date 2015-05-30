@@ -12,9 +12,11 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,8 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +67,7 @@ public class ZakladkaZnajomi extends Fragment{
     private Context activity;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
+        View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         db = new SQLiteHandler(getActivity().getApplicationContext());
         adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());//czy tu konieczny jest context jako pierwszy argument?nie wystarczy aktywność?
@@ -81,6 +85,27 @@ public class ZakladkaZnajomi extends Fragment{
         friendslist.setOnItemClickListener(adapter);
         adapter.getFriendsRequests(getActivity());
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onBackPressed()
+    {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.popBackStack();
+    }
+
+
 }
 
 class SingleFriend {
@@ -158,6 +183,17 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         HashMap<String, String> singlefriend = dbHandler.getFriendLoginAndPhoto(friendid);
         SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"),singlefriend.get("photo"),Integer.parseInt(friendid));
         listaZnajomych.add(singleFriend);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Collections.sort(listaZnajomych, new Comparator<SingleFriend>() {
+                    public int compare(SingleFriend result1, SingleFriend result2) {
+                        return result1.friendLogin.compareTo(result2.friendLogin);
+                    }
+                });
+            }
+        }, 2000);
         notifyDataSetChanged();
     }
     @Override
@@ -536,9 +572,6 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 showProfile.putExtra("photo",byteArray);
                 showProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(showProfile);
-                /*Toast toast = new Toast(this.context);
-                toast = Toast.makeText(this.context, "Imię : " + imie + "\nNazwisko : " + nazwisko + "\nEmail : " + mail + "\nTelefon : " + telefon, Toast.LENGTH_LONG);
-                toast.show();*/
                 break;
             case R.id.do_grupy:
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
@@ -549,8 +582,9 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             case R.id.wyznaczTrase:
                 getMyFriendsLocation("Znajomi");
                 break;
-
-        }
+            default:
+                break;
+                }
         return false;
     }
     public LatLng getFriendLocation(int userID)

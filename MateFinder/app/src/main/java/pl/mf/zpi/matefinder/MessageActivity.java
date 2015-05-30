@@ -88,6 +88,7 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
             case R.id.delete_message:
                 if(db.deleteMessage(message_id)) {
                     Toast.makeText(getApplicationContext(), "Wiadomość usunięta.", Toast.LENGTH_SHORT).show();
+                    MainActivity.refreshMenuIcon(db.allMessagesRead());
                     finish();
                     startActivity(getIntent());
                 }
@@ -97,6 +98,7 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
             case R.id.delete_all_messages:
                 db.deleteMessages();
                 Toast.makeText(getApplicationContext(), "Wiadomości zostały usunięte.", Toast.LENGTH_SHORT).show();
+                MainActivity.refreshMenuIcon(db.allMessagesRead());
                 finish();
                 startActivity(getIntent());
                 break;

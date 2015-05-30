@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
@@ -370,14 +371,14 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     private SessionManager session;
-
+   // private static TimerTask doAsynchronousTask;
     //private static TimerTask doAsynchronousTask;
     // Wyloguj
     private void logoutUser() {
         session.setLogin(false);
 
-//        doAsynchronousTask.cancel();
-        //   doAsynchronousTask = null;
+      //  doAsynchronousTask.cancel();
+      //  doAsynchronousTask = null;
 
         db.deleteFriends();
         db.deleteGroups();
@@ -604,7 +605,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         } else {
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
-
             finish();
         }
 
@@ -789,10 +789,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
     }
 
-    public boolean connChecker() {
+    private boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
-        boolean transfer = settings.getBoolean("transfer", true);
+        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo internet = connManager.getActiveNetworkInfo();

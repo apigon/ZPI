@@ -7,10 +7,10 @@
     tools:context="pl.mf.zpi.matefinder.SettingsActivity">
 
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
@@ -26,15 +26,57 @@
                     android:layout_height="fill_parent"
                     android:id="@+id/checkboxs"
                     android:layout_marginTop="@dimen/abc_action_bar_default_height_material">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/settings_notifications"
+                        android:id="@+id/textView"
+                        android:layout_marginLeft="10dp" />
+
+                    <RadioGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/notification_radios">
+
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_notification_silent"
+                            android:id="@+id/notification_silent"
+                            android:paddingLeft="10dp"
+                            android:layout_marginLeft="10dp" />
+
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_notification_loud"
+                            android:id="@+id/notification_loud"
+                            android:paddingLeft="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:checked="false" />
+
+                    </RadioGroup>
+
                     <CheckBox
                         android:paddingTop="?android:attr/actionBarSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/settings_sounds"
-                        android:id="@+id/notification"
+                        android:text="@string/settings_notification_sound"
+                        android:id="@+id/notification_sound"
                         android:checked="false"
                         android:padding="10dp"
-                       />
+                        android:layout_marginLeft="20dp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_Notification_vibrate"
+                        android:id="@+id/notification_vibrate"
+                        android:layout_marginLeft="20dp"
+                        android:paddingLeft="10dp"
+                        android:checked="false" />
 
                     <CheckBox
                         android:layout_width="wrap_content"
@@ -42,10 +84,11 @@
                         android:text="@string/settings_transfer"
                         android:id="@+id/internet"
                         android:checked="false"
-                        android:layout_marginTop="0dp"
+                        android:layout_marginTop="15dp"
                         android:padding="10dp"
-                        />
+                        android:layout_marginLeft="0dp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="wrap_content"
@@ -67,6 +110,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="20dp"
                         android:layout_gravity="left" />
+
                     <TextView
                         android:layout_width="192dp"
                         android:layout_height="wrap_content"
@@ -77,7 +121,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:minLines="2" />
-                    </LinearLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -104,29 +148,24 @@
                         android:spinnerMode="dropdown"
                         android:entries="@array/settings_choose_motive"
                         android:minWidth="300dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_gravity="left"
                         android:layout_marginTop="5dp"
                         android:gravity="left" />
+
                     <NumberPicker
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/radius"
-                        android:minWidth="50dp"
-                        android:minHeight="60dp"
-                        android:maxHeight="120dp"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical|center_horizontal" />
-
-
-
-                    </LinearLayout>
-
-
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:padding="5dp" />
+                </LinearLayout>
 
                 <include
-                android:id="@+id/app_bar"
-                layout="@layout/app_bar" />
+                    android:id="@+id/app_bar"
+                    layout="@layout/app_bar" />
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,9 +185,6 @@
 
 
     </RelativeLayout>
-
-
-
 
 
     <android.support.v7.widget.RecyclerView

@@ -1,5 +1,7 @@
 package pl.mf.zpi.matefinder;
 
+import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -10,10 +12,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -21,6 +27,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,9 +38,10 @@ import java.util.Map;
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
+import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
-public class SettingsActivity extends ActionBarActivity implements View.OnClickListener {
+public class SettingsActivity extends ActionBarActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
@@ -59,8 +67,23 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
 
-        CheckBox notification = (CheckBox) findViewById(R.id.notification);
-        notification.setChecked(settings.getBoolean(getString(R.string.settings_save_key_sounds), false));
+        RadioGroup notification_group = (RadioGroup) findViewById(R.id.notification_radios);
+        notification_group.setOnCheckedChangeListener(this);
+        RadioButton notification_silent = (RadioButton) findViewById(R.id.notification_silent);
+        notification_silent.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false));
+        RadioButton notification_loud = (RadioButton) findViewById(R.id.notification_loud);
+        notification_loud.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_loud), false));
+        CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+        notification_sound.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_sound), false));
+        CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
+        notification_vibrate.setChecked(settings.getBoolean(getString(R.string.settings_save_key_notification_vibrate), false));
+
+        boolean some_checked = settings.getBoolean(getString(R.string.settings_save_key_notification_silent), false) || settings.getBoolean(getString(R.string.settings_save_key_notification_loud), false);
+        if (!some_checked) {
+            notification_loud.setChecked(true);
+            notification_sound.setChecked(true);
+            notification_vibrate.setChecked(true);
+        }
 
         CheckBox internet = (CheckBox) findViewById(R.id.internet);
         internet.setChecked(settings.getBoolean(getString(R.string.settings_save_key_transfer), false));
@@ -69,11 +92,21 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
 
         NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
+        radius.setOrientation(LinearLayout.HORIZONTAL);
         radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
 
         zapisz = (Button) findViewById(R.id.button);
         zapisz.setOnClickListener(this);
+
+
+        //wyloguj
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
 
         //Boczne menu
         db = new SQLiteHandler(this);
@@ -110,14 +143,53 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         np.setMaxValue(5);
         np.setMinValue(1);
 
+
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                logoutUser();
+                Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
+                return true;
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+        CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
+        switch (checkedId) {
+            case R.id.notification_silent:
+                notification_sound.setChecked(false);
+                notification_sound.setEnabled(false);
+                notification_vibrate.setChecked(false);
+                notification_vibrate.setEnabled(false);
+                break;
+            case R.id.notification_loud:
+                notification_sound.setEnabled(true);
+                notification_vibrate.setEnabled(true);
+                break;
+        }
     }
 
     @Override
     public void onClick(View v) {
         if (v.equals(zapisz)) {
             CheckBox internet = (CheckBox) findViewById(R.id.internet);
-            CheckBox soudS = (CheckBox) findViewById(R.id.notification);
+            RadioButton notification_silent = (RadioButton) findViewById(R.id.notification_silent);
+            RadioButton notification_loud = (RadioButton) findViewById(R.id.notification_loud);
+            CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
+            CheckBox notification_vibrate = (CheckBox) findViewById(R.id.notification_vibrate);
 
             Spinner layout = (Spinner) findViewById(R.id.layout);
             NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
@@ -126,10 +198,14 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             SharedPreferences.Editor editor = settings.edit();
 
             editor.putBoolean(getString(R.string.settings_save_key_transfer), internet.isChecked());
-            editor.putBoolean(getString(R.string.settings_save_key_sounds), soudS.isChecked());
 
             editor.putInt(getString(R.string.settings_save_key_motive), layout.getSelectedItemPosition());
             editor.putInt(getString(R.string.settings_save_key_radius), radius.getValue());
+
+            editor.putBoolean(getString(R.string.settings_save_key_notification_silent), notification_silent.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_loud), notification_loud.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_sound), notification_sound.isChecked());
+            editor.putBoolean(getString(R.string.settings_save_key_notification_vibrate), notification_vibrate.isChecked());
 
             editor.commit();
 
@@ -139,6 +215,26 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             toast.show();
             finish();
         }
+    }
+
+    private SessionManager session;
+    // private static TimerTask doAsynchronousTask;
+    //private static TimerTask doAsynchronousTask;
+    // Wyloguj
+    private void logoutUser() {
+        session.setLogin(false);
+
+        //  doAsynchronousTask.cancel();
+        //  doAsynchronousTask = null;
+
+        db.deleteFriends();
+        db.deleteGroups();
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
     private void updateRadius(final String radius) {
@@ -183,5 +279,15 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backToMain();
+    }
+    private void backToMain() {
+            Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
     }
 }

@@ -51,12 +51,16 @@
 
     <!-- Ustawienia -->
     <string name="title_activity_settings">Ustawienia</string>
-    <string name="settings_sounds">Włącz dźwięki powiadomień</string>
+    <string name="settings_notifications">Rodzaj powiadomień</string>
     <string name="settings_transfer">Ograniczenie transferu danych</string>
     <string name="settings_nav">Nawigowanie użytkownika</string>
     <string name="settings_radious">Promień wyszukiwania użytkowników</string>
     <string name="settings_motive">Motyw aplikacji</string>
     <string name="settings_save_btn">Zapisz zmiany</string>
+    <string name="settings_notification_silent">Wycisz powiadomienia</string>
+    <string name="settings_notification_loud">Włącz powiadomienia</string>
+    <string name="settings_notification_sound">Dźwięk</string>
+    <string name="settings_Notification_vibrate">Wibracja</string>
     <string-array name="settings_choose_nav">
         <item>Głosowe</item>
         <item>Wizualne</item>
@@ -69,13 +73,15 @@
 
     <!--Ustawienia zapis-->
     <string name="settings_save_file">pl.mf.zpi.matefinder.Settings</string>
-    <string name="settings_save_key_sounds">sounds</string>
     <string name="settings_save_key_transfer">transfer</string>
     <string name="settings_save_key_navigation">navigation</string>
     <string name="settings_save_key_radius">radius</string>
     <string name="settings_save_key_motive">motive</string>
-    <string name="settings_save_key_visible_localization">visible localization</string>
-
+    <string name="settings_save_key_visible_localization">visible_localization</string>
+    <string name="settings_save_key_notification_silent">notification_silent</string>
+    <string name="settings_save_key_notification_loud">notification_loud</string>
+    <string name="settings_save_key_notification_sound">notification_sound</string>
+    <string name="settings_save_key_notification_vibrate">notification_vibrate</string>
 
     <!-- Mapy -->
     <string name="title_activity_maps">Mapy</string>
