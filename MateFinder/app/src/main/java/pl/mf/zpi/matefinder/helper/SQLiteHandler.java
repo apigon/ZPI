@@ -385,7 +385,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public List<HashMap<String, String>> getFriendsDetails() {
         List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_FRIENDS;
+        String selectQuery = "SELECT * FROM " + TABLE_FRIENDS + " ORDER BY " + KEY_FRIEND_LOGIN + " ASC";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

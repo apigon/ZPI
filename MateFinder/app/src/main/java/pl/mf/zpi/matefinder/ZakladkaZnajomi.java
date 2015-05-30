@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -82,6 +83,27 @@ public class ZakladkaZnajomi extends Fragment{
         friendslist.setOnItemClickListener(adapter);
         adapter.getFriendsRequests(getActivity());
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //backToMain();
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onBackPressed()
+    {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.popBackStack();
+    }
+
+
 }
 
 class SingleFriend {
@@ -142,17 +164,6 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
             listaZnajomych.add(sf);
         }
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Collections.sort(listaZnajomych, new Comparator<SingleFriend>() {
-                    public int compare(SingleFriend result1, SingleFriend result2) {
-                        return result1.friendLogin.compareTo(result2.friendLogin);
-                    }
-                });
-            }
-        }, 2000);
         context=c;
         this.listView = listView;
     }
