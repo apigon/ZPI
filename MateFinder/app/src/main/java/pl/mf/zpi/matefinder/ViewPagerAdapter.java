@@ -26,14 +26,14 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        if (position == 0) // dla 0 zwracamy zkładkę grup
-        {
-            grupy = new ZakladkaGrup();
-            return grupy;
-        } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
+        if (position == 0) // dla 0 zwracamy zkładkę znajoych
         {
             znajomi = new ZakladkaZnajomi();
             return znajomi;
+        } else             // dla 1 (w przeciwnym wypadku) zakładkę grup
+        {
+            grupy = new ZakladkaGrup();
+            return grupy;
         }
 
 
