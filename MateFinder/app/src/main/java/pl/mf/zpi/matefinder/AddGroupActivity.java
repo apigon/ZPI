@@ -130,9 +130,9 @@ public class AddGroupActivity extends ActionBarActivity implements View.OnClickL
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        Toast.makeText(getApplicationContext(),"Utworzono grupę!",Toast.LENGTH_LONG);
                         int gid = jObj.getInt("groupID");
                         db.addGroup(gid, nazwa);
+                        Toast.makeText(getApplicationContext(),"Utworzono grupę!",Toast.LENGTH_LONG).show();
                         end();
                     } else {
 

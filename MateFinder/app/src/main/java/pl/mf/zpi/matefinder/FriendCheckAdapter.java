@@ -150,9 +150,12 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
                 SQLiteHandler db = new SQLiteHandler(context);
                 HashMap<String, String> user = db.getUserDetails();
                 // Posting params to register url
+                Group g = db.getGroupDetails(gid);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "addFriendToGroup");
+                params.put("userID", db.getUserDetails().get("userID"));
                 params.put("groupID", ""+gid);
+                params.put("groupName", g.getName());
                 params.put("memberID", ""+mid);
 
                 return params;

@@ -285,6 +285,25 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return groups;
     }
 
+    public Group getGroupDetails(int id){
+        String selectQuery = "SELECT * FROM " + TABLE_GROUPS + " WHERE " + KEY_GROUP_ID+" = "+id;
+        Group group =null;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            group = new Group(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2)));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        //db.close();
+        // return friends
+        Log.d(TAG, "Fetching groups from Sqlite: " + group.toString());
+        return group;
+    }
+
     //Getting messages from db
     public ArrayList<Message> getMessages(){
         ArrayList<Message> messages = new ArrayList<Message>();

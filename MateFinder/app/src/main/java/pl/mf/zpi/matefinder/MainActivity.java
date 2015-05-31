@@ -240,20 +240,7 @@ public class MainActivity extends ActionBarActivity {
                 toast.show();
                 return true;
             case R.id.action_share_location:
-                SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
-                editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
-                editor.commit();
-                if (visible) {
-                    toast = Toast.makeText(this, "Lokalizacja bedzie udostępniana", Toast.LENGTH_SHORT);
-                    toast.show();
-                    item.setIcon(R.drawable.ic_action_location_on);
-                } else {
-                    toast = Toast.makeText(this, "Lokalizacja nie bedzie udostępniana", Toast.LENGTH_SHORT);
-                    toast.show();
-                    item.setIcon(R.drawable.ic_action_location_off);
-                }
+                setLocalizationActiveState(item);
                 return true;
             case android.R.id.home:
                 //backToMain();
@@ -558,5 +545,75 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private void setLocalizationActiveState(MenuItem item){
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+        Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+        setLocalizationActiveState(visible, item);
+    }
+
+    private void saveLocalizationActiveState(boolean visible, MenuItem item){
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
+        editor.commit();
+        Toast toast;
+        if (visible) {
+            toast = Toast.makeText(this, "Lokalizacja bedzie udostępniana", Toast.LENGTH_SHORT);
+            toast.show();
+            item.setIcon(R.drawable.ic_action_location_on);
+        } else {
+            toast = Toast.makeText(this, "Lokalizacja nie bedzie udostępniana", Toast.LENGTH_SHORT);
+            toast.show();
+            item.setIcon(R.drawable.ic_action_location_off);
+        }
+    }
+
+    private void setLocalizationActiveState(final boolean active, final MenuItem item){
+        String tag_string_req = "req_setActive";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Setting Active state Response: " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        saveLocalizationActiveState(active, item);
+                    }
+                    else{
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                String userID = db.getUserDetails().get("userID");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "setActive");
+                params.put("userID", userID);
+                params.put("active", (active?1:0)+"");
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

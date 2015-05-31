@@ -68,7 +68,7 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
             View row = listView.getChildAt(i);
             if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
                 Group g = groups.get(i);
-                addToGroup(g.getID(), id);
+                addToGroup(g, id);
             }
         }
         hideDialog();
@@ -77,7 +77,7 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
         ((Activity)context).finish();
     }
 
-    private void addToGroup(final int gid, final int mid){
+    private void addToGroup(final Group group, final int mid){
         //TODO dodać json'a (odkomentować i wywalić dodawanie do sqlite)
         // Tag used to cancel the request
         db = new SQLiteHandler(context);
@@ -96,7 +96,7 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        db.addMember(gid, mid);
+                        db.addMember(group.getID(), mid);
                         // Launch login activity
                         //   backToMain();
                     } else {
@@ -130,7 +130,9 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "addFriendToGroup");
-                params.put("groupID", ""+gid);
+                params.put("userID", db.getUserDetails().get("userID"));
+                params.put("groupID", ""+group.getID());
+                params.put("groupName", group.getName());
                 params.put("memberID", ""+mid);
 
                 return params;
