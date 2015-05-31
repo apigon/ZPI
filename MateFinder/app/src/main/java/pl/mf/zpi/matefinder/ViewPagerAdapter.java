@@ -11,6 +11,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private CharSequence tytuly[];
     private int iloscZakladek;
+    private ZakladkaGrup grupy;
+    private ZakladkaZnajomi znajomi;
 
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int n) {
@@ -18,7 +20,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         this.tytuly = mTitles;
         this.iloscZakladek = n;
-
     }
 
     //Zwraca fragment dla kazdej zakładkir
@@ -27,12 +28,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         if (position == 0) // dla 0 zwracamy zkładkę grup
         {
-            ZakladkaZnajomi znajomi = new ZakladkaZnajomi();
-            return znajomi;
+            grupy = new ZakladkaGrup();
+            return grupy;
         } else             // dla 1 (w przeciwnym wypadku) zakładkę znajomych
         {
-            ZakladkaGrup grupy = new ZakladkaGrup();
-            return grupy;
+            znajomi = new ZakladkaZnajomi();
+            return znajomi;
         }
 
 
@@ -49,5 +50,13 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return iloscZakladek;
+    }
+
+    public void refresh(){
+        grupy.refresh();
+    }
+
+    public MainActivityGroupAdapter getGroupAdapter(){
+        return grupy.getAdapter();
     }
 }

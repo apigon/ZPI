@@ -4,9 +4,7 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
-import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -50,7 +48,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -76,6 +74,9 @@ public class MainActivity extends ActionBarActivity{
 
     private static Menu menu;
     private static TimerTask doAsynchronousTask;
+
+    private int request;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,9 @@ public class MainActivity extends ActionBarActivity{
             }
         });
         zakladki.setViewPager(pager);
+
+        request = 1;
+
     }
 
     @Override
@@ -147,10 +151,26 @@ public class MainActivity extends ActionBarActivity{
         inflater.inflate(R.menu.menu_main, menu);
         this.menu = menu;
         refreshMenuIcon(db.allMessagesRead());
+        setLocationIcon();
+//        MenuItem location = menu.getItem(R.id.action_share_location);
+//        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+//        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+//
+//        if(visible)
+//            location.setIcon(R.drawable.ic_action_location_on);
+//        else
+//            location.setIcon(R.drawable.ic_action_location_off);
+
         if (doAsynchronousTask == null)
             callAsynchronousTask();
 
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode == 1)
+            adapter.refresh();
     }
 
     /**
@@ -177,7 +197,7 @@ public class MainActivity extends ActionBarActivity{
 
     private void createGroup() {
         Intent intent = new Intent(this, AddGroupActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, request);
     }
 
     private void makeFriend() {
@@ -266,7 +286,7 @@ public class MainActivity extends ActionBarActivity{
 
             ;
         };
-        timer.schedule(doAsynchronousTask, 0, 10000);
+        timer.schedule(doAsynchronousTask, 0, 60000);
     }
 
     private boolean[] notifManager() {
@@ -516,10 +536,24 @@ public class MainActivity extends ActionBarActivity{
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
+    private void setLocationIcon() {
+        MenuItem location = menu.findItem(R.id.action_share_location);
+
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
+        Boolean visible = settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
+
+        if (visible)
+            location.setIcon(R.drawable.ic_action_location_on);
+        else
+            location.setIcon(R.drawable.ic_action_location_off);
+    }
+
     @Override
     public void onBackPressed() {
         backToMain();
     }
+
     private void backToMain() {
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         startActivity(intent);

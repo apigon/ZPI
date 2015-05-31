@@ -87,7 +87,6 @@ public class UpdateGroupActivity extends ActionBarActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        SQLiteHandler db = new SQLiteHandler(this);
         String newName = name.getText().toString();
         if(!newName.equals(group.getName())) {
             updateGroup(newName);
@@ -158,15 +157,11 @@ public class UpdateGroupActivity extends ActionBarActivity implements View.OnCli
 
             @Override
             protected Map<String, String> getParams() {
-                SQLiteHandler db = new SQLiteHandler(getApplicationContext());
-                HashMap<String, String> user = db.getUserDetails();
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "updateGroup");
-                params.put("userID", user.get("userID"));
                 params.put("groupID", group.getID()+"");
                 params.put("groupName", nazwa);
-                params.put("oldName", group.getName());
 
                 return params;
             }
@@ -176,8 +171,7 @@ public class UpdateGroupActivity extends ActionBarActivity implements View.OnCli
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
     private void backToMain(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        setResult(1);
         finish();
     }
 
