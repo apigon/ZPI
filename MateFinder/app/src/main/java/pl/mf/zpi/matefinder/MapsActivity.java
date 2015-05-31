@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
@@ -372,14 +371,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     private SessionManager session;
-   // private static TimerTask doAsynchronousTask;
+
+    // private static TimerTask doAsynchronousTask;
     //private static TimerTask doAsynchronousTask;
     // Wyloguj
     private void logoutUser() {
         session.setLogin(false);
 
-      //  doAsynchronousTask.cancel();
-      //  doAsynchronousTask = null;
+        MainActivity.doAsynchronousTask.cancel();
+        MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
         db.deleteGroups();
@@ -629,22 +629,22 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             String encodedString = overviewPolylines.getString("points");
             List<LatLng> list = decodePoly(encodedString);
 
-            LatLng middle=null;
+            LatLng middle = null;
             PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
             for (int z = 0; z < list.size(); z++) {
                 LatLng point = list.get(z);
                 options.add(point);
-                if(list.size()/2==z)
-                    middle=list.get(z); //do wyznaczania miejsca spotkania
+                if (list.size() / 2 == z)
+                    middle = list.get(z); //do wyznaczania miejsca spotkania
             }
             line = googleMap.addPolyline(options);
-            if(middle!=null)
-                    googleMap.addMarker(new MarkerOptions()
-                    .position(middle)
-                    .title("Proponowane miejsce spotkania")
-                    .draggable(false)
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+            if (middle != null)
+                googleMap.addMarker(new MarkerOptions()
+                        .position(middle)
+                        .title("Proponowane miejsce spotkania")
+                        .draggable(false)
+                        .icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
             LatLngBounds.Builder builder = new LatLngBounds.Builder(); //oddalenie kamery dla widocznosci calej trasy
             for (Marker marker : markers) {
                 builder.include(marker.getPosition());

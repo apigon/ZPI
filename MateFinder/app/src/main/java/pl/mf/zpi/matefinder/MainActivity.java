@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -73,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
 
     private static Menu menu;
-    private static TimerTask doAsynchronousTask;
+    public static TimerTask doAsynchronousTask;
 
     private int request;
 
@@ -276,7 +277,7 @@ public class MainActivity extends ActionBarActivity {
                             try {
                                 MessageAsync performBackgroundTask = new MessageAsync(MainActivity.this, notifManager());
                                 // PerformBackgroundTask this class is the class that extends AsynchTask
-                                performBackgroundTask.execute();
+                                performBackgroundTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
                             }
