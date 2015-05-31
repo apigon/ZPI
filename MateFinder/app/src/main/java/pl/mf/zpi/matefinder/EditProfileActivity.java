@@ -384,8 +384,8 @@ public class EditProfileActivity extends ActionBarActivity {
     private void logoutUser() {
         session.setLogin(false);
 
-        //  doAsynchronousTask.cancel();
-        //  doAsynchronousTask = null;
+        MainActivity.doAsynchronousTask.cancel();
+        MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
         db.deleteGroups();

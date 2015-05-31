@@ -1,6 +1,5 @@
 package pl.mf.zpi.matefinder;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,6 +90,8 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
 
         NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
+        radius.setMaxValue(5);
+        radius.setMinValue(1);
         radius.setOrientation(LinearLayout.HORIZONTAL);
         radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
@@ -139,11 +139,6 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings, menu);
-        NumberPicker np = (NumberPicker) findViewById(R.id.radius);
-        np.setMaxValue(5);
-        np.setMinValue(1);
-
-
         return true;
     }
 
@@ -213,7 +208,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             updateRadius(radiusS);
             Toast toast = Toast.makeText(this, "Zmiany zostały zapisane.", Toast.LENGTH_SHORT);
             toast.show();
-            finish();
+            //finish();
         }
     }
 
@@ -224,8 +219,8 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     private void logoutUser() {
         session.setLogin(false);
 
-        //  doAsynchronousTask.cancel();
-        //  doAsynchronousTask = null;
+        MainActivity.doAsynchronousTask.cancel();
+        MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
         db.deleteGroups();
