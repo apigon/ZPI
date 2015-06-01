@@ -45,7 +45,6 @@
                             android:layout_height="wrap_content"
                             android:text="@string/settings_notification_silent"
                             android:id="@+id/notification_silent"
-                            android:paddingLeft="10dp"
                             android:layout_marginLeft="10dp" />
 
                         <RadioButton
@@ -53,20 +52,17 @@
                             android:layout_height="wrap_content"
                             android:text="@string/settings_notification_loud"
                             android:id="@+id/notification_loud"
-                            android:paddingLeft="10dp"
                             android:layout_marginLeft="10dp"
                             android:checked="false" />
 
                     </RadioGroup>
 
                     <CheckBox
-                        android:paddingTop="?android:attr/actionBarSize"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_notification_sound"
                         android:id="@+id/notification_sound"
                         android:checked="false"
-                        android:padding="10dp"
                         android:layout_marginLeft="20dp" />
 
                     <CheckBox
@@ -75,7 +71,6 @@
                         android:text="@string/settings_Notification_vibrate"
                         android:id="@+id/notification_vibrate"
                         android:layout_marginLeft="20dp"
-                        android:paddingLeft="10dp"
                         android:checked="false" />
 
                     <CheckBox
@@ -85,7 +80,6 @@
                         android:id="@+id/internet"
                         android:checked="false"
                         android:layout_marginTop="15dp"
-                        android:padding="10dp"
                         android:layout_marginLeft="0dp" />
                 </LinearLayout>
 
