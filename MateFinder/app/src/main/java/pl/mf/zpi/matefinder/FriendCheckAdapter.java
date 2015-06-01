@@ -91,16 +91,12 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
             View row = listView.getChildAt(i);
             if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
                 Friend f = friends.get(i);
-                addToGroup(id, f.getId());
+                addToGroup(id, f.getId(), i==friends.size()-1);
             }
         }
-        hideDialog();
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
-        ((Activity)context).finish();
     }
 
-    private void addToGroup(final int gid, final int mid){
+    private void addToGroup(final int gid, final int mid, final boolean last){
 //        Tag used to cancel the request
         db = new SQLiteHandler(context);
         String tag_string_req = "addMember_req";
@@ -119,8 +115,8 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         db.addMember(gid, mid);
-                        // Launch login activity
-                        //   backToMain();
+                        if(last)
+                            backToMain();
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -164,6 +160,11 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void backToMain() {
+        ((Activity)context).setResult(1);
+        ((Activity) context).finish();
     }
 
     private void showDialog() {

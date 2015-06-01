@@ -56,7 +56,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         grupy.refresh();
     }
 
-    public MainActivityGroupAdapter getGroupAdapter(){
+    public ExpandableGroupListAdapter getGroupAdapter(){
         return grupy.getAdapter();
     }
 }

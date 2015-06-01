@@ -111,6 +111,8 @@
     <string name="friend_menu_delete">Usuń znajomego</string>
 
     <!--Menu group-->
+    <string name="group_menu_visible_off">Wyłącz udostępnianie lokallizacji</string>
+    <string name="group_menu_visible_on">Włącz udostępnianie lokalizacji</string>
     <string name="group_menu_edit">Edytuj grupę</string>
     <string name="group_menu_add_friend">Dodaj znajomych</string>
     <string name="group_menu_delete">Usuń grupę</string>

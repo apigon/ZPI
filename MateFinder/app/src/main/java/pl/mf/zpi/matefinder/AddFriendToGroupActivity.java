@@ -46,10 +46,6 @@ public class AddFriendToGroupActivity extends ActionBarActivity {
             findViewById(R.id.save).setOnClickListener(adapter);
         }
 
-
-
-
-
     }
 
     @Override

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:title="@string/group_menu_visible_off"
+        android:id="@+id/visible"/>
+
+    <item
         android:id="@+id/edit"
         android:title="@string/group_menu_edit"/>
 

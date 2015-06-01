@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -577,10 +578,14 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 Intent intent = new Intent(context, AddFriendToGroupActivity.class);
                 intent.putExtra("adapter", 1);
                 intent.putExtra("id", listaZnajomych.get(klikniete).getID());
-                activity.startActivity(intent);
+                activity.startActivityForResult(intent, 1);
                 break;
             case R.id.wyznaczTrase:
-                getMyFriendsLocation("Znajomi");
+                if(checkLocalizationOn())
+                    getMyFriendsLocation("Znajomi");
+                else{
+                    Toast.makeText(context, "Proszę włączyć udostępnianie lokalizacji!", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;
@@ -625,7 +630,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         else
             Toast.makeText(context,"Użytkownik nie jest aktywny", Toast.LENGTH_LONG).show();
     }
-   ;
+
+    private boolean checkLocalizationOn(){
+        SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.settings_save_file), Context.MODE_PRIVATE);
+        return settings.getBoolean(context.getString(R.string.settings_save_key_visible_localization), true);
+    }
 
     private void getMyFriendsLocation(final String groupName) {
         dbHandler = new SQLiteHandler(context);

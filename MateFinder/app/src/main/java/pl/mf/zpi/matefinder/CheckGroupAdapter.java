@@ -72,9 +72,6 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
             }
         }
         hideDialog();
-        // Intent intent = new Intent(context, MainActivity.class);
-        // context.startActivity(intent);
-        ((Activity)context).finish();
     }
 
     private void addToGroup(final Group group, final int mid){
@@ -98,7 +95,7 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
                     if (!error) {
                         db.addMember(group.getID(), mid);
                         // Launch login activity
-                        //   backToMain();
+                        backToMain();
                     } else {
 
                         // Error occurred in registration. Get the error
@@ -151,5 +148,10 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void backToMain(){
+        ((Activity)context).setResult(1);
+        ((Activity) context).finish();
     }
 }

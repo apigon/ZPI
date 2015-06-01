@@ -54,7 +54,6 @@ public class GroupAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.group_list_element, parent, false);
         TextView name = (TextView) row.findViewById(R.id.groupName);
