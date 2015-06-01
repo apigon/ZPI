@@ -267,7 +267,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //Getting groups details from db
     public ArrayList<Group> getGroupsDetails(){
         ArrayList<Group> groups = new ArrayList<Group>();
-        String selectQuery = "SELECT * FROM " + TABLE_GROUPS + " WHERE " + KEY_GROUP_NAME+" <> 'Znajomi'";
+        String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
+        //+ " WHERE " + KEY_GROUP_NAME+" <> 'Znajomi'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
