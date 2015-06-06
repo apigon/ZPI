@@ -164,8 +164,16 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
         for(int i=0;i<friends.size();i++){
-            SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
+            final SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
             listaZnajomych.add(sf);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("tworzenie znajomego", "Nowy znajomy został utworzony: " + sf.toString());
+                    notifyDataSetChanged();
+                }
+            }, 1000);
         }
         context=c;
         this.listView = listView;
@@ -222,6 +230,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         final SingleFriend tmp = listaZnajomych.get(position);
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
+        /*
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -229,7 +238,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 notifyDataSetChanged();
             }
         }, 1000);
-
+        */
+        notifyDataSetChanged();
         return row;
     }
 
