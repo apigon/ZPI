@@ -94,8 +94,8 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
-        if (connChecker())
-            getFriendsRequests();
+        //if (connChecker())
+        //    getFriendsRequests();
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);

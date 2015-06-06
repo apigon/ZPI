@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -84,7 +86,9 @@ public class ZakladkaZnajomi extends Fragment{
     public void updateFriendsList(){
         friendslist.setAdapter(adapter);
         friendslist.setOnItemClickListener(adapter);
-        adapter.getFriendsRequests(getActivity());
+        if (adapter.connChecker())
+        //    getFriendsRequests();
+        getFriendsRequests(getActivity(), adapter);
     }
 
     @Override
@@ -106,6 +110,84 @@ public class ZakladkaZnajomi extends Fragment{
         fm.popBackStack();
     }
 
+    public void getFriendsRequests(Context context, final FriendsAdapter a){
+        final Context context1 = context;
+        String tag_string_req = "req_getFriendsRequests";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting friends requests Response: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if(!error){
+                        JSONArray user = jObj.getJSONArray("messages");
+                        for (int i = 0; i < user.length(); i++) {
+                            // user successfully logged in
+                            JSONObject u = user.getJSONObject(i);
+                            final String requestID = u.getString(("messageID"));
+                            final String userID = u.getString("userID");
+                            String content = u.getString("content");
+                            // Wyświetlanie dialogów
+                            new AlertDialog.Builder(context1)
+                                    .setTitle("Zaproszenie do grona znajomych")
+                                    .setMessage(content)
+                                    .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            a.removeFriendRequest(requestID);
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            a.addFriend(requestID, userID);
+                                            final Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());
+                                                    friendslist.setAdapter(adapter);
+                                                    friendslist.setOnItemClickListener(adapter);
+                                                }
+                                            }, 1000);
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login ERROR: " + error.getMessage());
+                Toast.makeText(context1,
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                HashMap<String, String> user = db.getUserDetails();
+                String userID = user.get("userID");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "getMessages");
+                params.put("userID", userID);
+                params.put("type", "0");
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
 
 }
 
@@ -190,10 +272,18 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     public void addFriendToAdapter(String friendid){
         HashMap<String, String> singlefriend = dbHandler.getFriendLoginAndPhoto(friendid);
-        SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"),singlefriend.get("photo"),Integer.parseInt(friendid));
-        listaZnajomych.add(singleFriend);
+        final SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"),singlefriend.get("photo"),Integer.parseInt(friendid));
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                listaZnajomych.add(singleFriend);
+            }
+        }, 1000);
+        notifyDataSetChanged();
+        /*
+        final Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Collections.sort(listaZnajomych, new Comparator<SingleFriend>() {
@@ -204,6 +294,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             }
         }, 2000);
         notifyDataSetChanged();
+        */
     }
     @Override
     public int getCount() {
@@ -242,7 +333,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         notifyDataSetChanged();
         return row;
     }
-
+    /*
     public void getFriendsRequests(Context context){
         final Context context1 = context;
         String tag_string_req = "req_getFriendsRequests";
@@ -312,8 +403,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
-    private void addFriend(final String requestID, final String user2ID){
+    */
+    public void addFriend(final String requestID, final String user2ID){
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -328,7 +419,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                     if (!error) {
                         dbHandler.deleteFriends();
                         String tempUserID = dbHandler.getUserDetails().get("userID");
-                        addFriendsList(tempUserID);
+                        addFriendsList(tempUserID,user2ID);
+                        /*
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -336,6 +428,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                                 addFriendToAdapter(user2ID);
                             }
                         },2000);
+                        */
                         // db.deleteFriends();
                         // addFriendsList(userID); + zaimplementować w tej klasie
                         // sprawdzic w metodzie addfriend w php jaki response ustawiony
@@ -379,7 +472,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void removeFriendRequest(final String requestID){
+    public void removeFriendRequest(final String requestID){
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -428,7 +521,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     }
 
 
-    private void addFriendsList(final String userID) {
+    public void addFriendsList(final String userID, final String user2ID) {
         // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
 
@@ -472,6 +565,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
                     }*/ }
+                    addFriendToAdapter(user2ID);
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
@@ -503,7 +597,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    private void removeFriend(final String login) {
+    public void removeFriend(final String login) {
         // Tag used to cancel the request
         String tag_string_req = "req_remove_friend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -721,6 +815,20 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
+    }
+    public boolean connChecker() {
+        boolean conn_ok = false;
+        SharedPreferences settings = this.activity.getSharedPreferences(this.activity.getString(R.string.settings_save_file), this.activity.MODE_PRIVATE);
+        boolean transfer = settings.getBoolean(this.activity.getString(R.string.settings_save_key_transfer), true);
+        Boolean visible = settings.getBoolean(this.activity.getString(R.string.settings_save_key_visible_localization), true);
+        ConnectivityManager connManager = (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo internet = connManager.getActiveNetworkInfo();
+        Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
+        if (visible == true && (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected())) {
+            conn_ok = true;
+        }
+        return conn_ok;
     }
 }
 
