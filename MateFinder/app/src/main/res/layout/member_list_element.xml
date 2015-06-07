@@ -8,6 +8,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/memberName"
         android:textStyle="bold"
-        android:paddingLeft="60dp"/>
+        android:padding="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

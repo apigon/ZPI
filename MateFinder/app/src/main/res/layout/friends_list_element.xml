@@ -8,7 +8,7 @@
         android:layout_height="80dp"
         android:id="@+id/imageView_friend_photo"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,6 +22,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:textSize="@dimen/abc_text_size_title_material_toolbar"
-        android:textColor="@color/grey" />
+        android:textColor="@color/grey"/>
 
 </LinearLayout>
