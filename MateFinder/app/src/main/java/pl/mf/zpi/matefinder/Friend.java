@@ -6,8 +6,6 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
-import javax.xml.namespace.NamespaceContext;
-
 import pl.mf.zpi.matefinder.app.AppController;
 
 /**
@@ -43,32 +41,28 @@ public class Friend {
         return name!=null?name:"";
     }
 
-    public String getSurname(){
-        return surname!=null?surname:"";
-    }
-
-    public String getPhone(){
-        return phone;
-    }
-
-    public int getId(){
-        return id;
-    }
-
     public void setName(String name){
         this.name=name;
+    }
+
+    public String getSurname(){
+        return surname!=null?surname:"";
     }
 
     public void setSurname(String surname){
         this.surname=surname;
     }
 
-    public void setEmail(String email){
-        this.email=email;
+    public String getPhone(){
+        return phone;
     }
 
     public  void setPhone(String phone){
         this.phone=phone;
+    }
+
+    public int getId(){
+        return id;
     }
 
     public String getLogin(){
@@ -77,5 +71,15 @@ public class Friend {
 
     public String getEmail(){
         return email;
+    }
+
+    public void setEmail(String email){
+        this.email=email;
+    }
+
+    @Override
+    public boolean equals(Object f){
+        Friend fr = (Friend) f;
+        return login.equals(fr.login);
     }
 }

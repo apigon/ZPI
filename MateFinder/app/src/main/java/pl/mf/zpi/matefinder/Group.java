@@ -3,8 +3,6 @@ package pl.mf.zpi.matefinder;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import pl.mf.zpi.matefinder.helper.SQLiteHandler;
-
 /**
  * Created by root on 04.05.15.
  */
@@ -34,12 +32,12 @@ public class Group implements Serializable {
         return friends;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
     public boolean getVisible() {
         return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public String getName() {
@@ -48,5 +46,10 @@ public class Group implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean equals(Object o){
+        Group g = (Group) o;
+        return id==((Group) o).getID();
     }
 }

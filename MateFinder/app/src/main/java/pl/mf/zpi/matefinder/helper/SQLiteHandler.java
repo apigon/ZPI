@@ -286,6 +286,27 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return groups;
     }
 
+    //Get all groups ID which member is friend with fID
+    public ArrayList<Group> getMemberGroupsID(int fid){
+        ArrayList<Group> groups = new ArrayList<Group>();
+        String selectQuery = "SELECT * FROM " + TABLE_MEMBERS + " WHERE " + KEY_MEMBER_USER_ID +" = "+ fid;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Group g = new Group(Integer.parseInt(cursor.getString(1)), "", 1);
+            groups.add(g);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        //db.close();
+        // return friends
+        Log.d(TAG, "Fetching groups ID which member is fid from Sqlite: " + groups.toString());
+        return groups;
+    }
+
     public Group getGroupDetails(int id){
         String selectQuery = "SELECT * FROM " + TABLE_GROUPS + " WHERE " + KEY_GROUP_ID+" = "+id;
         Group group =null;

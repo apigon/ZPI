@@ -111,8 +111,8 @@
     <string name="friend_menu_delete">Usuń znajomego</string>
 
     <!--Menu group-->
-    <string name="group_menu_visible_off">Wyłącz udostępnianie lokalizacji</string>
-    <string name="group_menu_visible_on">Włącz udostępnianie lokalizacji</string>
+    <string name="group_menu_visible_off">Wyłącz widoczność grupy</string>
+    <string name="group_menu_visible_on">Włącz widoczność grupy</string>
     <string name="group_menu_edit">Edytuj grupę</string>
     <string name="group_menu_add_friend">Dodaj znajomych</string>
     <string name="group_menu_delete">Usuń grupę</string>
@@ -142,7 +142,6 @@
     <string name="title_activity_messages">Wiadomości</string>
     <string name="message_delete">Usuń</string>
     <string name="message_delete_all">Usuń wszystkie</string>
-
 
 
 </resources>

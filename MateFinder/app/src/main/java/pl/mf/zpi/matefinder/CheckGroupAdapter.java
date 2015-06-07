@@ -3,8 +3,6 @@ package pl.mf.zpi.matefinder;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +16,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.identity.intents.AddressConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +33,8 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickListener{
 
-    private int id;
     private static final String TAG = "addToGroup";
+    private int id;
     private ProgressDialog pDialog;
 
     public CheckGroupAdapter(Context c, ListView list, int id) {
@@ -47,8 +45,15 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
         pDialog.setCancelable(false);
 
         db = new SQLiteHandler(context);
-    }
+        ArrayList<Group> g = db.getMemberGroupsID(id);
 
+        groups.removeAll(g);
+
+        if(groups.size()==0){
+            Toast.makeText(context, "Znajomy jest już dodany do wszystkich Twoich grup.", Toast.LENGTH_SHORT).show();
+            backToMain();
+        }
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -64,18 +69,31 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
     public void onClick(View v) {
         pDialog.setMessage("Zapisywanie...");
         showDialog();
+        int count = countChecked();
+        int added=0;
         for(int i=0; i<groups.size(); i++){
             View row = listView.getChildAt(i);
             if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
                 Group g = groups.get(i);
-                addToGroup(g, id);
+                added++;
+                addToGroup(g, id, added==count);
             }
         }
         hideDialog();
     }
 
-    private void addToGroup(final Group group, final int mid){
-        //TODO dodać json'a (odkomentować i wywalić dodawanie do sqlite)
+    private int countChecked(){
+        int count = 0;
+        for(int i=0; i<groups.size(); i++){
+            View row = listView.getChildAt(i);
+            if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private void addToGroup(final Group group, final int mid, final boolean end){
         // Tag used to cancel the request
         db = new SQLiteHandler(context);
         String tag_string_req = "addMember_req";
@@ -94,8 +112,8 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         db.addMember(group.getID(), mid);
-                        // Launch login activity
-                        backToMain();
+                        if(end)
+                            backToMain();
                     } else {
 
                         // Error occurred in registration. Get the error

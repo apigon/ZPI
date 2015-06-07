@@ -3,8 +3,6 @@ package pl.mf.zpi.matefinder;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.nfc.Tag;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,12 +34,12 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
  */
 public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListener {
 
+    private static final String TAG = "addGroup";
     private Context context;
     private ArrayList<Friend> friends;
     private int id;
     private ListView listView;
     private SQLiteHandler db;
-    private static final String TAG = "addGroup";
     private ProgressDialog pDialog;
 
     public FriendCheckAdapter(Context context, ListView list, int id){
@@ -51,10 +49,16 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
         this.id=id;
 
         friends =db.getFriends(id);
-
+        ArrayList <Friend> f = db.getMembersDetails(id);
+        friends.removeAll(f);
 
         pDialog = new ProgressDialog(context);
         pDialog.setCancelable(false);
+
+        if(friends.size()==0){
+            Toast.makeText(context, "Nie masz wiecej znajomych, których możesz dodać do tej grupy.", Toast.LENGTH_SHORT).show();
+            backToMain();
+        }
     }
 
 
@@ -87,13 +91,27 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
     public void onClick(View v) {
         pDialog.setMessage("Zapisywanie...");
         showDialog();
+        int count = countChecked();
+        int added = 0;
         for(int i=0; i<friends.size(); i++){
             View row = listView.getChildAt(i);
             if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
                 Friend f = friends.get(i);
-                addToGroup(id, f.getId(), i==friends.size()-1);
+                added++;
+                addToGroup(id, f.getId(), added==count);
             }
         }
+    }
+
+    private int countChecked(){
+        int count = 0;
+        for(int i=0; i<friends.size(); i++){
+            View row = listView.getChildAt(i);
+            if(((CheckBox)row.findViewById(R.id.check)).isChecked()){
+                count++;
+            }
+        }
+        return count;
     }
 
     private void addToGroup(final int gid, final int mid, final boolean last){
