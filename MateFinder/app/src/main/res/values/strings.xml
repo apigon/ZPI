@@ -129,6 +129,12 @@
     <string name="delete_group_yes">Tak</string>
     <string name="delete_group_no">Nie</string>
 
+    <!--Usuwanie członka-->
+    <string name="delete_member_title">Usuń grupę</string>
+    <string name="dlelete_member_confirm">Czy na pewno chcesz usunąć wybraną grupę?</string>
+    <string name="delete_member_yes">Tak</string>
+    <string name="delete_member_no">Nie</string>
+
     <string name="title_activity_add_friend_to_group">Dodaj znajomego do grup</string>
     <string name="title_activity_update_group">Edytuj grupę</string>
     <string name="title_activity_add_friend">Dodaj znajomego</string>

@@ -52,27 +52,32 @@ import pl.mf.zpi.matefinder.helper.SessionManager;
 public class EditProfileActivity extends ActionBarActivity {
 
     private static final String TAG = EditProfileActivity.class.getSimpleName();
+    RecyclerView mRecyclerView;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
+    DrawerLayout Drawer;
+    ActionBarDrawerToggle mDrawerToggle;
     private ProgressDialog pDialog;
-
     private Button btn_update;
-
     private TextView login;
     private TextView email;
     private TextView phone_number;
     private TextView name;
     private TextView surname;
-
     private ImageView profile_photo;
     private String image_data;
-
     private SQLiteHandler db;
+    private SessionManager session;
 
-    RecyclerView mRecyclerView;
-    RecyclerView.Adapter mAdapter;
-    RecyclerView.LayoutManager mLayoutManager;
-    DrawerLayout Drawer;
-
-    ActionBarDrawerToggle mDrawerToggle;
+    private static String encodeToBase64(Bitmap image) {
+        System.gc();
+        if (image == null)
+            return null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,16 +269,6 @@ public class EditProfileActivity extends ActionBarActivity {
         image_data = encodeToBase64(image);
     }
 
-    private static String encodeToBase64(Bitmap image) {
-        System.gc();
-        if (image == null)
-            return null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] b = baos.toByteArray();
-        return Base64.encodeToString(b, Base64.DEFAULT);
-    }
-
     // Zapis zdjęcia do galerii po aktualizacji
     private void savePhotoToGallery() {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
@@ -320,6 +315,7 @@ public class EditProfileActivity extends ActionBarActivity {
                         // Inserting row in users table
                         db.deleteUsers();
                         db.addUser(userID, login, email, phone, name, surname, photo, location);
+                        mAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
@@ -368,16 +364,18 @@ public class EditProfileActivity extends ActionBarActivity {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
     @Override
     public void onBackPressed() {
         backToMain();
     }
+
     private void backToMain() {
         Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
-    private SessionManager session;
+
     // private static TimerTask doAsynchronousTask;
     //private static TimerTask doAsynchronousTask;
     // Wyloguj

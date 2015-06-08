@@ -337,86 +337,86 @@ public class ExpandableGroupListAdapter extends BaseExpandableListAdapter implem
     }
 
     private void deleteMember(){
-        final Friend f;
-        //= groups.get(groupPosition);
+        final Group g = groups.get(groupPosition);
+        final Friend f = members.get(g.getID()).get(memberPositon);
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.delete_group_title)
-                .setMessage(R.string.dlelete_group_confirm)
-                .setPositiveButton(R.string.delete_group_yes, new DialogInterface.OnClickListener() {
+                .setTitle(R.string.delete_member_title)
+                .setMessage(R.string.dlelete_member_confirm)
+                .setPositiveButton(R.string.delete_member_yes, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        deleteMember(g, f);
+                        deleteMember(g.getID(), f.getId());
                     }
 
                 })
-                .setNegativeButton(R.string.delete_group_no, null)
+                .setNegativeButton(R.string.delete_member_no, null)
                 .show();
 
     }
 
-    private void deleteMemeber(final Group gid, final Friend f){
-//        // Tag used to cancel the request
-//        //db = new SQLiteHandler(getApplicationContext());
-//        showDialog();
-//        String tag_string_req = "deleteGroup_req";
-//
-//
-//        StringRequest strReq = new StringRequest(Request.Method.POST,
-//                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-//
-//            @Override
-//            public void onResponse(String response) {
-//                Log.d(TAG, "Delete group Response: " + response.toString());
-//                hideDialog();
-//
-//                try {
-//                    JSONObject jObj = new JSONObject(response);
-//                    boolean error = jObj.getBoolean("error");
-//                    if (!error) {
-//                        db.deleteGroup(gid.getID());
-//                        groups.remove(gid);
-//                        notifyDataSetChanged();
-//                    } else {
-//
-//                        // Error occurred in registration. Get the error
-//                        // message
-//                        String errorMsg = jObj.getString("error_msg");
-//                        Toast.makeText(context,
-//                                errorMsg, Toast.LENGTH_LONG).show();
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e(TAG, "Deleting group Error: " + error.getMessage());
-//                Toast.makeText(context,
-//                        error.getMessage(), Toast.LENGTH_LONG).show();
-//                hideDialog();
-//            }
-//        }) {
-//
-//            @Override
-//            protected Map<String, String> getParams() {
-//                SQLiteHandler db = new SQLiteHandler(context);
-//                HashMap<String, String> user = db.getUserDetails();
-//                // Posting params to register url
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("tag", "deleteGroup");
-//                params.put("groupID", ""+gid.getID());
-//
-//                return params;
-//            }
-//        };
-//
-//        // Adding request to request queue
-//        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    private void deleteMember(final int gid, final int mid){
+        // Tag used to cancel the request
+        //db = new SQLiteHandler(getApplicationContext());
+        showDialog();
+        String tag_string_req = "deleteGroup_req";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_REGISTER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Delete group Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        db.deleteMembers(gid, mid);
+                        refresh();
+                    } else {
+
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(context,
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Deleting group Error: " + error.getMessage());
+                Toast.makeText(context,
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                SQLiteHandler db = new SQLiteHandler(context);
+                HashMap<String, String> user = db.getUserDetails();
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "deleteMember");
+                params.put("groupID", ""+gid);
+                params.put("memberID", ""+mid);
+
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
 }
