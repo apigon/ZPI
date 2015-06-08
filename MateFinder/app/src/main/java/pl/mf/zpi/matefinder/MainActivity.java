@@ -52,32 +52,32 @@ import pl.mf.zpi.matefinder.helper.SessionManager;
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    public static TimerTask doAsynchronousTask;
+    private static boolean location_shared;
+    private static Menu menu;
     private SQLiteHandler db;
     private SessionManager session;
-
     private Toolbar toolbar;
     private ActionBar actionBar;
-    private static boolean location_shared;
-
     private ViewPager pager;
     private ViewPagerAdapter adapter;
     private SlidingTabLayout zakladki;
     private CharSequence tytuly[] = {"Znajomi", "Grupy"};
     private int n = 2;
-
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
     private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     private RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
     private DrawerLayout Drawer;                                  // Declaring DrawerLayout
-
     private ActionBarDrawerToggle mDrawerToggle;
-
-    private static Menu menu;
-    public static TimerTask doAsynchronousTask;
-
     private int request;
 
+    public static void refreshMenuIcon(boolean new_messages) {
+        MenuItem item = menu.findItem(R.id.action_notification);
+        if (!new_messages)
+            item.setIcon(R.drawable.ic_action_new_email);
+        else
+            item.setIcon(R.drawable.ic_action_email);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,10 +226,10 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.home:
                 return true;
-            case R.id.action_send_notification:
-                toast = Toast.makeText(this, "Przepraszamy, wysyłanie powiadomień jeszcze nie gotowe", Toast.LENGTH_SHORT);
-                toast.show();
-                return true;
+//            case R.id.action_send_notification:
+//                toast = Toast.makeText(this, "Przepraszamy, wysyłanie powiadomień jeszcze nie gotowe", Toast.LENGTH_SHORT);
+//                toast.show();
+//                return true;
             case R.id.action_add_user:
                 makeFriend();
                 return true;
@@ -301,14 +301,6 @@ public class MainActivity extends ActionBarActivity {
             conn_ok = true;
         }
         return conn_ok;
-    }
-
-    public static void refreshMenuIcon(boolean new_messages) {
-        MenuItem item = menu.findItem(R.id.action_notification);
-        if (!new_messages)
-            item.setIcon(R.drawable.ic_action_new_email);
-        else
-            item.setIcon(R.drawable.ic_action_email);
     }
 
     private void getFriendsRequests() {

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!-- Search, should appear as action button -->
     <!-- Settings, should always be in the overflow -->
-    <item
-        android:id="@+id/action_send_notification"
-        android:title="@string/action_send_notification"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/action_send_notification"-->
+        <!--android:title="@string/action_send_notification"-->
+        <!--app:showAsAction="never" />-->
     <item
         android:id="@+id/action_add_user"
         android:title="@string/action_add_user"
@@ -18,8 +18,8 @@
 
     <item
         android:id="@+id/action_search"
-        android:title="@string/action_search"
         android:icon="@drawable/ic_action_search"
+        android:title="@string/action_search"
         app:showAsAction="always" />
 
     <item
@@ -29,8 +29,8 @@
 
     <item
         android:id="@+id/action_share_location"
-        android:title="@string/action_share_location"
         android:icon="@drawable/ic_action_location_off"
+        android:title="@string/action_share_location"
         app:showAsAction="always" />
 
     <item
