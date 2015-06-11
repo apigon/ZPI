@@ -14,19 +14,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -43,16 +38,14 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
@@ -61,34 +54,55 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 /**
  * Created by root on 12.04.15.
  */
-public class ZakladkaZnajomi extends Fragment{
+public class ZakladkaZnajomi extends Fragment {
 
     private static final String TAG = ZakladkaZnajomi.class.getSimpleName();
     FriendsAdapter adapter;
     SQLiteHandler db;
     ListView friendslist;
     private Context activity;
+    private Timer refresh_friends_timer;
+    private TimerTask refresh_friends;
+    public static boolean new_accepted_req;
+    public static boolean new_req;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.zakladka_znajomi, container, false);
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         db = new SQLiteHandler(getActivity().getApplicationContext());
         adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());//czy tu konieczny jest context jako pierwszy argument?nie wystarczy aktywność?
+        if (new_accepted_req == true) {
+            new_accepted_req = false;
+        }
+        if (new_req == true) {
+            new_req = false;
+        }
         return v;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         updateFriendsList();
+        refreshFriendsList();
     }
 
-    public void updateFriendsList(){
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refresh_friends_timer.cancel();
+        refresh_friends_timer = null;
+        refresh_friends.cancel();
+        refresh_friends = null;
+    }
+
+    public void updateFriendsList() {
         friendslist.setAdapter(adapter);
         friendslist.setOnItemClickListener(adapter);
         if (adapter.connChecker())
-        //    getFriendsRequests();
-        getFriendsRequests(getActivity(), adapter);
+            //    getFriendsRequests();
+            getFriendsRequests(getActivity(), adapter);
     }
 
     @Override
@@ -104,13 +118,12 @@ public class ZakladkaZnajomi extends Fragment{
         }
     }
 
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         fm.popBackStack();
     }
 
-    public void getFriendsRequests(Context context, final FriendsAdapter a){
+    public void getFriendsRequests(Context context, final FriendsAdapter a) {
         final Context context1 = context;
         String tag_string_req = "req_getFriendsRequests";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -123,7 +136,7 @@ public class ZakladkaZnajomi extends Fragment{
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-                    if(!error){
+                    if (!error) {
                         JSONArray user = jObj.getJSONArray("messages");
                         for (int i = 0; i < user.length(); i++) {
                             // user successfully logged in
@@ -189,6 +202,44 @@ public class ZakladkaZnajomi extends Fragment{
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    public void refreshFriendsList() {
+        final Handler h = new Handler();
+        refresh_friends_timer = new Timer();
+        refresh_friends = new TimerTask() {
+            @Override
+            public void run() {
+                h.post(new Runnable() {
+                    public void run() {
+                        Log.d("Refresh Friends", "Odświeżanie listy znajomych");
+                        if (new_accepted_req == true) {
+                            try {
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());
+                                        friendslist.setAdapter(adapter);
+                                        friendslist.setOnItemClickListener(adapter);
+                                    }
+                                }, 1000);
+                                new_accepted_req = false;
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                        if (new_req == true && adapter.connChecker()) {
+                            getFriendsRequests(getActivity(), adapter);
+                            new_req = false;
+                        }
+                    }
+                });
+            }
+
+            ;
+        };
+        refresh_friends_timer.schedule(refresh_friends, 0, 60000);
+    }
+
 }
 
 class SingleFriend {
@@ -196,21 +247,22 @@ class SingleFriend {
     Bitmap friendPhoto;
     int id;
 
-    public SingleFriend(String friendLogin,String friendPhoto, int id){
+    public SingleFriend(String friendLogin, String friendPhoto, int id) {
         this.friendLogin = friendLogin;
         getFriendPhoto(friendPhoto);
-        Log.d("setting singlefriend","SingleFriend utworzony");
-        this.id=id;
-    }
-    public void setFriendPhoto(Bitmap photo){
-        this.friendPhoto = photo;
-        Log.d("setting photo","Bitmapa ustawiona");
+        Log.d("setting singlefriend", "SingleFriend utworzony");
+        this.id = id;
     }
 
-    public void getFriendPhoto(String friendPhoto){
+    public void setFriendPhoto(Bitmap photo) {
+        this.friendPhoto = photo;
+        Log.d("setting photo", "Bitmapa ustawiona");
+    }
+
+    public void getFriendPhoto(String friendPhoto) {
         String url = "http://156.17.130.212/android_login_api/images/" + friendPhoto;
 
-        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>(){
+        ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {
                 Log.d("Bitmap", "Bitmap Response: " + bitmap.toString());
@@ -220,13 +272,13 @@ class SingleFriend {
         AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
 
-    public int getID(){
+    public int getID() {
         return id;
     }
 }
 
 class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener,
-        PopupMenu.OnMenuItemClickListener{
+        PopupMenu.OnMenuItemClickListener {
 
     private static final String TAG = "removeFriend";
     ProgressDialog pDialog;
@@ -234,19 +286,19 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     ArrayList<SingleFriend> listaZnajomych;
     Context context;
     private ListView listView;
-    int klikniete=0;
+    int klikniete = 0;
     List<HashMap<String, String>> friends;
     private Activity activity;
 
 
-    public FriendsAdapter(Context c, ListView listView, Activity activity){
+    public FriendsAdapter(Context c, ListView listView, Activity activity) {
         dbHandler = new SQLiteHandler(c);
         // fetching friends from sqlite:
-        this.activity=activity;
+        this.activity = activity;
         friends = dbHandler.getFriendsDetails();
         listaZnajomych = new ArrayList<SingleFriend>();
-        for(int i=0;i<friends.size();i++){
-            final SingleFriend sf = new SingleFriend(friends.get(i).get("login"),friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
+        for (int i = 0; i < friends.size(); i++) {
+            final SingleFriend sf = new SingleFriend(friends.get(i).get("login"), friends.get(i).get("photo"), Integer.parseInt(friends.get(i).get("userID")));
             listaZnajomych.add(sf);
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -257,22 +309,22 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 }
             }, 1000);
         }
-        context=c;
+        context = c;
         this.listView = listView;
     }
 
-    public void deleteFriendFromAdapter(String login){
-        for(int i=0;i<listaZnajomych.size();i++){
-            if(listaZnajomych.get(i).friendLogin.equals(login)){
+    public void deleteFriendFromAdapter(String login) {
+        for (int i = 0; i < listaZnajomych.size(); i++) {
+            if (listaZnajomych.get(i).friendLogin.equals(login)) {
                 listaZnajomych.remove(i);
             }
         }
         notifyDataSetChanged();
     }
 
-    public void addFriendToAdapter(String friendid){
+    public void addFriendToAdapter(String friendid) {
         HashMap<String, String> singlefriend = dbHandler.getFriendLoginAndPhoto(friendid);
-        final SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"),singlefriend.get("photo"),Integer.parseInt(friendid));
+        final SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"), singlefriend.get("photo"), Integer.parseInt(friendid));
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -296,6 +348,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         notifyDataSetChanged();
         */
     }
+
     @Override
     public int getCount() {
         return listaZnajomych.size();
@@ -315,7 +368,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     public View getView(int position, View convertView, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View row = inflater.inflate(R.layout.friends_list_element,parent,false);
+        final View row = inflater.inflate(R.layout.friends_list_element, parent, false);
         final TextView friendLogin = (TextView) row.findViewById(R.id.textView_friend_login);
         ImageView friendPhoto = (ImageView) row.findViewById(R.id.imageView_friend_photo);
         final SingleFriend tmp = listaZnajomych.get(position);
@@ -333,6 +386,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         notifyDataSetChanged();
         return row;
     }
+
     /*
     public void getFriendsRequests(Context context){
         final Context context1 = context;
@@ -404,7 +458,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
     */
-    public void addFriend(final String requestID, final String user2ID){
+    public void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -419,7 +473,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                     if (!error) {
                         dbHandler.deleteFriends();
                         String tempUserID = dbHandler.getUserDetails().get("userID");
-                        addFriendsList(tempUserID,user2ID);
+                        addFriendsList(tempUserID, user2ID);
                         /*
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
@@ -472,7 +526,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    public void removeFriendRequest(final String requestID){
+    public void removeFriendRequest(final String requestID) {
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_REGISTER, new Response.Listener<String>() {
@@ -564,7 +618,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
-                    }*/ }
+                    }*/
+                    }
                     addFriendToAdapter(user2ID);
                 } catch (JSONException e) {
                     // JSON error
@@ -587,7 +642,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "friends");
-                params.put("userID",userID );
+                params.put("userID", userID);
                 return params;
             }
 
@@ -628,7 +683,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "removeFriend");
                 params.put("login", login);
-                params.put("userID",user.get("userID"));
+                params.put("userID", user.get("userID"));
 
                 return params;
             }
@@ -637,7 +692,6 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
 
 
     @Override
@@ -668,13 +722,13 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 nazwisko = temp.get("surname");
                 mail = temp.get("email");
                 telefon = temp.get("phone");
-                Intent showProfile = new Intent(this.context,ShowFriendProfileActivity.class);
-                showProfile.putExtra("name",imie);
-                showProfile.putExtra("surname",nazwisko);
-                showProfile.putExtra("email",mail);
-                showProfile.putExtra("phone",telefon);
-                showProfile.putExtra("login",login);
-                showProfile.putExtra("photo",byteArray);
+                Intent showProfile = new Intent(this.context, ShowFriendProfileActivity.class);
+                showProfile.putExtra("name", imie);
+                showProfile.putExtra("surname", nazwisko);
+                showProfile.putExtra("email", mail);
+                showProfile.putExtra("phone", telefon);
+                showProfile.putExtra("login", login);
+                showProfile.putExtra("photo", byteArray);
                 showProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(showProfile);
                 break;
@@ -685,44 +739,41 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                 activity.startActivityForResult(intent, 1);
                 break;
             case R.id.wyznaczTrase:
-                if(checkLocalizationOn())
+                if (checkLocalizationOn())
                     getMyFriendsLocation("Znajomi");
-                else{
+                else {
                     Toast.makeText(context, "Proszę włączyć udostępnianie lokalizacji!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
                 break;
-                }
+        }
         return false;
     }
-    public LatLng getFriendLocation(int userID)
-    {
+
+    public LatLng getFriendLocation(int userID) {
         dbHandler = new SQLiteHandler(context);
         HashMap<String, String> user = dbHandler.getFriendLocation(userID);
-        LatLng loc=null;
-        if(user!=null)
-        {
+        LatLng loc = null;
+        if (user != null) {
             String lat = user.get("lat");
             String lng = user.get("lng");
-            if(lat!=null && lng !=null)
-            {
+            if (lat != null && lng != null) {
                 double friendLat = Double.parseDouble(lat);
                 double friendLng = Double.parseDouble(lng);
-                loc = new LatLng(friendLat,friendLng);
+                loc = new LatLng(friendLat, friendLng);
             }
 
         }
 
         return loc;
     }
-    public void goToMapActivity()
-    {
+
+    public void goToMapActivity() {
         HashMap<String, String> list = friends.get(klikniete);
         String friendID = list.get("location");
         LatLng friendLoc = getFriendLocation(Integer.parseInt(friendID));
-        if(friendLoc != null)
-        {
+        if (friendLoc != null) {
             Bundle args = new Bundle();
             args.putParcelable("friendLoc", friendLoc);
             Intent mapIntent = new Intent(context, MapsActivity.class);
@@ -730,12 +781,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //mapIntent.putExtra("id", listaZnajomych.get(klikniete).getID());
             context.startActivity(mapIntent);
-        }
-        else
-            Toast.makeText(context,"Użytkownik nie jest aktywny", Toast.LENGTH_LONG).show();
+        } else
+            Toast.makeText(context, "Użytkownik nie jest aktywny", Toast.LENGTH_LONG).show();
     }
 
-    private boolean checkLocalizationOn(){
+    private boolean checkLocalizationOn() {
         SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.settings_save_file), Context.MODE_PRIVATE);
         return settings.getBoolean(context.getString(R.string.settings_save_key_visible_localization), true);
     }
@@ -776,15 +826,14 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
                             dbHandler.addFriendLocation(location, login, lat, lng);
                         }
-                             goToMapActivity();
-
+                        goToMapActivity();
 
 
                     } else {
                         // Error occurred in registration. Get the error
                         // message
                         String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(context,errorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -795,7 +844,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Friends Locations Error: " + error.getMessage());
-                Toast.makeText(context,error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
 
@@ -816,6 +865,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
     }
+
     public boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = this.activity.getSharedPreferences(this.activity.getString(R.string.settings_save_file), this.activity.MODE_PRIVATE);

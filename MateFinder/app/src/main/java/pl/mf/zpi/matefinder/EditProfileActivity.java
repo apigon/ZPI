@@ -183,6 +183,15 @@ public class EditProfileActivity extends ActionBarActivity {
                 logoutUser();
                 Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.action_change_pass:
+                startActivity(new Intent(EditProfileActivity.this, EditPasswordActivity.class));
+                return true;
+            case R.id.action_change_photo:
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Wybieranie zdjęcia z galerii"), 1);
+                return true;
             case android.R.id.home:
                 //backToMain();
                 onBackPressed();

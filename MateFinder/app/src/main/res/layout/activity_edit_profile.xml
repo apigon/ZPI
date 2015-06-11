@@ -182,7 +182,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
             android:linksClickable="true"
-            android:text="@string/editProfile_changePass_link" />
+            android:text="@string/editProfile_changePass_link"
+            android:singleLine="false" />
 
     </RelativeLayout>
 

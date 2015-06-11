@@ -50,6 +50,8 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         getMessages();
+        getAcceptedRequests();
+        getNewRequests();
         return true;
     }
 
@@ -100,6 +102,102 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                     params.put("tag", "getMessages");
                     params.put("userID", userID);
                     params.put("type", "1");
+                    return params;
+                }
+            };
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
+    }
+
+    private void getNewRequests() {
+        Log.d(TAG, "Sprawdzanie potwierdzeń zaproszeń...");
+        if (session.isLoggedIn()) {
+            String tag_string_req = "req_getNewRequests";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Getting new requests Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        if (!error) {
+                            JSONArray new_req = jObj.getJSONArray("messages");
+                            if (new_req.length() > 0) {
+                                ZakladkaZnajomi.new_req = true;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Message ERROR: " + error.getMessage());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    HashMap<String, String> user = db.getUserDetails();
+                    String userID = user.get("userID");
+                    params.put("tag", "getMessages");
+                    params.put("userID", userID);
+                    params.put("type", "0");
+                    return params;
+                }
+            };
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
+    }
+
+    private void getAcceptedRequests() {
+        Log.d(TAG, "Sprawdzanie zaproszeń...");
+        if (session.isLoggedIn()) {
+            String tag_string_req = "req_getAcceptedRequests";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_REGISTER, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Getting accepted requests Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.getBoolean("error");
+                        if (!error) {
+                            JSONArray accepted_req = jObj.getJSONArray("messages");
+                            if (accepted_req.length() > 0) {
+                                ZakladkaZnajomi.new_accepted_req = true;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Message ERROR: " + error.getMessage());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    HashMap<String, String> user = db.getUserDetails();
+                    String userID = user.get("userID");
+                    params.put("tag", "getMessages");
+                    params.put("userID", userID);
+                    params.put("type", "2");
                     return params;
                 }
             };
