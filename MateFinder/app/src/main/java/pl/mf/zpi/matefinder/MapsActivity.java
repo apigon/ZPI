@@ -546,7 +546,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         for (int i=0; i<niewidoczneGrupy.size(); i++)
             doWyswietlenia.removeAll(db.getMembersDetails(niewidoczneGrupy.get(i).getID()));
-        //W doWyświetlenia masz wszsytkich urzytkowników którzy nie należą do żadnej niewidzoczne grupy
+        //W doWyświetlenia masz wszsytkich uzytkowników którzy nie należą do żadnej niewidzocznek grupy
         //musisz tylko sprawdzić czy są oni aktywni i popbrać ich lokalizację
 
 
