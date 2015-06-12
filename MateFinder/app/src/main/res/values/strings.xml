@@ -47,7 +47,9 @@
     <string name="editProfile_btn_confirm">Zatwierdź zmiany</string>
     <string name="title_activity_edit_profile">Edycja profilu</string>
     <string name="title_activity_edit_password">Zmiana hasła</string>
-    <string name="editProfile_changePass_link">Zmień hasło</string>
+    <string name="editProfile_changePass_link"><u>Zmień hasło</u></string>
+    <string name="editProfile_changePass">Zmień hasło</string>
+    <string name="editProfile_changePhoto">Zmień zdjęcie</string>
 
     <!-- Ustawienia -->
     <string name="title_activity_settings">Ustawienia</string>

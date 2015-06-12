@@ -90,8 +90,10 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         layout.setSelection(settings.getInt(getString(R.string.settings_save_key_motive), 0));
 
         NumberPicker radius = (NumberPicker) findViewById(R.id.radius);
-        radius.setMaxValue(5);
-        radius.setMinValue(1);
+        String[] displayed_values = {"100m", "200m", "500m", "1km", "2km", "5km"};
+        radius.setMaxValue(displayed_values.length - 1);
+        radius.setMinValue(0);
+        radius.setDisplayedValues(displayed_values);
         radius.setOrientation(LinearLayout.HORIZONTAL);
         radius.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         radius.setValue(settings.getInt(getString(R.string.settings_save_key_radius), 0));
@@ -204,7 +206,8 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
             editor.commit();
 
-            String radiusS = "" + radius.getValue();
+            float[] radius_values = {(float) 0.1, (float) 0.2, (float) 0.5, 1, 2, 5};
+            String radiusS = "" + radius_values[radius.getValue()];
             updateRadius(radiusS);
             Toast toast = Toast.makeText(this, "Zmiany zostały zapisane.", Toast.LENGTH_SHORT);
             toast.show();
@@ -213,6 +216,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     }
 
     private SessionManager session;
+
     // private static TimerTask doAsynchronousTask;
     //private static TimerTask doAsynchronousTask;
     // Wyloguj
@@ -280,9 +284,10 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     public void onBackPressed() {
         backToMain();
     }
+
     private void backToMain() {
-            Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

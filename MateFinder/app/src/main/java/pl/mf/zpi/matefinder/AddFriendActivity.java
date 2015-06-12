@@ -79,7 +79,7 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
         String login = ((EditText) findViewById(R.id.login)).getText().toString();
         if (!login.equals("")) {
             addFriend(login);
-            finish();
+            //finish();
         } else {
             Toast.makeText(getApplicationContext(),
                     "Proszę podać login użytkownika dodawanego do znajomych!", Toast.LENGTH_LONG)

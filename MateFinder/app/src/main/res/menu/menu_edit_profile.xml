@@ -3,6 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="pl.mf.zpi.matefinder.EditProfileActivity">
     <item
+        android:id="@+id/action_change_photo"
+        android:title="@string/editProfile_changePhoto"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_change_pass"
+        android:title="@string/editProfile_changePass"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_logout"
         android:title="@string/action_logout"
         app:showAsAction="never" />

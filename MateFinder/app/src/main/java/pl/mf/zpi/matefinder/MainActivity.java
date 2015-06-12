@@ -4,9 +4,7 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -236,10 +234,6 @@ public class MainActivity extends ActionBarActivity {
             case R.id.action_add_group:
                 createGroup();
                 return true;
-            case R.id.action_search:
-                toast = Toast.makeText(this, "Przepraszamy, wyszukiwanie znajomych jeszcze nie gotowe", Toast.LENGTH_SHORT);
-                toast.show();
-                return true;
             case R.id.action_share_location:
                 setLocalizationActiveState(item);
                 return true;
@@ -301,72 +295,6 @@ public class MainActivity extends ActionBarActivity {
             conn_ok = true;
         }
         return conn_ok;
-    }
-
-    private void getFriendsRequests() {
-        String tag_string_req = "req_getFriendsRequests";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Getting friends requests Response: " + response.toString());
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        JSONArray user = jObj.getJSONArray("messages");
-                        for (int i = 0; i < user.length(); i++) {
-                            // user successfully logged in
-                            JSONObject u = user.getJSONObject(i);
-                            final String requestID = u.getString(("messageID"));
-                            final String userID = u.getString("userID");
-                            String content = u.getString("content");
-                            // Wyświetlanie dialogów
-                            new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle("Zaproszenie do grona znajomych")
-                                    .setMessage(content)
-                                    .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            removeFriendRequest(requestID);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            addFriend(requestID, userID);
-                                        }
-                                    })
-                                    .show();
-                        }
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login ERROR: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                HashMap<String, String> user = db.getUserDetails();
-                String userID = user.get("userID");
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "getMessages");
-                params.put("userID", userID);
-                params.put("type", "0");
-                return params;
-            }
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
     private void addFriend(final String requestID, final String user2ID) {
