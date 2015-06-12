@@ -69,7 +69,7 @@ public class RegisterActivity extends Activity {
 
                 if (getPhone())
                     if (repeatPassword.equals(password))
-                        if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
+                        if (!login.isEmpty() && !email.isEmpty() && !password.isEmpty() && !phone.isEmpty()) {
                             registerUser(login, email, password, phone, "", "");
                         } else {
                             Toast.makeText(getApplicationContext(),
@@ -120,6 +120,7 @@ public class RegisterActivity extends Activity {
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         // Launch login activity
+                        Toast.makeText(getApplicationContext(), "Rejestracja powiodła się. Zaloguj się!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(
                                 RegisterActivity.this,
                                 LoginActivity.class);

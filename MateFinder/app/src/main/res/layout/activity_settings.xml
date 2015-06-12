@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="7dp"
+    android:paddingBottom="10dp"
     tools:context="pl.mf.zpi.matefinder.SettingsActivity">
 
 
@@ -21,138 +22,138 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:id="@+id/checkboxs"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:id="@+id/checkboxs"
-                    android:layout_marginTop="@dimen/abc_action_bar_default_height_material">
+                    android:layout_marginTop="@dimen/abc_action_bar_default_height_material"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_marginLeft="10dp"
                         android:text="@string/settings_notifications"
-                        android:id="@+id/textView"
-                        android:layout_marginLeft="10dp" />
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <RadioGroup
+                        android:id="@+id/notification_radios"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/notification_radios">
+                        android:layout_height="wrap_content">
 
                         <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/settings_notification_silent"
                             android:id="@+id/notification_silent"
-                            android:layout_marginLeft="10dp" />
-
-                        <RadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/settings_notification_loud"
-                            android:id="@+id/notification_loud"
                             android:layout_marginLeft="10dp"
-                            android:checked="false" />
+                            android:text="@string/settings_notification_silent" />
+
+                        <RadioButton
+                            android:id="@+id/notification_loud"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:checked="false"
+                            android:text="@string/settings_notification_loud" />
 
                     </RadioGroup>
 
                     <CheckBox
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/settings_notification_sound"
                         android:id="@+id/notification_sound"
-                        android:checked="false"
-                        android:layout_marginLeft="20dp" />
-
-                    <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/settings_Notification_vibrate"
-                        android:id="@+id/notification_vibrate"
                         android:layout_marginLeft="20dp"
-                        android:checked="false" />
+                        android:checked="false"
+                        android:text="@string/settings_notification_sound" />
 
                     <CheckBox
+                        android:id="@+id/notification_vibrate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/settings_transfer"
-                        android:id="@+id/internet"
+                        android:layout_marginLeft="20dp"
                         android:checked="false"
+                        android:text="@string/settings_Notification_vibrate" />
+
+                    <CheckBox
+                        android:id="@+id/internet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="0dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginLeft="0dp" />
+                        android:checked="false"
+                        android:text="@string/settings_transfer" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:id="@+id/descriptions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/descriptions"
-                    android:layout_below="@+id/checkboxs"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/checkboxs"
                     android:layout_marginLeft="10dp"
-                    android:layout_weight="1">
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/settings_motive"
-                        android:id="@+id/textView2"
-                        android:layout_marginTop="5dp"
+                        android:layout_gravity="left"
                         android:layout_marginBottom="20dp"
-                        android:layout_gravity="left" />
+                        android:layout_marginTop="5dp"
+                        android:text="@string/settings_motive"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
+                        android:id="@+id/textView3"
                         android:layout_width="192dp"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/settings_radious"
-                        android:id="@+id/textView3"
                         android:layout_gravity="left"
-                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        android:minLines="2" />
+                        android:layout_marginTop="10dp"
+                        android:minLines="2"
+                        android:text="@string/settings_radious"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:id="@+id/spinners"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="false"
-                    android:layout_alignParentRight="false"
                     android:layout_alignParentEnd="true"
-                    android:id="@+id/spinners"
-                    android:layout_toRightOf="@+id/descriptions"
-                    android:layout_below="@+id/checkboxs"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp"
                     android:layout_alignParentLeft="false"
-                    android:gravity="left"
+                    android:layout_alignParentRight="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_below="@+id/checkboxs"
                     android:layout_marginBottom="10dp"
-                    android:layout_alignParentTop="false">
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/descriptions"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:orientation="vertical">
 
                     <Spinner
                         android:id="@+id/layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:spinnerMode="dropdown"
-                        android:entries="@array/settings_choose_motive"
-                        android:minWidth="300dp"
-                        android:layout_marginBottom="10dp"
                         android:layout_gravity="left"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginTop="5dp"
-                        android:gravity="left" />
+                        android:entries="@array/settings_choose_motive"
+                        android:gravity="left"
+                        android:minWidth="300dp"
+                        android:spinnerMode="dropdown" />
 
                     <NumberPicker
+                        android:id="@+id/radius"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/radius"
-                        android:orientation="horizontal"
                         android:gravity="center_vertical|center_horizontal"
+                        android:orientation="horizontal"
                         android:padding="5dp" />
                 </LinearLayout>
 
@@ -161,18 +162,18 @@
                     layout="@layout/app_bar" />
 
                 <Button
+                    android:id="@+id/button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_save_btn"
-                    android:id="@+id/button"
-                    android:padding="10dp"
-                    android:gravity="bottom"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_below="@+id/spinners"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="15dp"
-                    android:layout_alignParentTop="false"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@+id/spinners" />
+                    android:gravity="bottom"
+                    android:padding="10dp"
+                    android:text="@string/settings_save_btn" />
 
             </RelativeLayout>
         </ScrollView>

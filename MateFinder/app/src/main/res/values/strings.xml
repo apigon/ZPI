@@ -12,7 +12,7 @@
     <string name="hint_login">Login</string>
     <string name="btn_login">ZALOGUJ</string>
     <string name="btn_register">ZAREJESTRUJ</string>
-    <string name="btn_link_to_register">Nie jesteś członkiem? Zarejestruj się.</string>
+    <string name="btn_link_to_register">Nie jesteś członkiem? <u>Zarejestruj się.</u></string>
     <string name="btn_link_to_login">Jestem zarejestrowany! Zaloguj mnie.</string>
     <string name="action_logout">Wyloguj</string>
     <string name="name">Imię i nazwisko</string>
