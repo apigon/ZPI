@@ -597,9 +597,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return locations;
     }
 
-    public List<HashMap<String, String>> getFriendLocationDetails() {
+    public List<HashMap<String, String>> getFriendLocationDetails(int userID) {
         List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
-        java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS_FRIENDS;
+        java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS_FRIENDS
+                + " WHERE "+ userID+ "=" + KEY_FRIEND_LOCATION_ID;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -609,7 +610,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         if (cursor.getCount() > 0) {
             do {
                 HashMap<String, String> location = new HashMap<String, String>();
-                location.put("locationID", cursor.getString(1));
+                location.put("locationID",cursor.getString(0));
+                location.put("login", cursor.getString(1));
                 location.put("lat", cursor.getString(2));
                 location.put("lng", cursor.getString(3));
                 locations.add(location);

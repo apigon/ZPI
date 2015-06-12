@@ -758,7 +758,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         if (user != null) {
             String lat = user.get("lat");
             String lng = user.get("lng");
-            if (lat != null && lng != null) {
+            if (lat != null && lng != null && !lat.equals("null") && !lng.equals("null")) {
                 double friendLat = Double.parseDouble(lat);
                 double friendLng = Double.parseDouble(lng);
                 loc = new LatLng(friendLat, friendLng);
@@ -774,10 +774,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         String friendID = list.get("location");
         LatLng friendLoc = getFriendLocation(Integer.parseInt(friendID));
         if (friendLoc != null) {
-            Bundle args = new Bundle();
-            args.putParcelable("friendLoc", friendLoc);
+            //Bundle args = new Bundle();
+            //args.putParcelable("friendLoc", friendLoc);
             Intent mapIntent = new Intent(context, MapsActivity.class);
-            mapIntent.putExtra("friendID", args);
+            mapIntent.putExtra("friendID", friendID);
             mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //mapIntent.putExtra("id", listaZnajomych.get(klikniete).getID());
             context.startActivity(mapIntent);
