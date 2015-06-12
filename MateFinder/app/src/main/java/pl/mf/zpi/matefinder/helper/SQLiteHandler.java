@@ -464,6 +464,33 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return friends;
     }
 
+    public ArrayList<Friend> getFriends(){
+        String query = "SELECT * FROM "+ TABLE_FRIENDS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        ArrayList<Friend> friends = new ArrayList<Friend>();
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+            friends.add(new Friend(cursor.getInt(1), cursor.getString(2), cursor.getString(7)));
+
+        return friends;
+
+    }
+
+    public ArrayList<Group> getInvisibleGroups(){
+        String query = "SELECT * FROM " + TABLE_GROUPS+" WHERE "+ KEY_GROUP_VISIBLE +" = 0";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ArrayList<Group> invisibleGroups = new ArrayList<Group>();
+
+        Cursor cursor = db.rawQuery(query, null);
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+            invisibleGroups.add(new Group(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Integer.parseInt(cursor.getString(2))));
+
+        return invisibleGroups;
+    }
+
     /**
      * Getting user data from database
      */

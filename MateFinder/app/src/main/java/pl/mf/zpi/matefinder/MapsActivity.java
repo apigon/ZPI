@@ -67,6 +67,7 @@ import pl.mf.zpi.matefinder.helper.SessionManager;
 public class MapsActivity extends ActionBarActivity implements LocationListener {
 
 
+    private static final String TAG = MapsActivity.class.getSimpleName();
     GoogleMap googleMap;
     StreetViewPanorama myStreetView;
     boolean isStreetView = false;
@@ -79,17 +80,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     Context context;
     Bundle bundle;
     LatLng friendLoc; //do wyznaczania trasy
-
+    Polyline line;
     private SQLiteHandler db;
-    private static final String TAG = MapsActivity.class.getSimpleName();
     private ProgressDialog pDialog;
-
     private RecyclerView mRecyclerView;                           // Declaring RecyclerView
     private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     private RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
     private DrawerLayout Drawer;                                  // Declaring DrawerLayout
-
     private ActionBarDrawerToggle mDrawerToggle;
+    private SessionManager session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -181,7 +180,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             getMyFriendsLocation("Znajomi");
 
     }
-
 
     public void fetchRouteToFriend(LatLng friendLocation) {
         LatLng myLocation = null;
@@ -336,7 +334,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         //  return coordinate;
     }
 
-
     public void moveCameraOnMe() {
         if (me != null) {
             me.remove();
@@ -369,8 +366,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 e.printStackTrace();
             }
     }
-
-    private SessionManager session;
 
     // private static TimerTask doAsynchronousTask;
     //private static TimerTask doAsynchronousTask;
@@ -544,6 +539,17 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         db = new SQLiteHandler(getApplicationContext());
         markers = new ArrayList<Marker>();
         db.setGroupVisible("Znajomi1", "1");
+
+        //Lista znajomych do wyświetlenia
+        ArrayList<Friend> doWyswietlenia = db.getFriends();
+        ArrayList<Group> niewidoczneGrupy = db.getInvisibleGroups();
+
+        for (int i=0; i<niewidoczneGrupy.size(); i++)
+            doWyswietlenia.removeAll(db.getMembersDetails(niewidoczneGrupy.get(i).getID()));
+        //W doWyświetlenia masz wszsytkich urzytkowników którzy nie należą do żadnej niewidzoczne grupy
+        //musisz tylko sprawdzić czy są oni aktywni i popbrać ich lokalizację
+
+
         Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation = null;
@@ -610,9 +616,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
 
     }
-
-
-    Polyline line;
 
     public void drawPath(String result) {
         if (line != null) {
@@ -771,10 +774,23 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     }
 
+    private boolean connChecker() {
+        boolean conn_ok = false;
+        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
+        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo internet = connManager.getActiveNetworkInfo();
+        Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
+        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
+            conn_ok = true;
+        }
+        return conn_ok;
+    }
 
     private class connectAsyncTask extends AsyncTask<Void, Void, String> {
-        private ProgressDialog progressDialog;
         String url;
+        private ProgressDialog progressDialog;
 
         connectAsyncTask(String urlPass) {
             url = urlPass;
@@ -805,19 +821,5 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 drawPath(result);
             }
         }
-    }
-
-    private boolean connChecker() {
-        boolean conn_ok = false;
-        SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
-        boolean transfer = settings.getBoolean(getString(R.string.settings_save_key_transfer), true);
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo internet = connManager.getActiveNetworkInfo();
-        Log.d(TAG, "Shared transfer: " + connManager.getActiveNetworkInfo());
-        if (transfer == false && internet != null && internet.isConnected() || transfer == true && mWifi.isConnected()) {
-            conn_ok = true;
-        }
-        return conn_ok;
     }
 }
