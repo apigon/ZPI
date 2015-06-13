@@ -4,7 +4,9 @@ package pl.mf.zpi.matefinder;
  * Created by root on 22.03.15.
  */
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -459,7 +461,19 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        backToMain();
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Opuszczanie aplikacji")
+                .setMessage("Na pewno chcesc wyjść z aplikacji?")
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        backToMain();
+                    }
+                })
+                .setNegativeButton("Nie", null)
+                .show();
     }
 
     private void backToMain() {
