@@ -1,5 +1,7 @@
 package pl.mf.zpi.matefinder;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -15,9 +17,15 @@ public class Group implements Serializable {
 
     public Group(int id, String name, int visible) {
         this.id = id;
-        this.name = name;
+        if(name.toString().equals("Znajomi")){
+            this.name = "Domy\u015blna";
+        }
+        else{
+            this.name = name;
+        }
         friends = new ArrayList<String>();
         this.visible = visible == 1;
+        Log.d("CREATE NEW GROUP","Nazwa grupy " + this.name);
     }
 
     public int getID() {
