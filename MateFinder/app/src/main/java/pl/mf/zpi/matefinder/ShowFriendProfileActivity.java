@@ -13,7 +13,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
+/**
+ * Aktywnosc ktora wyswietla profil wybranego znajomego - przekazywanie danych znajomego z adaptera do tej aktywnosci za pomoca Bundle
+ */
 public class ShowFriendProfileActivity extends ActionBarActivity {
 
     Button back;

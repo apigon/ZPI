@@ -54,6 +54,10 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 /**
  * Created by root on 12.04.15.
  */
+
+/**
+ * Klasa reprezentujaca fragment Znajomi na ekranie glownym aplikacji
+ */
 public class ZakladkaZnajomi extends Fragment {
 
     private static final String TAG = ZakladkaZnajomi.class.getSimpleName();
@@ -97,6 +101,9 @@ public class ZakladkaZnajomi extends Fragment {
         refresh_friends = null;
     }
 
+    /**
+     * Metoda odswiezajaca adapter znajomych
+     */
     public void updateFriendsList() {
         friendslist.setAdapter(adapter);
         friendslist.setOnItemClickListener(adapter);
@@ -123,6 +130,11 @@ public class ZakladkaZnajomi extends Fragment {
         fm.popBackStack();
     }
 
+    /**
+     * Metoda realizujaca odbieranie i przetwarzania zaproszen do grona znajomych dla danego uzytkownika
+     * @param context - kontekst w ktorym dziala metoda
+     * @param a - adapter dla listy znajomych
+     */
     public void getFriendsRequests(Context context, final FriendsAdapter a) {
         final Context context1 = context;
         String tag_string_req = "req_getFriendsRequests";
@@ -202,6 +214,9 @@ public class ZakladkaZnajomi extends Fragment {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda odswiezajaca liste znajomych
+     */
     public void refreshFriendsList() {
         final Handler h = new Handler();
         refresh_friends_timer = new Timer();
@@ -243,6 +258,9 @@ public class ZakladkaZnajomi extends Fragment {
 
 }
 
+/**
+ * Klasa reprezentujaca obiekt znajomego
+ */
 class SingleFriend {
     String friendLogin;
     Bitmap friendPhoto;
@@ -278,6 +296,9 @@ class SingleFriend {
     }
 }
 
+/**
+ * Klasa reprezentujaca adapter dla listy znajomych
+ */
 class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListener,
         PopupMenu.OnMenuItemClickListener {
 
@@ -292,6 +313,12 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     private Activity activity;
 
 
+    /**
+     * Konstruktor adaptera dla listy znajomych
+     * @param c - kontekst aplikacji w ktorym wywolujemy konstruktor
+     * @param listView - lista znajomych
+     * @param activity - aktywnosc w ktorej wywolujemy konstruktor
+     */
     public FriendsAdapter(Context c, ListView listView, Activity activity) {
         dbHandler = new SQLiteHandler(c);
         // fetching friends from sqlite:
@@ -314,6 +341,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         this.listView = listView;
     }
 
+    /**
+     * Metoda usuwajaca danego znajomego z adaptera
+     * @param login - login usuwanego znajomego
+     */
     public void deleteFriendFromAdapter(String login) {
         for (int i = 0; i < listaZnajomych.size(); i++) {
             if (listaZnajomych.get(i).friendLogin.equals(login)) {
@@ -323,6 +354,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         notifyDataSetChanged();
     }
 
+    /**
+     * Metoda dodawajaca znajomego do adaptera
+     * @param friendid - id dodawanego znajomego
+     */
     public void addFriendToAdapter(String friendid) {
         HashMap<String, String> singlefriend = dbHandler.getFriendLoginAndPhoto(friendid);
         final SingleFriend singleFriend = new SingleFriend(singlefriend.get("login"), singlefriend.get("photo"), Integer.parseInt(friendid));
@@ -380,6 +415,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         return row;
     }
 
+    /**
+     * Metoda dodawajaca znajomego do lokalnej bazy danych SQLite
+     * @param requestID - id zalogowanego uzytkownika
+     * @param user2ID - id dodawanego uzytkownika
+     */
     public void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -396,19 +436,6 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
                         dbHandler.deleteFriends();
                         String tempUserID = dbHandler.getUserDetails().get("userID");
                         addFriendsList(tempUserID, user2ID);
-                        /*
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                addFriendToAdapter(user2ID);
-                            }
-                        },2000);
-                        */
-                        // db.deleteFriends();
-                        // addFriendsList(userID); + zaimplementować w tej klasie
-                        // sprawdzic w metodzie addfriend w php jaki response ustawiony
-                        // dodac add friend do sqlite i do listview
                         Toast.makeText(context,
                                 "Użytkownik został dodany do grona znajomych.", Toast.LENGTH_LONG).show();
                     } else {
@@ -448,6 +475,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda odrzucajaca zaproszenie do znajomych
+     * @param requestID - id powiadomienia
+     */
     public void removeFriendRequest(final String requestID) {
         String tag_string_req = "req_removeFriendRequest";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -496,6 +527,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda dodajaca znajomego do bazy sqlite - pobieranie danych znajomego z serwera
+     * @param userID - id zalogowanego użytkownika
+     * @param user2ID - id użytkownika dodawanego do znajomych
+     */
 
     public void addFriendsList(final String userID, final String user2ID) {
         // Tag used to cancel the request
@@ -574,6 +610,10 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda usuwajaca uzytkownika ze znajomych
+     * @param login
+     */
     public void removeFriend(final String login) {
         // Tag used to cancel the request
         String tag_string_req = "req_remove_friend";
@@ -673,6 +713,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         return false;
     }
 
+    /**
+     * Metoda pobierajaca aktualna lokalizacje znajomego
+     * @param userID -  id szukanego znajomego
+     * @return
+     */
     public LatLng getFriendLocation(int userID) {
         dbHandler = new SQLiteHandler(context);
         HashMap<String, String> user = dbHandler.getFriendLocation(userID);
@@ -691,6 +736,9 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         return loc;
     }
 
+    /**
+     * Funkcja przechodzaca do aktywnosci wyswietlania mapy
+     */
     public void goToMapActivity() {
         HashMap<String, String> list = friends.get(klikniete);
         String friendID = list.get("location");
@@ -707,11 +755,19 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
             Toast.makeText(context, "Użytkownik nie jest aktywny", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Metoda sprawdzajaca czy uzytkownik jest aktywny
+     * @return
+     */
     private boolean checkLocalizationOn() {
         SharedPreferences settings = context.getSharedPreferences(context.getString(R.string.settings_save_file), Context.MODE_PRIVATE);
         return settings.getBoolean(context.getString(R.string.settings_save_key_visible_localization), true);
     }
 
+    /**
+     * Metoda pobierajaca lokalizacje znajomych z danej grupy
+     * @param groupName -  nazwa szukanej grupy
+     */
     private void getMyFriendsLocation(final String groupName) {
         dbHandler = new SQLiteHandler(context);
         // final String [] friends = getMyFriendsId();
