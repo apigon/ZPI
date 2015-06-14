@@ -30,7 +30,7 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Created by root on 18.05.15.
+ * Adapter listy znajomych wykorzystywany przy dodawaniu do grup. Znajomi sa filtrowani tak zeby nie bylo mozliwosci dodania znajomego do grupy kilkakrotnie
  */
 public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListener {
 
@@ -87,6 +87,10 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
         return row;
     }
 
+    /**
+     * Zapisywanie wybranych znajomych do wybranej grupy.
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         pDialog.setMessage("Zapisywanie...");
@@ -114,8 +118,13 @@ public class FriendCheckAdapter extends BaseAdapter implements View.OnClickListe
         return count;
     }
 
+    /**
+     * Dodawanie znajomych do wybranej grupy.
+     * @param gid id grupy
+     * @param mid id dodawanego znajomego
+     * @param last czy to ostatni dodawany znajomy
+     */
     private void addToGroup(final int gid, final int mid, final boolean last){
-//        Tag used to cancel the request
         db = new SQLiteHandler(context);
         String tag_string_req = "addMember_req";
 

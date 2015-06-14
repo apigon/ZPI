@@ -7,9 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-
-import java.io.Serializable;
 
 /**
  * Created by root on 12.04.15.
@@ -26,10 +23,7 @@ public class ZakladkaGrup extends Fragment{
         groupList = (ExpandableListView)v.findViewById(R.id.groupList);
         adapter = new ExpandableGroupListAdapter(getActivity(), groupList);
         groupList.setAdapter(adapter);
-//        groupList.setOnGroupCollapseListener(adapter);
-//        groupList.setOnGroupExpandListener(adapter);
         groupList.setOnItemLongClickListener(adapter);
-//        groupList.setOnItemClickListener(adapter);
         return v;
     }
 

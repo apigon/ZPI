@@ -9,7 +9,7 @@ import com.android.volley.toolbox.ImageRequest;
 import pl.mf.zpi.matefinder.app.AppController;
 
 /**
- * Created by root on 06.05.15.
+ * Przechowywanie informacji o znajomych
  */
 public class Friend {
     private int id;

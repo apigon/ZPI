@@ -36,7 +36,7 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Created by root on 01.06.15.
+ * Adapter listy grup w glownej aktywnosci.
  */
 public class ExpandableGroupListAdapter extends BaseExpandableListAdapter implements AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 

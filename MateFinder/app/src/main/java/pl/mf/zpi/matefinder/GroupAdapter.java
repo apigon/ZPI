@@ -1,27 +1,19 @@
 package pl.mf.zpi.matefinder;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Created by root on 04.05.15.
+ * Adapter grup
  */
 public class GroupAdapter extends BaseAdapter {
 
@@ -39,16 +31,30 @@ public class GroupAdapter extends BaseAdapter {
         index = -1;
     }
 
+    /**
+     * Pobieranie ilosci elementow w adapterze
+     * @return ilosc elementow
+     */
     @Override
     public int getCount() {
         return groups.size();
     }
 
+    /**
+     * Pobieranie danego elementu z adaptera
+     * @param position pozycja w adapterze
+     * @return zwraca wybrany element
+     */
     @Override
     public Object getItem(int position) {
         return groups.get(position);
     }
 
+    /**
+     * Pobieranie id wybranego elementu
+     * @param position Pozycja w adapterze wybranego elementu
+     * @return id wybranego elementu
+     */
     @Override
     public long getItemId(int position) {
         return position;
@@ -63,6 +69,4 @@ public class GroupAdapter extends BaseAdapter {
         name.setText(tmp.getName());
         return row;
     }
-
-
 }
