@@ -93,6 +93,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     private DrawerLayout Drawer;                                  // Declaring DrawerLayout
     private ActionBarDrawerToggle mDrawerToggle;
     private SessionManager session;
+    private boolean drawerOpened;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,21 +160,20 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
         mDrawerToggle = new ActionBarDrawerToggle(this, Drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
                 // open I am not going to put anything here)
+                drawerOpened = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 // Code here will execute once drawer is closed
+                drawerOpened = false;
             }
-
-
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
@@ -866,7 +866,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onBackPressed() {
-        backToMain();
+        if(!drawerOpened)
+            backToMain();
+        else
+            hideMenu();
     }
 
     /**
@@ -923,6 +926,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             conn_ok = true;
         }
         return conn_ok;
+    }
+
+    public void hideMenu(){
+        Drawer.closeDrawers();
     }
 
     /**

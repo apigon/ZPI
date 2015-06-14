@@ -71,6 +71,7 @@ public class EditProfileActivity extends ActionBarActivity {
     private String image_data;
     private SQLiteHandler db;
     private SessionManager session;
+    private boolean drawerOpened;
 
     /**
      * Metoda odpowiedzialna za przeksztalcenie zdjecia w postaci bitmapy na jego bitowa reprezentacje.
@@ -171,11 +172,16 @@ public class EditProfileActivity extends ActionBarActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+                drawerOpened = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+                drawerOpened = false;
             }
         };
         Drawer.setDrawerListener(mDrawerToggle);
@@ -447,7 +453,10 @@ public class EditProfileActivity extends ActionBarActivity {
      */
     @Override
     public void onBackPressed() {
-        backToMain();
+        if(!drawerOpened)
+            backToMain();
+        else
+            hideMenu();
     }
 
     /**
@@ -475,5 +484,9 @@ public class EditProfileActivity extends ActionBarActivity {
         Intent intent = new Intent(EditProfileActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void hideMenu(){
+        Drawer.closeDrawers();
     }
 }

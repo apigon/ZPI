@@ -223,23 +223,32 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                         main();
                         ((Activity) context).finish();
                     }
+                    else{
+                        ((MainActivity)context).hideMenu();
+                    }
                     break;
                 case 2:
                     if (!(context instanceof MapsActivity)) {
                         maps();
                     }
+                    else
+                        ((MapsActivity)context).hideMenu();
                     break;
                 case 3:
                     if (!(context instanceof EditProfileActivity)) {
                         editProfile();
                         ((Activity) context).finish();
                     }
+                    else
+                        ((EditProfileActivity)context).hideMenu();
                     break;
                 case 4:
                     if (!(context instanceof SettingsActivity)) {
                         settings();
                         ((Activity) context).finish();
                     }
+                    else
+                        ((SettingsActivity)context).hideMenu();
             }
 
         }

@@ -1,6 +1,6 @@
 package pl.mf.zpi.matefinder;
 /**
- * Wyswietlanie listy grup
+ * Rejestracja uzytkownika.
  */
 
 import android.app.Activity;

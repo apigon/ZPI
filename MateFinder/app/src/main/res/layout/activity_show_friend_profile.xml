@@ -21,14 +21,11 @@
 
     <Button
         android:id="@+id/showProfile_btn_accept"
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:text="@string/showProfile_back" />
 
     <TableRow
@@ -72,19 +69,19 @@
             android:id="@+id/showProfile_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:text="@string/editProfile_email"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginBottom="10dp" />
+            android:textSize="@dimen/editProfile_fontSize" />
 
         <TextView
             android:id="@+id/showProfile_email_content"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
-            android:textSize="@dimen/editProfile_fontSize"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:textSize="@dimen/editProfile_fontSize" />
     </TableRow>
 
     <TableRow
@@ -101,17 +98,17 @@
             android:id="@+id/showProfile_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="@string/editProfile_phone"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginTop="10dp" />
+            android:textSize="@dimen/editProfile_fontSize" />
 
         <TextView
             android:id="@+id/showProfile_phone_content"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_marginLeft="20dp"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/editProfile_fontSize" />
     </TableRow>
 
     <TableRow
@@ -128,9 +125,9 @@
             android:id="@+id/showProfile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:text="@string/editProfile_name"
-            android:textSize="@dimen/editProfile_fontSize"
-            android:layout_marginBottom="10dp" />
+            android:textSize="@dimen/editProfile_fontSize" />
 
         <TextView
             android:id="@+id/showProfile_name_content"
