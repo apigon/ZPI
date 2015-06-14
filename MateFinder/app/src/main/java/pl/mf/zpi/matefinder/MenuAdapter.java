@@ -35,7 +35,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private String name;        //String Resource for header View Name
     private String email;       //String Resource for header view email
 
-
     // Creating a ViewHolder which extends the RecyclerView View Holder
     // ViewHolder are used to to store the inflated views in order to recycle them
 
@@ -51,7 +50,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         email = user.get("email");
 
         this.context = appContext;
-
     }
 
     // Edytuj profil
