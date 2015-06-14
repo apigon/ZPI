@@ -19,6 +19,9 @@ import pl.mf.zpi.matefinder.Friend;
 import pl.mf.zpi.matefinder.Group;
 import pl.mf.zpi.matefinder.Message;
 
+/**
+ * Klasa odpowiedzialna za obsluge zapytan dla bazy danych sqlite na urzadzeniu
+ */
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = SQLiteHandler.class.getSimpleName();
@@ -88,6 +91,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Metoda tworzaca wszystkie tabele w bazie danych
+     * @param db - baza danych
+     */
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -146,6 +153,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Metoda dodajaca lokalizacje do bazy danych
+     * @param locationID - id dodawanej lokalizacji
+     * @param lat - dlugosc geograficzna dodawanej lokalizacji
+     * @param lng - szerokosc geograficzna dodawanej lokalizacji
+     */
     public void addLocation(String locationID, String lat, String lng) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -158,6 +171,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New location inserted into sqlite: " + id);
     }
 
+    /**
+     * Metoda dodajaca lokalizacje dla danego znajomego
+     * @param locationID - id dodawanej lokalizacji
+     * @param login - login danego znajomego
+     * @param lat - dlugosc geograficzna dodawanej lokalizacji
+     * @param lng - szerokosc geograficzna dodawanej lokalizacji
+     */
     public void addFriendLocation(int locationID, String login, String lat, String lng) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -171,6 +191,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New friend location inserted into sqlite: " + id);
     }
 
+    /**
+     * Dodawanie znajomego do danej grupy
+     * @param groupID - id grupy
+     * @param userID - id znajomego
+     */
     public void addMember(String groupID, String userID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -186,6 +211,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //db.close();
     }
 
+    /**
+     * Dodawanie grupy do bazy danych
+     * @param groupID - id dodawanej grupy
+     * @param name - nazwa dodawanej grupy
+     */
     public void addGroup(String groupID, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -198,6 +228,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New group inserted into SQLite: " + id);
     }
 
+    /**
+     * Dodawanie grupy do bazy danych
+     * @param gid - id dodawanej grupy
+     * @param name - nazwa dodawanej grupy
+     */
     public void addGroup(int gid, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -210,6 +245,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New group inserted into SQLite: " + id);
     }
 
+    /**
+     * Dodawanie powiadomienia do bazy danych
+     * @param mess_id - id powiadomienia
+     * @param author -  login autora
+     * @param content - tresc wiadomosci
+     */
     public void addMessage(String mess_id, String author, String content) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT " + KEY_ID_DATABASE + " FROM " + TABLE_LOGIN;
@@ -229,7 +270,15 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Storing user details in database
+     * Dodawanie danych zalogowanego uzytkownika do bazy danych
+     * @param userID - id zalogowanego uzytkownika
+     * @param login - login zalogowanego uzytkownika
+     * @param email - email zalogowanego uzytkownika
+     * @param phone - numer telefonu zalogowanego uzytkownika
+     * @param name - imie zalogowanego uzytkownika
+     * @param surname - nazwisko zalogowanego uzytkownika
+     * @param photo - zdjecie zalogowanego uzytkownika
+     * @param location - lokalizacja zalogowanego uzytkownika
      */
     public void addUser(String userID, String login, String email, String phone, String name, String surname, String photo, String location) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -250,6 +299,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
+    /**
+     * Dodawanie znajomego do bazy danych
+     * @param userID - id dodawanego znajomego
+     * @param login - login dodawanego znajomego
+     * @param email - email dodawanego znajomego
+     * @param phone - numer telefonu dodawanego znajomego
+     * @param name - imie dodawanego znajomego
+     * @param surname - nazwisko dodawanego znajomego
+     * @param photo - zdjecie dodawanego znajomego
+     * @param location - lokalizacja dodawanego znajomego
+     */
     public void addFriend(String userID, String login, String email, String phone, String name, String surname, String photo, String location) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -269,6 +329,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New friend inserted into sqlite: " + id);
     }
 
+    /**
+     * Metoda zwracajaca dane wszystkich grup z bazy danych
+     * @return
+     */
     //Getting groups details from db
     public ArrayList<Group> getGroupsDetails() {
         ArrayList<Group> groups = new ArrayList<Group>();
@@ -291,6 +355,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return groups;
     }
 
+    /**
+     * Metoda zwracajaca danego znajomego
+     * @param fid - id danego znajomego
+     * @return
+     */
     //Get all groups ID which member is friend with fID
     public ArrayList<Group> getMemberGroupsID(int fid) {
         ArrayList<Group> groups = new ArrayList<Group>();
@@ -312,6 +381,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return groups;
     }
 
+    /**
+     * Metda zwracajaca dane grupy
+     * @param id - id grupy
+     * @return
+     */
     public Group getGroupDetails(int id) {
         String selectQuery = "SELECT * FROM " + TABLE_GROUPS + " WHERE " + KEY_GROUP_ID + " = " + id;
         Group group = null;
@@ -331,6 +405,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return group;
     }
 
+    /**
+     * Metoda pobierajaca powiadomienia z bazy danych
+     * @return
+     */
     //Getting messages from db
     public ArrayList<Message> getMessages() {
         ArrayList<Message> messages = new ArrayList<Message>();
@@ -359,6 +437,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return messages;
     }
 
+    /**
+     * Metoda sprawdzajaca czy wszystkie powiadomienia zostaly odczytane
+     * @return
+     */
     //Checking if all read
     public boolean allMessagesRead() {
         boolean all_read = true;
@@ -381,6 +463,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return all_read;
     }
 
+    /**
+     * Metoda zwracajaca czlonkow danej grupy
+     * @param gid -  id danej grupy
+     * @return
+     */
     //getting members of group specified with id
     public ArrayList<Friend> getMembersDetails(int gid) {
         ArrayList<Friend> members = new ArrayList<Friend>();
@@ -401,6 +488,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return members;
     }
 
+    /**
+     * Metoda zwracajaca dane znajomego
+     * @param fid -  id znajomego
+     * @param db -  baza danych
+     * @return
+     */
     private Friend getFriendDetails(int fid, SQLiteDatabase db) {
         String selectQuery = "SELECT * FROM " + TABLE_FRIENDS + " WHERE " + KEY_FRIEND_ID_DATABASE + " = " + fid;
         Cursor c = db.rawQuery(selectQuery, null);
@@ -409,6 +502,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return f;
     }
 
+    /**
+     * Metoda zwracajaca login i zdjecie danego znajomego
+     * @param friendID - id znajomego
+     * @return
+     */
     public HashMap<String, String> getFriendLoginAndPhoto(String friendID) {
         HashMap<String, String> singlefriend = new HashMap<String, String>();
         String selectQuery = "SELECT " + KEY_FRIEND_LOGIN + "," + KEY_FRIEND_PHOTO + " FROM " + TABLE_FRIENDS + " WHERE " + KEY_FRIEND_ID_DATABASE + "=" + friendID;
@@ -427,6 +525,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     /**
      * Getting friends data from database
+     */
+    /**
+     * Metoda zwracajaca dane wszystkich znajomych z bazy danych
+     * @return
      */
     public List<HashMap<String, String>> getFriendsDetails() {
         List<HashMap<String, String>> friends = new ArrayList<HashMap<String, String>>();
@@ -464,6 +566,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return friends;
     }
 
+    /**
+     * Metoda zwracajaca id, login oraz zdjecie znajomych z bazy danych
+     * @return
+     */
     public ArrayList<Friend> getFriends(){
         String query = "SELECT * FROM "+ TABLE_FRIENDS;
 
@@ -478,6 +584,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Metoda zwracajaca wszystkie grupy, które sa niewidoczne
+     * @return
+     */
     public ArrayList<Group> getInvisibleGroups(){
         String query = "SELECT * FROM " + TABLE_GROUPS+" WHERE "+ KEY_GROUP_VISIBLE +" = 0";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -493,6 +603,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     /**
      * Getting user data from database
+     */
+    /**
+     * Metoda zwracajaca dane zalogowanego uzytkownika z bazy danych
+     * @return
      */
     public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
@@ -520,6 +634,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return user;
     }
 
+    /**
+     * Metoda zwracajaca dane wszystkich lokalizacji
+     * @return
+     */
     public HashMap<String, String> getLocationDetails() {
         HashMap<java.lang.String, java.lang.String> locations = new HashMap<java.lang.String, java.lang.String>();
         java.lang.String selectQuery = "SELECT  * FROM " + TABLE_LOCATIONS;
@@ -542,6 +660,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return locations;
     }
 
+    /**
+     * Metoda zwracajaca dane o lokalizacji danego znajomego
+     * @param userID - id znajomego
+     * @return
+     */
     public HashMap<String, String> getFriendLocation(int userID) {
         HashMap<String, String> location = new HashMap<String, String>();
         String selectQuery = "SELECT  " + KEY_FRIEND_LAT + "," + KEY_FRIEND_LNG +
@@ -560,42 +683,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return location;
     }
 
-    public List<HashMap<String, String>> getFriendLocationsFromGroups() {
-        //pobierz wspolrzedne znajomych
-        List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
-        java.lang.String selectQuery =
-                "SELECT l." + KEY_FRIEND_LOCATION_ID + ",l." + KEY_FRIEND_LOGIN + ",l." + KEY_FRIEND_LAT + ",l." + KEY_FRIEND_LNG
-                        + " FROM " + TABLE_MEMBERS
-                        + " m INNER JOIN " + TABLE_LOCATIONS_FRIENDS + " l ON l." + KEY_FRIEND_LOCATION_ID + " =m." + KEY_MEMBER_USER_ID
-                        + " LEFT OUTER JOIN " + TABLE_GROUPS + " g ON m." + KEY_MEMBER_GROUP_ID + "=g." + KEY_GROUP_ID
-                        + " WHERE g." + KEY_GROUP_VISIBLE + "=?";
-
-        String[] nameTab = {"1"};
-
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, nameTab);
-
-        cursor.moveToFirst();
-
-        if (cursor.getCount() > 0) {
-            do {
-                HashMap<String, String> location = new HashMap<String, String>();
-                location.put("locationID", cursor.getString(0));
-                location.put("login", cursor.getString(1));
-                location.put("lat", cursor.getString(2));
-                location.put("lng", cursor.getString(3));
-                locations.add(location);
-            }
-            while (cursor.moveToNext());
-        }
-        cursor.close();
-        //db.close();
-        // return user
-        Log.d(TAG, "MEMBERS Fetching friend location from Sqlite: " + locations.toString());
-
-        return locations;
-    }
+    /**
+     * Metoda zwracajaca dane lokalizacji danego znajomego
+     * @param userID - id znajomego
+     * @return
+     */
 
     public List<HashMap<String, String>> getFriendLocationDetails(int userID) {
         List<HashMap<java.lang.String, java.lang.String>> locations = new ArrayList();
@@ -641,6 +733,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return rowCount;
     }
 
+    /**
+     * Metoda usuwajaca wiadomosc z bazy danych
+     * @param id - id wiadomosci
+     * @return
+     */
     public boolean deleteMessage(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         boolean deleted = db.delete(TABLE_MESSAGES, KEY_MESSAGE_ID + " = " + id, null) > 0;
@@ -649,6 +746,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return deleted;
     }
 
+    /**
+     * Metoda usuwajaca czlonka danej grupy z bazy danych
+     * @param gid - id grupy
+     * @param fid - id czlonka
+     */
     public void deleteMembers(int gid, int fid) {
         SQLiteDatabase db = this.getReadableDatabase();
         int i = db.delete(TABLE_MEMBERS, "("+KEY_MEMBER_GROUP_ID + " = " + gid + " AND " + KEY_MEMBER_USER_ID + " = " + fid+")", null);
@@ -656,6 +758,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //db.close();
     }
 
+    /**
+     * Metoda usuwajaca wszystkie lokalizacje z bazy danych
+     */
     public void deleteLocations() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
@@ -666,7 +771,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Re crate database Delete all tables and create them again
+     * Metoda usuwajaca wszystkie dane zalogowanego u¿ytkownika z bazy danych
      */
     public void deleteUsers() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -677,6 +782,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all user info from sqlite");
     }
 
+    /**
+     * Metoda usuwajaca wszystkie grupy z bazy danych
+     */
     public void deleteGroups() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
@@ -686,6 +794,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all groups info from sqlite");
     }
 
+    /**
+     * Metoda usuwajaca wszystkich znajomych z bazy danych
+     */
     public void deleteFriends() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
@@ -695,6 +806,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all friends info from sqlite");
     }
 
+    /**
+     * Metoda usuwajaca wszystkie wiadomosci z bazy danych
+     */
     public void deleteMessages() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
@@ -704,6 +818,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all messages info from sqlite");
     }
 
+    /**
+     * Metoda usuwajaca  lokalizacje znajomych z bazy danych
+     */
     public void deleteFriendsLocations() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
@@ -713,6 +830,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all friends locations info from sqlite");
     }
 
+    /**
+     * Metoda usuwajaca wszystkie dane o czlonkach grup z bazy danych
+     */
     public void deleteMembers() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Delete All Rows
@@ -722,6 +842,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Deleted all members locations info from sqlite");
     }
 
+    /**
+     * Metoda zwracajaca id czlonka
+     */
     private int getMemberID() {
         int id = 1;
 
@@ -740,6 +863,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return id;
     }
 
+
+    /**
+     * Metoda zmieniajaca status wiadomosci na odczytana
+     * @param id -  id wiadomosci
+     */
     public void setMessageRead(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -749,6 +877,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Updated message read in sqlite" + id);
     }
 
+    /**
+     * Aktualizowanie danych o grupie w bazie danych
+     * @param gid - id grupy
+     * @param name - nazwa grupy
+     */
     public void updateGroup(int gid, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -760,22 +893,22 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Updated group info in sqlite" + id);
     }
 
+    /**
+     * Usuwanie znajomego z bazy danych
+     * @param friendLogin - login znajomego
+     */
     public void removeFriend(String friendLogin) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_FRIENDS, KEY_FRIEND_LOGIN + " = ? ", new String[]{friendLogin});
         //db.close();
     }
 
-    /*
-        public void setGroupVisible(int gid, boolean visible) {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(KEY_GROUP_VISIBLE, visible);
-            long id = db.update(TABLE_GROUPS, values, KEY_GROUP_ID + "=" + gid, null);
-            db.close();
 
-            Log.d(TAG, "Updated group visibility info in sqlite" + id);
-        }*/
+    /**
+     * Metoda ustawiajaca widocznosc grupy na widoczna
+     * @param name - nazwa grupy
+     * @param visible - atrybut widocznosci
+     */
     public void setGroupVisible(String name, String visible) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -787,6 +920,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Updated group visibility info in sqlite" + id);
     }
 
+    /**
+     * Metoda dodajaca znajomego do grupy
+     * @param gid - id grupy
+     * @param mid - id znajomego
+     */
     public void addMember(int gid, int mid) {
         ContentValues values = new ContentValues();
         values.put(KEY_MEMBER_ID, "" + (getMemberID() + 1));
@@ -800,6 +938,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New Member added in sqlite " + id);
     }
 
+    /**
+     * Metoda zwracajaca dane wszystkich znajomych
+     * @param gid - id grupy
+     * @return
+     */
     public ArrayList<Friend> getFriends(int gid) {
         ArrayList<Friend> friends = new ArrayList<Friend>();
 
@@ -822,6 +965,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return friends;
     }
 
+    /**
+     * Metoda usuwajaca dana grupe z bazy danych
+     * @param gid - id grupy
+     */
     public void deleteGroup(int gid) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_GROUPS, KEY_GROUP_ID + " = ? ", new String[]{gid + ""});
@@ -830,6 +977,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //
     }
 
+    /**
+     * Metoda usuwajaca czlonkow z danej grupy
+     * @param gid - id grupy
+     * @param db - baza danych
+     */
     private void deleteMemers(int gid, SQLiteDatabase db) {
         db.delete(TABLE_MEMBERS, KEY_MEMBER_GROUP_ID + " = ? ", new String[]{gid + ""});
     }
