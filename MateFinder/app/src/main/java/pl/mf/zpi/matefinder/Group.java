@@ -6,10 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by root on 04.05.15.
+ * Przechowywanie informacji o grupie znajomych
  */
 public class Group implements Serializable {
-
     private String name;
     private ArrayList<String> friends;
     private boolean visible;
@@ -28,9 +27,14 @@ public class Group implements Serializable {
         Log.d("CREATE NEW GROUP","Nazwa grupy " + this.name);
     }
 
+    /**
+     * Pobieranie Id grupy.
+     * @return id grupy
+     */
     public int getID() {
         return id;
     }
+
 
     public void addFriend(String friend) {
         friends.add(friend);
@@ -40,18 +44,34 @@ public class Group implements Serializable {
         return friends;
     }
 
+    /**
+     * Sprawdzanie czy grupa jest widoczna (wyswietlana).
+     * @return true gdy grupa wyswietlana, false w przeciwnym wypadku
+     */
     public boolean getVisible() {
         return visible;
     }
 
+    /**
+     * Ustawianie widocznyosci (wyswietlania) grupy.
+     * @param visible wyswietlanie grupy
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
+    /**
+     * Pobieranie nazwy grupy.
+     * @return nazwa grupy
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Ustawianie nazwy grupy.
+     * @param name nazwa grupy
+     */
     public void setName(String name) {
         this.name = name;
     }

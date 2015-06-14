@@ -1,5 +1,6 @@
-package pl.mf.zpi.matefinder; /**
- * Created by root on 22.03.15.
+package pl.mf.zpi.matefinder;
+/**
+ * Wyswietlanie listy grup
  */
 
 import android.app.Activity;
@@ -43,6 +44,10 @@ public class RegisterActivity extends Activity {
     private ProgressDialog pDialog;
     private String login, email, password, phone;
 
+    /**
+     * Utworzenie widoku rejestracji
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +100,13 @@ public class RegisterActivity extends Activity {
     }
 
     /**
-     * Function to store user in MySQL database will post params(tag, name,
-     * email, password) to register url
+     *
+     * @param login login tworzonego uzytkownika
+     * @param email email tworzonego uzytkownika
+     * @param password haslo tworzonego uzytkownika
+     * @param phone nr. tel. tworzonego uzytkownika
+     * @param name imie tworzonego uzytkownika
+     * @param surname nazwisko tworzonego uzytkownika
      */
     private void registerUser(final String login, final String email,
                               final String password, final String phone,
@@ -180,6 +190,11 @@ public class RegisterActivity extends Activity {
             pDialog.dismiss();
     }
 
+    /**
+     * Pobiera numer telefonu uzytkownika.
+     * Jezeli nie uda sie pobrac automatycznie wyswietlana jest prosba o reczne wpisanie numeru
+     * @return true jezeli udalo sie pobrac nr. tel. w przeciwnym razie false
+     */
     private boolean getPhone() {
         Context mAppContext = getApplicationContext();
         TelephonyManager tMgr = (TelephonyManager) mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
