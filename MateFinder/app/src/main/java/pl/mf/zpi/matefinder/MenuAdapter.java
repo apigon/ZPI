@@ -226,7 +226,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                         ((Activity) context).finish();
                     }
                     else
-                    //hide
                     break;
                 case 2:
                     if (!(context instanceof MapsActivity)) {

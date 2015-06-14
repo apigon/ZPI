@@ -1,4 +1,5 @@
-package pl.mf.zpi.matefinder; /**
+package pl.mf.zpi.matefinder;
+/**
  * Created by root on 22.03.15.
  */
 
@@ -42,6 +43,7 @@ public class RegisterActivity extends Activity {
 
     private ProgressDialog pDialog;
     private String login, email, password, phone;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

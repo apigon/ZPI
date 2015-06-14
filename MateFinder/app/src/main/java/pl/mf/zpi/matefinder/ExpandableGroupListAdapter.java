@@ -154,16 +154,14 @@ public class ExpandableGroupListAdapter extends BaseExpandableListAdapter implem
         if ( itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             memberPositon = listView.getPackedPositionChild(packedPosition);
             groupPosition = listView.getPackedPositionGroup(packedPosition);
-            if(!groups.get(groupPosition).getName().equals("Znajomi")) {
-                View v = listView.getChildAt(position);
-                if(v==null)
-                    v=listView.getChildAt(listView.getLastVisiblePosition()-6);
-                PopupMenu menu = new PopupMenu(context, v);
-                menu.getMenuInflater().inflate(R.menu.group_friend_popup_menu, menu.getMenu());
-                menu.setOnMenuItemClickListener(this);
-                menu.show();
-                return true;
-            }
+            View v = listView.getChildAt(position);
+            if(v==null)
+                v=listView.getChildAt(listView.getLastVisiblePosition()-6);
+            PopupMenu menu = new PopupMenu(context, v);
+            menu.getMenuInflater().inflate(R.menu.group_friend_popup_menu, menu.getMenu());
+            menu.setOnMenuItemClickListener(this);
+            menu.show();
+            return true;
             //do your per-item callback here
         } else if(itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             groupPosition = listView.getPackedPositionGroup(packedPosition);
@@ -171,10 +169,8 @@ public class ExpandableGroupListAdapter extends BaseExpandableListAdapter implem
                 if (v == null)
                     v = listView.getChildAt(listView.getLastVisiblePosition() - 3);
                 PopupMenu menu = new PopupMenu(context, v);
-                if(!groups.get(groupPosition).getName().equals("Znajomi"))
-                    menu.getMenuInflater().inflate(R.menu.group_popup_menu, menu.getMenu());
-                else
-                    menu.getMenuInflater().inflate(R.menu.group_friends_popup_menu, menu.getMenu());
+
+                menu.getMenuInflater().inflate(R.menu.group_popup_menu, menu.getMenu());
                 menu.setOnMenuItemClickListener(this);
                 MenuItem item = menu.getMenu().findItem(R.id.visible);
                 if (!groups.get(groupPosition).getVisible())
