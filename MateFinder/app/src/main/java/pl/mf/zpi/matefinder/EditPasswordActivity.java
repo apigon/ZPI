@@ -28,7 +28,9 @@ import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
-
+/**
+ * Aktywność odpowiadająca za zmianę hasła użytkownika zalogowanego w aplikacji.
+ */
 public class EditPasswordActivity extends ActionBarActivity {
 
     private static final String TAG = EditPasswordActivity.class.getSimpleName();
@@ -42,6 +44,11 @@ public class EditPasswordActivity extends ActionBarActivity {
 
     private SQLiteHandler db;
 
+    /**
+     * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
+     *
+     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowała się aktywność przed jej zakończeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,13 +79,24 @@ public class EditPasswordActivity extends ActionBarActivity {
         });
     }
 
-
+    /**
+     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywności.
+     *
+     * @param menu parametr, do którego przypisywany jest odpowiedni widok
+     * @return po dokonaniu przypisania zawsze zwraca wartość TRUE
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit_password, menu);
         return true;
     }
 
+    /**
+     * Metoda odpowiedzialna za przypisanie funkcjonalności, odpowiednich zachowań aplikacji do poszczególnych pozycji w menu.
+     *
+     * @param item wybrana pozycja, do której przypisywana jest określona funkcjonalność
+     * @return zwraca wartość 'true' po przypisaniu funkcjonalności do danej pozycji Menu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -90,13 +108,18 @@ public class EditPasswordActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za powrót do aktywności edycji profilu po zakończeniu bieżącej aktywności.
+     */
     private void backToEditProfile() {
-        // Launching the login activity
         Intent intent = new Intent(EditPasswordActivity.this, EditProfileActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Metoda pobierająca dane użytkownika z lokalnej bazy danych oraz dane z pól tekstowych przeznaczonych na stare oraz nowe hasła. Po pobraniu owych danych oraz porównaniu ich zgodności hasło użytkownika zostaje zmienione lub zostaje wyświetlony komunikat o błędzie.
+     */
     private void changePassword() {
         HashMap<String, String> user = db.getUserDetails();
 
@@ -112,8 +135,14 @@ public class EditPasswordActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Metoda zapisująca nowe hasło w bazie danych na serwerze.
+     *
+     * @param login    login użytkownika
+     * @param old_pass stare hasło uzytkownika
+     * @param new_pass nowe hasło użytkownika
+     */
     private void changePasswordDB(final String login, final String old_pass, final String new_pass) {
-        // Tag used to cancel the request
         String tag_string_req = "changePass_req";
 
         pDialog.setMessage("Zmiana hasła...");
@@ -133,8 +162,6 @@ public class EditPasswordActivity extends ActionBarActivity {
                     if (!error) {
                         Toast.makeText(getApplicationContext(), "Hasło zostało zmienione.", Toast.LENGTH_LONG).show();
                     } else {
-                        // Error occurred in registration. Get the error
-                        // message
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
@@ -154,7 +181,6 @@ public class EditPasswordActivity extends ActionBarActivity {
         }) {
             @Override
             protected Map<String, String> getParams() {
-                // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "change_password");
                 params.put("login", login);
@@ -168,11 +194,17 @@ public class EditPasswordActivity extends ActionBarActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda odpowiedzialna za wyświetlanie komunikatu "Zmiana hasła..." po zatwierdzeniu zmian przez użytkownika.
+     */
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
 
+    /**
+     * Metoda odpowiedzialna za ukrycie komunikatu "Zmiana hasła...", gdy proces aktualizacji zakończył się, to znaczy, gdy dane pomyślnie zostały przekazane na serwer.
+     */
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();

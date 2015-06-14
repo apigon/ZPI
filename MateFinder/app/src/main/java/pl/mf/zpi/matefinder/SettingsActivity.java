@@ -38,21 +38,30 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
-
+/**
+ * Aktywność odpowiadająca personalizowanie ustawień aplikacji według upodobań użytkownika. Wszelkie ustawienia przechowywane są przy pomocy SharedPreferences. Jedynie promień wyszukiwania użytkowników wysyłany jest na serwer.
+ */
 public class SettingsActivity extends ActionBarActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private Button zapisz;
 
-    private RecyclerView mRecyclerView;                           // Declaring RecyclerView
-    private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    private RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    private DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private DrawerLayout Drawer;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private SQLiteHandler db;
 
+    private SessionManager session;
+
+    /**
+     * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
+     *
+     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowała się aktywność przed jej zakończeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +146,12 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         mDrawerToggle.syncState();
     }
 
+    /**
+     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywności.
+     *
+     * @param menu parametr, do którego przypisywany jest odpowiedni widok
+     * @return po dokonaniu przypisania zawsze zwraca wartość 'true'
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -144,16 +159,20 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         return true;
     }
 
+    /**
+     * Metoda odpowiedzialna za przypisanie funkcjonalności, odpowiednich zachowań aplikacji do poszczególnych pozycji w menu.
+     *
+     * @param item wybrana pozycja, do której przypisywana jest określona funkcjonalność
+     * @return zwraca wartość TRUE po przypisaniu funkcjonalności do danej pozycji Menu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_logout:
                 logoutUser();
                 Toast.makeText(this, "Wylogowano!", Toast.LENGTH_SHORT).show();
                 return true;
             case android.R.id.home:
-                //backToMain();
                 onBackPressed();
                 return true;
             default:
@@ -161,6 +180,12 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za aktywację lub dezaktywację danych CheckBox'ów z ustawieniami powiadomień, w zależności od wybranej opcji z RadioGroup. Zaznaczony jest RadioButton z profilem cichym, CheckBox'y 'Dźwięk' oraz 'Wibracja' są nieaktywne.
+     *
+     * @param group     grupa, do której należą dane RadioButton'y
+     * @param checkedId identyfikator zaznaczonego RadioButton'a
+     */
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         CheckBox notification_sound = (CheckBox) findViewById(R.id.notification_sound);
@@ -179,6 +204,11 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za zapis zmodyfikowanych ustawień użytkownika, po zatwierdzeniu ich przez niego. Wszelkie ustawienia zostają zapisane w SharedPreferences. Promień wyszukiwania użytkowników zostaje wysłany na serwer.
+     *
+     * @param v widok z wybraną opcją 'Zapisz'
+     */
     @Override
     public void onClick(View v) {
         if (v.equals(zapisz)) {
@@ -215,11 +245,9 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         }
     }
 
-    private SessionManager session;
-
-    // private static TimerTask doAsynchronousTask;
-    //private static TimerTask doAsynchronousTask;
-    // Wyloguj
+    /**
+     * Metoda odpowiedzialna za wylogowania użytkownika z aplikacji.
+     */
     private void logoutUser() {
         session.setLogin(false);
 
@@ -236,6 +264,11 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         finish(); //tylko tutaj finish() ma uzasadnienie !!!
     }
 
+    /**
+     * Metoda odpowiedzialna za ustanowienie połączenia z serwerem oraz wysłanie do bazy danych umieszczonej na nim wartości promienia wyszukiwania użytkowników.
+     *
+     * @param radius wartość promienia wyszukiwania użytkowników
+     */
     private void updateRadius(final String radius) {
         String tag_string_req = "update_radius_req";
 
@@ -280,11 +313,17 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda odpowiedzialna za przypisanie określonego zachowania dla przycisku 'Wstecz'.
+     */
     @Override
     public void onBackPressed() {
         backToMain();
     }
 
+    /**
+     * Metoda odpowiedzialna za przejście z danej aktywności do aktywności głównej - tutaj ekranu znajomych.
+     */
     private void backToMain() {
         Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         startActivity(intent);

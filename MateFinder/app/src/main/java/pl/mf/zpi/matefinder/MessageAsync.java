@@ -27,7 +27,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 /**
- * Created by Adam on 2015-05-15.
+ * Klasa umożliwiająca asynchroniczne pobieranie wiadomości z serwera. Łączenie z serwerem odbywa się co 1 minutę.
  */
 public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
 
@@ -39,6 +39,12 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
 
     private boolean[] notif_settings;
 
+    /**
+     * Konstruktor pobierający dane zalogowanego użytkownika oraz ustawienia dotyczące sposobu otrzymywania powiadomień
+     *
+     * @param context        kontekst intencji
+     * @param notif_settings tablica parametrów, określających ustawienia otrzymywania powiadomień (dźwięk, wibracja, cichy)
+     */
     public MessageAsync(Context context, boolean[] notif_settings) {
         Log.d(TAG, "Uruchomiono ASYNC");
         this.context = context;
@@ -47,6 +53,12 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         this.notif_settings = notif_settings;
     }
 
+    /**
+     * Metoda odpowiedzialna za pobieranie z serwera nowych wiadomości, zaproszeń do znajomych oraz sprawdzanie, czy dane zaproszenie zostało akceptowane przez innego użytkownika. Jest wykonywana w tle.
+     *
+     * @param params parametry zadania asynchronicznego; argument konieczny w danej metodzie nadpisywanej po nadklasie
+     * @return w każdym wypadku, po wykonaniu wszystkich operacji, zwraca wartość TRUE
+     */
     @Override
     protected Boolean doInBackground(Void... params) {
         getMessages();
@@ -55,6 +67,9 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         return true;
     }
 
+    /**
+     * Metoda odpowiedzialna za ustanowienia połączenia z serwerem oraz pobranie wiadomości z bazy danych i zapis ich na urządzeniu. W przypadku pobrania nowych wiadomości zostaje utworzone powiadomienie, zgodne z preferencjami użytkownika.
+     */
     private void getMessages() {
         Log.d(TAG, "Sprawdzanie wiadomości...");
         if (session.isLoggedIn()) {
@@ -71,7 +86,6 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                         if (!error) {
                             JSONArray user = jObj.getJSONArray("messages");
                             for (int i = 0; i < user.length(); i++) {
-                                // user successfully logged in
                                 JSONObject u = user.getJSONObject(i);
                                 final String requestID = u.getString(("messageID"));
                                 final String authorLogin = u.getString(("authorLogin"));
@@ -111,6 +125,9 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za ustanowienie połączenia z serwerem oraz sprawdzenie, czy do danego użytkownika wpłynęło nowe zaproszenie do listy znajomych. W przypadku, gdy takie zaproszenie wpłynęło, zostaje wyświetlany dialog z treścią zaproszenia oraz możliwościami akceptacji, bądź też odrzucenia go.
+     */
     private void getNewRequests() {
         Log.d(TAG, "Sprawdzanie potwierdzeń zaproszeń...");
         if (session.isLoggedIn()) {
@@ -159,6 +176,9 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za ustanowienie połączenia z serwerem oraz sprawdzenie, czy inny użytkownik akceptował zaproszenie do znajomych, wysłane przez danego. W przypadku, gdy tamten akceptował zaproszenie, lista znajomych zostaje odświeżona.
+     */
     private void getAcceptedRequests() {
         Log.d(TAG, "Sprawdzanie zaproszeń...");
         if (session.isLoggedIn()) {
@@ -207,6 +227,9 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za utworzenie powiadomienia o nowej wiadomości. W zależności od preferencji użytkownika, powiadomieniu zostaje przypisany, dźwięk, wibracja lub też jest ono tworzone w trybie cichym.
+     */
     private void makeNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_app);
@@ -237,6 +260,4 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
-
-
 }

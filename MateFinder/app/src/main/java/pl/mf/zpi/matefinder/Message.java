@@ -1,7 +1,7 @@
 package pl.mf.zpi.matefinder;
 
 /**
- * Created by Adam on 2015-05-23.
+ * Klasa przechowująca informacje na temat wiadomości, jej unikalny identyfikator, login autora, treść, datę otrzymania oraz czy została przeczytana, czy nie.
  */
 public class Message {
 
@@ -11,7 +11,16 @@ public class Message {
     private int read;
     private String date;
 
-    public Message(int id, String author, String content, int read, String date){
+    /**
+     * Konstruktor przypisujący wartości poszczególnych parametrów wiadomości.
+     *
+     * @param id      identyfikator wiadomości
+     * @param author  login autor wiadomości
+     * @param content treść wiadomości
+     * @param read    parametr określający, czy wiadomość została przeczytana
+     * @param date    data dostarczenia wiadomości
+     */
+    public Message(int id, String author, String content, int read, String date) {
         this.id = id;
         this.content = content;
         this.author = author;
@@ -19,23 +28,48 @@ public class Message {
         this.date = date;
     }
 
-    public String getText(){
+    /**
+     * Metoda odpowiedzialna za pobranie oraz zwrócenie treści wiadomości.
+     *
+     * @return treść wiadomości
+     */
+    public String getText() {
         return content;
     }
 
-    public String getAuthor(){
+    /**
+     * Metoda odpowiedzialna za pobranie oraz zwrócenie loginu autora wiadomości.
+     *
+     * @return login autora wiadomości
+     */
+    public String getAuthor() {
         return author;
     }
 
-    public int getId(){
+    /**
+     * Metoda odpowiedzialna za pobranie oraz zwrócenie identyfikatora wiadomości.
+     *
+     * @return unikalny identyfikator wiadomości
+     */
+    public int getId() {
         return id;
     }
 
-    public String getDate(){
+    /**
+     * Metoda odpowiedzialna za pobranie oraz zwrócenie daty otrzymania wiadomości.
+     *
+     * @return data otrzymania wiadomości
+     */
+    public String getDate() {
         return date;
     }
 
-    public boolean isRead(){
+    /**
+     * Metoda odpowiedzialna za pobranie oraz zwrócenie informacji na temat tego, czy wiadomość została przeczytana.
+     *
+     * @return TRUE, gdy wiadomość została przeczytana, FALSE w przeciwnym wypadku
+     */
+    public boolean isRead() {
         return read == 1;
     }
 }
