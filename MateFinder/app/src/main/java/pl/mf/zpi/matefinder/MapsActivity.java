@@ -423,7 +423,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 e.printStackTrace();
             }
     }
-
+    public void removeUpdates()
+    {
+        locationManager.removeUpdates(this);
+    }
     /**
      * Wylogowanie uzytkownika z aplikacji.
      */
@@ -679,6 +682,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             isStreetView = false;
             myStreetView.setPosition((LatLng) null);
         } else {
+            removeUpdates();
             Intent intent = new Intent(MapsActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
