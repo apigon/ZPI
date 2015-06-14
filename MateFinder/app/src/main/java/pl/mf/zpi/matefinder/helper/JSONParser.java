@@ -15,6 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Klasa odpowiedzialna za przetwarzanie odpowiedzi serwera Google,
+ * w celu wyznaczenia trasy na mapie.
+ */
 public class JSONParser {
 
     InputStream is = null;
