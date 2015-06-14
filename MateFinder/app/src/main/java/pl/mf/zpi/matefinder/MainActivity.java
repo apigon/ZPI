@@ -34,7 +34,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,6 +73,11 @@ public class MainActivity extends ActionBarActivity {
     private int request;
     private boolean drawerOpened;
 
+    /**
+     * Metoda odpowiedzialna za zmiane ikony powiadomienia na pasku ActionBar, po nadejsciu nowej wiadomosci.
+     *
+     * @param new_messages parametr okreslajacy, czy nadeszla nowa wiadomosc; TRUE, jesli jest nowa wiadomosc, FALSE w przeciwnym wypadku
+     */
     public static void refreshMenuIcon(boolean new_messages) {
         MenuItem item = menu.findItem(R.id.action_notification);
         if (!new_messages)
@@ -180,11 +184,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * Logging out the user. Will set isLoggedIn flag to false in shared
-     * preferences Clears the user data from sqlite users table
+     * Metoda odpowiedzialna za wylogowanie uzytkownika z aplikacji
      */
-
-    // Wyloguj
     private void logoutUser() {
         session.setLogin(false);
 
@@ -211,6 +212,9 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    /**
+     * Metoda odpowiedzialna za przejscie do aktywnosci wiadomosci.
+     */
     private void openMessages() {
         Intent intent = new Intent(this, MessageActivity.class);
         startActivity(intent);
@@ -253,6 +257,9 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za wywolywanie zadania asynchronicznego, pobierajacego wiadomosci z serwera. Metoda jest wywolywana cyklicznie co 1 minutę.
+     */
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
@@ -278,6 +285,11 @@ public class MainActivity extends ActionBarActivity {
         timer.schedule(doAsynchronousTask, 0, 60000);
     }
 
+    /**
+     * Metoda odpowiedzialna za okreslenie parametrów powiadomien, wyspecjalizowanych przez uzytkownika w panelu ustawien.
+     *
+     * @return trzyelementowa tablica, ktorej wartosci okreslaja, czy dany styl powiadomienia jest wybrany (cichy, dzwiek, wibracja)
+     */
     private boolean[] notifManager() {
         boolean[] notif_settings = new boolean[3];
 
@@ -289,6 +301,11 @@ public class MainActivity extends ActionBarActivity {
         return notif_settings;
     }
 
+    /**
+     * Metoda odpowiadajaca za okreslenie, czy jest mozliwe uzyskanie polaczenia z internetem, biorac pod uwage dostepnosc internetu mobilnego, siec wifi oraz aktywny lub nieaktywny tryb oszczedny.
+     *
+     * @return TRUE, gdy jest mozliwe ustanowienie polaczenia, FALSE w przeciwnym wypadku
+     */
     private boolean connChecker() {
         boolean conn_ok = false;
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), this.MODE_PRIVATE);
