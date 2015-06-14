@@ -180,7 +180,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         /**
          * Przekazywanie indeksu znajomego,
-         * do którego ma być wyznaczona trasa.
+         * do ktorego ma być wyznaczona trasa.
          */
         bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -194,7 +194,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
 
         /**
-         * Pobieranie lokalizacji znajomych i wyświetlanie ich na mapie.
+         * Pobieranie lokalizacji znajomych i wyswietlanie ich na mapie.
          */
         if (connChecker())
             getMyFriendsLocation("Znajomi");
@@ -204,7 +204,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @param friendLocation - współrzędne znajomego.
+     * @param friendLocation - wspolrzedne znajomego.
      * Wyznaczanie trasy do znajomego.
      */
     public void fetchRouteToFriend(LatLng friendLocation) {
@@ -223,7 +223,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     /**
      *
      * @param userID - identyfikator znajomego
-     * @return - zwraca współrzędne znajomego
+     * @return - zwraca wspolrzedne znajomego
      */
     public LatLng getFriendLocation(int userID) {
         db = new SQLiteHandler(context);
@@ -245,8 +245,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @param lat - szerokość geograficzna użytkownika korzystającego z aplikacji
-     * @param lng - długość geograficzna użytkownika korzystającego z aplikacji
+     * @param lat - szerokosc geograficzna uzytkownika korzystajacego z aplikacji
+     * @param lng - długosc geograficzna uzytkownika korzystajacego z aplikacji
      * @throws IOException
      * Aktualizacja danych na serwer oraz do bazy SQLite.
      */
@@ -279,7 +279,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                         // Inserting row in users table
                         db.deleteLocations();
                         db.addLocation(locationID, lat, lng);
-                        Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "Zmiany zostały zapisane.", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
                         // message
@@ -322,7 +322,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @param latLng - współrzędne geograficzne użytkoniwka korzystającego z aplikacji
+     * @param latLng - wspolrzedne geograficzne uzytkoniwka korzystajacego z aplikacji
      *              Tworzenie widoku StreetView.
      */
     private void createStreetView(final LatLng latLng) {
@@ -391,7 +391,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
       }
 
     /**
-     * Przeniesienie kamery na użytkownika korzystającego z aplikacji.
+     * Przeniesienie kamery na uzytkownika korzystajacego z aplikacji.
      */
     public void moveCameraOnMe() {
         if (me != null) {
@@ -408,7 +408,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Odświeżanie lokalizacji użytkownika korzystającego z aplikacji.
+     * Odswiezanie lokalizacji uzytkownika korzystajacego z aplikacji.
      */
     public void refresh() {
         provider = LocationManager.NETWORK_PROVIDER;
@@ -425,7 +425,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Wylogowanie użytkownika z aplikacji.
+     * Wylogowanie uzytkownika z aplikacji.
      */
     private void logoutUser() {
         session.setLogin(false);
@@ -467,7 +467,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Tworzenie mapy i wyświetlenie jej na ekranie.
+     * Tworzenie mapy i wyswietlenie jej na ekranie.
      */
     private void createMapView() {
       try {
@@ -486,8 +486,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Utworzenie markera ze współrzędnymi miasta Wrocław.
-     * Metoda wywoływana tylko w przypadku problemów z lokalizacją użytkownika.
+     * Utworzenie markera ze wspolrzednymi miasta Wroclaw.
+     * Metoda wywolywana tylko w przypadku problemow z lokalizacja uzytkownika.
      */
     private void addWroclawMarker() {
            if (null != googleMap) {
@@ -500,8 +500,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @param groupName - nazwa grupy, której członków zapisujemy w bazie danych
-     *                  Pobieranie lokalizacji członków oraz zapisywanie ich do bazy lokalnej.
+     * @param groupName - nazwa grupy, ktorej członkow zapisujemy w bazie danych
+     *                  Pobieranie lokalizacji czlonkow oraz zapisywanie ich do bazy lokalnej.
      */
     private void getMyFriendsLocation(final String groupName) {
         db = new SQLiteHandler(getApplicationContext());
@@ -545,7 +545,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                         } catch (IOException e) {
                             e.printStackTrace();
                         };
-                        Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
                         // message
@@ -587,7 +587,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      * Dodawanie lokalizacji znajomych wraz z ich loginami do listy,
-     * a następnie wyświetlanie ich na mapie.
+     * a nastepnie wyswietlanie ich na mapie.
      * @throws IOException
      */
     private void showMyFriends() throws IOException {
@@ -642,11 +642,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @return - współrzędne z ostatnią lokalizacją użytkownika
-     * korzystającego z aplikacji.
+     * @return - wspolrzedne z ostatnia lokalizacja uzytkownika
+     * korzystajacego z aplikacji.
      * @throws IOException
-     * Pobieranie ostatniej lokalizacji użytkownika z bazy danych,
-     * w przypadku braku połączenia z internetem lub systemem GPS.
+     * Pobieranie ostatniej lokalizacji uzytkownika z bazy danych,
+     * w przypadku braku polaczenia z internetem lub systemem GPS.
      */
     private LatLng getMyLastLocation() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
@@ -664,9 +664,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Powrót do ekranu głównego aplikacji,
-     * lub wyjście z ekranu StreetView, jeżeli użytkownik
-     * się aktualnie w nim znajduje.
+     * Powrot do ekranu glownego aplikacji,
+     * lub wyjscie z ekranu StreetView, jezeli uzytkownik
+     * sie aktualnie w nim znajduje.
      */
     private void backToMain() {
         // Launching the login activity
@@ -688,7 +688,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     /**
      *
      * @param result
-     * Rysowanie trasy prowadzącej do znajomego.
+     * Rysowanie trasy prowadzacej do znajomego.
      */
     public void drawPath(String result) {
         if (line != null) {
@@ -786,10 +786,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      *
-     * @param sourcelat - szerokość geograficzna użytkownika korzystającego z aplikacji
-     * @param sourcelog - długość geograficzna użytkownika korzystającego z aplikacji
-     * @param destlat - szerokość geograficzna znajomego, do którego wyznaczamy trasę
-     * @param destlog - długość geograficzna znajomego, do którego wyznaczamy trasę
+     * @param sourcelat - szerokosc geograficzna uzytkownika korzystającego z aplikacji
+     * @param sourcelog - dlugosc geograficzna uzytkownika korzystajacego z aplikacji
+     * @param destlat - szerokosc geograficzna znajomego, do ktorego wyznaczamy trase
+     * @param destlog - dlugosc geograficzna znajomego, do ktorego wyznaczamy trase
      * @return
      * Tworzenie adresu URL wysyłanego później na serwer Google,
      * w celu wyznaczenia trasy na mapie.
@@ -820,8 +820,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      * Tworzenie okna dialogowego w celu
-     * poinformowania użytkownika o braku
-     * włączonej usługi GPS
+     * poinformowania uzytkownika o braku
+     * wlaczonej uslugi GPS
      */
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -861,8 +861,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Metoda aktualizująca lokalizację użytkownika korzystającego z aplikacji.
-     * @param location - lokalizacja użytkownika
+     * Metoda aktualizujaca lokalizacje uzytkownika korzystajacego z aplikacji.
+     * @param location - lokalizacja uzytkownika
      */
     @Override
     public void onLocationChanged(Location location) {
@@ -899,8 +899,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Sprawdzanie dostępności połączenia internetowego.
-     * @return - zmienna true/false informująca o dostępie do internetu.
+     * Sprawdzanie dostępnosci polaczenia internetowego.
+     * @return - zmienna true/false informujaca o dostepie do internetu.
      */
     private boolean connChecker() {
         boolean conn_ok = false;
@@ -917,7 +917,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     * Asynchroniczne wywołanie metody odpowiedzialnej za wyznaczanie trasy na mapie.
+     * Asynchroniczne wywolanie metody odpowiedzialnej za wyznaczanie trasy na mapie.
      */
     private class connectAsyncTask extends AsyncTask<Void, Void, String> {
         String url;
