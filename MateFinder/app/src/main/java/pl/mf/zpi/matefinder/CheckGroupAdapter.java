@@ -29,7 +29,7 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Created by root on 17.05.15.
+ * Adapter grup wykorzystywany przy dodawaniu znajomego do grup. Adapter automatycznie filtruje grpy tak aby nie bylo mozliwosci dodania znajomoego kilkakrotnie do tej samej grupy
  */
 public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickListener{
 
@@ -65,6 +65,10 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
         return row;
     }
 
+    /**
+     * Zapisywanie przynaleznosci znajomego do poszczegolnych grup
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         pDialog.setMessage("Zapisywanie...");
@@ -93,6 +97,12 @@ public class CheckGroupAdapter extends  GroupAdapter implements View.OnClickList
         return count;
     }
 
+    /**
+     * Dodawanie znajomego do konkretnej grupy
+     * @param group grupa do ktorej dodajemy
+     * @param mid znajomy ktorego dodajemy
+     * @param end czy grupa, do ktorej dodajemy jest ostatnia, do ktorej mamy dodac
+     */
     private void addToGroup(final Group group, final int mid, final boolean end){
         // Tag used to cancel the request
         db = new SQLiteHandler(context);

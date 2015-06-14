@@ -56,6 +56,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     private SQLiteHandler db;
 
     private SessionManager session;
+    private boolean drawerOpened;
 
     /**
      * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
@@ -133,13 +134,16 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
-                mAdapter.notifyDataSetChanged();
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+                drawerOpened = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+                drawerOpened = false;
             }
         };
         Drawer.setDrawerListener(mDrawerToggle);
@@ -318,7 +322,10 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
      */
     @Override
     public void onBackPressed() {
-        backToMain();
+        if(!drawerOpened)
+            backToMain();
+        else
+            hideMenu();
     }
 
     /**
@@ -328,5 +335,9 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void hideMenu(){
+        Drawer.closeDrawers();
     }
 }

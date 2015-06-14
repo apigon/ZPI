@@ -72,6 +72,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout Drawer;                                  // Declaring DrawerLayout
     private ActionBarDrawerToggle mDrawerToggle;
     private int request;
+    private boolean drawerOpened;
 
     public static void refreshMenuIcon(boolean new_messages) {
         MenuItem item = menu.findItem(R.id.action_notification);
@@ -119,12 +120,14 @@ public class MainActivity extends ActionBarActivity {
                 super.onDrawerOpened(drawerView);
                 // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
                 // open I am not going to put anything here)
+                drawerOpened = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 // Code here will execute once drawer is closed
+                drawerOpened = false;
             }
         }; // Drawer Toggle Object Made
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
@@ -142,6 +145,8 @@ public class MainActivity extends ActionBarActivity {
         zakladki.setViewPager(pager);
 
         request = 1;
+
+        drawerOpened = false;
 
     }
 
@@ -169,7 +174,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == 1)
             adapter.refresh();
     }
@@ -314,20 +319,22 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Opuszczanie aplikacji")
-                .setMessage("Na pewno chcesc wyjść z aplikacji?")
-                .setPositiveButton("Tak", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        backToMain();
+        if (!drawerOpened)
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Opuszczanie aplikacji")
+                    .setMessage("Na pewno chcesc wyjść z aplikacji?")
+                    .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            backToMain();
 
-                    }
-                })
-                .setNegativeButton("Nie", null)
-                .show();
+                        }
+                    })
+                    .setNegativeButton("Nie", null)
+                    .show();
+        else
+            hideMenu();
     }
 
     private void backToMain() {
@@ -338,13 +345,13 @@ public class MainActivity extends ActionBarActivity {
         finish();
     }
 
-    private void setLocalizationActiveState(MenuItem item){
+    private void setLocalizationActiveState(MenuItem item) {
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
         Boolean visible = !settings.getBoolean(getString(R.string.settings_save_key_visible_localization), true);
         setLocalizationActiveState(visible, item);
     }
 
-    private void saveLocalizationActiveState(boolean visible, MenuItem item){
+    private void saveLocalizationActiveState(boolean visible, MenuItem item) {
         SharedPreferences settings = getSharedPreferences(getString(R.string.settings_save_file), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(getString(R.string.settings_save_key_visible_localization), visible);
@@ -361,7 +368,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void setLocalizationActiveState(final boolean active, final MenuItem item){
+    private void setLocalizationActiveState(final boolean active, final MenuItem item) {
         String tag_string_req = "req_setActive";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_LOGIN, new Response.Listener<String>() {
@@ -373,8 +380,7 @@ public class MainActivity extends ActionBarActivity {
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
                         saveLocalizationActiveState(active, item);
-                    }
-                    else{
+                    } else {
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
@@ -399,12 +405,16 @@ public class MainActivity extends ActionBarActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("tag", "setActive");
                 params.put("userID", userID);
-                params.put("active", (active?1:0)+"");
+                params.put("active", (active ? 1 : 0) + "");
                 return params;
             }
 
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public void hideMenu() {
+        Drawer.closeDrawers();
     }
 }
