@@ -68,7 +68,6 @@ public class ZakladkaZnajomi extends Fragment {
     private Timer refresh_friends_timer;
     private TimerTask refresh_friends;
     public static boolean new_accepted_req;
-    public static boolean new_req;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,12 +75,6 @@ public class ZakladkaZnajomi extends Fragment {
         friendslist = (ListView) v.findViewById(R.id.ListaZnajomych);
         db = new SQLiteHandler(getActivity().getApplicationContext());
         adapter = new FriendsAdapter(getActivity().getApplicationContext(), friendslist, getActivity());//czy tu konieczny jest context jako pierwszy argument?nie wystarczy aktywność?
-        if (new_accepted_req == true) {
-            new_accepted_req = false;
-        }
-        if (new_req == true) {
-            new_req = false;
-        }
         return v;
     }
 
@@ -132,8 +125,9 @@ public class ZakladkaZnajomi extends Fragment {
 
     /**
      * Metoda realizujaca odbieranie i przetwarzania zaproszen do grona znajomych dla danego uzytkownika
+     *
      * @param context - kontekst w ktorym dziala metoda
-     * @param a - adapter dla listy znajomych
+     * @param a       - adapter dla listy znajomych
      */
     public void getFriendsRequests(Context context, final FriendsAdapter a) {
         final Context context1 = context;
@@ -228,6 +222,10 @@ public class ZakladkaZnajomi extends Fragment {
                         Log.d("Refresh Friends", "Odświeżanie listy znajomych");
                         if (new_accepted_req == true) {
                             try {
+                                HashMap<String, String> user = db.getUserDetails();
+                                String userID = user.get("userID");
+                                db.deleteFriends();
+                                addFriendsList(userID);
                                 final Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -236,7 +234,7 @@ public class ZakladkaZnajomi extends Fragment {
                                         friendslist.setAdapter(adapter);
                                         friendslist.setOnItemClickListener(adapter);
                                     }
-                                }, 1000);
+                                }, 2000);
                                 new_accepted_req = false;
                             } catch (Exception e) {
                                 // TODO Auto-generated catch block
@@ -245,7 +243,6 @@ public class ZakladkaZnajomi extends Fragment {
 
 
                         getFriendsRequests(getActivity(), adapter);
-                        new_req = false;
 
                     }
                 });
@@ -254,6 +251,59 @@ public class ZakladkaZnajomi extends Fragment {
             ;
         };
         refresh_friends_timer.schedule(refresh_friends, 0, 60000);
+    }
+
+    /**
+     * Metoda tworzaca w bazie sqlite liste znajomych uzytkownika o podanym id
+     *
+     * @param userID - id zalogowanego uzytkownika
+     */
+    private void addFriendsList(final String userID) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_getFriends";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Getting friends list Response: " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    JSONArray user = jObj.getJSONArray("users");
+                    for (int i = 0; i < user.length(); i++) {
+                        JSONObject u = user.getJSONObject(i);
+                        String userID = u.getString("userID");
+                        String login = u.getString("login");
+                        String email = u.getString("email");
+                        String phone = u.getString("phone_number");
+                        String name = u.getString("name");
+                        String surname = u.getString("surname");
+                        String photo = u.getString("photo");
+                        String location = u.getString("location");
+                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "friends");
+                params.put("userID", userID);
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
 }
@@ -315,7 +365,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Konstruktor adaptera dla listy znajomych
-     * @param c - kontekst aplikacji w ktorym wywolujemy konstruktor
+     *
+     * @param c        - kontekst aplikacji w ktorym wywolujemy konstruktor
      * @param listView - lista znajomych
      * @param activity - aktywnosc w ktorej wywolujemy konstruktor
      */
@@ -343,6 +394,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda usuwajaca danego znajomego z adaptera
+     *
      * @param login - login usuwanego znajomego
      */
     public void deleteFriendFromAdapter(String login) {
@@ -356,6 +408,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda dodawajaca znajomego do adaptera
+     *
      * @param friendid - id dodawanego znajomego
      */
     public void addFriendToAdapter(String friendid) {
@@ -417,8 +470,9 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda dodawajaca znajomego do lokalnej bazy danych SQLite
+     *
      * @param requestID - id zalogowanego uzytkownika
-     * @param user2ID - id dodawanego uzytkownika
+     * @param user2ID   - id dodawanego uzytkownika
      */
     public void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
@@ -477,6 +531,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda odrzucajaca zaproszenie do znajomych
+     *
      * @param requestID - id powiadomienia
      */
     public void removeFriendRequest(final String requestID) {
@@ -529,7 +584,8 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda dodajaca znajomego do bazy sqlite - pobieranie danych znajomego z serwera
-     * @param userID - id zalogowanego użytkownika
+     *
+     * @param userID  - id zalogowanego użytkownika
      * @param user2ID - id użytkownika dodawanego do znajomych
      */
 
@@ -612,6 +668,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda usuwajaca uzytkownika ze znajomych
+     *
      * @param login
      */
     public void removeFriend(final String login) {
@@ -715,6 +772,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda pobierajaca aktualna lokalizacje znajomego
+     *
      * @param userID -  id szukanego znajomego
      * @return
      */
@@ -757,6 +815,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda sprawdzajaca czy uzytkownik jest aktywny
+     *
      * @return
      */
     private boolean checkLocalizationOn() {
@@ -766,6 +825,7 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
 
     /**
      * Metoda pobierajaca lokalizacje znajomych z danej grupy
+     *
      * @param groupName -  nazwa szukanej grupy
      */
     private void getMyFriendsLocation(final String groupName) {

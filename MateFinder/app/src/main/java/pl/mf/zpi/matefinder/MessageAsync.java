@@ -141,10 +141,7 @@ public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
                         JSONObject jObj = new JSONObject(response);
                         boolean error = jObj.getBoolean("error");
                         if (!error) {
-                            JSONArray accepted_req = jObj.getJSONArray("messages");
-                            if (accepted_req.length() > 0) {
-                                ZakladkaZnajomi.new_accepted_req = true;
-                            }
+                            ZakladkaZnajomi.new_accepted_req = true;
                         }
                     } catch (JSONException e) {
                         // JSON error
