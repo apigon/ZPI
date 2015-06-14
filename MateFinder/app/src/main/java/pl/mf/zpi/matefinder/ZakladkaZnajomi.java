@@ -227,10 +227,11 @@ public class ZakladkaZnajomi extends Fragment {
                                 // TODO Auto-generated catch block
                             }
                         }
-                        if (new_req == true && adapter.connChecker()) {
-                            getFriendsRequests(getActivity(), adapter);
-                            new_req = false;
-                        }
+
+
+                        getFriendsRequests(getActivity(), adapter);
+                        new_req = false;
+
                     }
                 });
             }
@@ -374,90 +375,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
         final SingleFriend tmp = listaZnajomych.get(position);
         friendLogin.setText(tmp.friendLogin);
         friendPhoto.setImageBitmap(tmp.friendPhoto);
-        /*
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        }, 1000);
-        */
+
         notifyDataSetChanged();
         return row;
     }
 
-    /*
-    public void getFriendsRequests(Context context){
-        final Context context1 = context;
-        String tag_string_req = "req_getFriendsRequests";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Getting friends requests Response: " + response.toString());
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if(!error){
-                        JSONArray user = jObj.getJSONArray("messages");
-                        for (int i = 0; i < user.length(); i++) {
-                            // user successfully logged in
-                            JSONObject u = user.getJSONObject(i);
-                            final String requestID = u.getString(("messageID"));
-                            final String userID = u.getString("userID");
-                            String content = u.getString("content");
-                            // Wyświetlanie dialogów
-                            new AlertDialog.Builder(context1)
-                                    .setTitle("Zaproszenie do grona znajomych")
-                                    .setMessage(content)
-                                    .setPositiveButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            removeFriendRequest(requestID);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            addFriend(requestID, userID);
-                                        }
-                                    })
-                                    .show();
-                        }
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login ERROR: " + error.getMessage());
-                Toast.makeText(context1,
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                HashMap<String, String> user = dbHandler.getUserDetails();
-                String userID = user.get("userID");
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "getMessages");
-                params.put("userID", userID);
-                params.put("type", "0");
-                return params;
-            }
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-    */
     public void addFriend(final String requestID, final String user2ID) {
         String tag_string_req = "req_addFriend";
         StringRequest strReq = new StringRequest(Request.Method.POST,

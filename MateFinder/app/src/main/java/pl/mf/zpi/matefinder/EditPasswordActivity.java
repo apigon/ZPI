@@ -29,7 +29,7 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Aktywność odpowiadająca za zmianę hasła użytkownika zalogowanego w aplikacji.
+ * Aktywność odpowiadajaca za zmiane hasla uzytkownika zalogowanego w aplikacji.
  */
 public class EditPasswordActivity extends ActionBarActivity {
 
@@ -45,9 +45,9 @@ public class EditPasswordActivity extends ActionBarActivity {
     private SQLiteHandler db;
 
     /**
-     * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
+     * Metoda wywolywana przy tworzeniu aktywnosci, zawiera inicjalizacje wszelkich potrzebnych parametrow, widokow, bocznego menu.
      *
-     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowała się aktywność przed jej zakończeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
+     * @param savedInstanceState parametr przechowujacy poprzedni stan, w ktorym znajdowala się aktywnosc przed jej zakonczeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,7 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywności.
+     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywnosci.
      *
      * @param menu parametr, do którego przypisywany jest odpowiedni widok
      * @return po dokonaniu przypisania zawsze zwraca wartość TRUE
@@ -92,10 +92,10 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie funkcjonalności, odpowiednich zachowań aplikacji do poszczególnych pozycji w menu.
+     * Metoda odpowiedzialna za przypisanie funkcjonalnosci, odpowiednich zachowan aplikacji do poszczegolnych pozycji w menu.
      *
-     * @param item wybrana pozycja, do której przypisywana jest określona funkcjonalność
-     * @return zwraca wartość 'true' po przypisaniu funkcjonalności do danej pozycji Menu
+     * @param item wybrana pozycja, do ktorej przypisywana jest okreslona funkcjonalnosc
+     * @return zwraca wartosc TRUE po przypisaniu funkcjonalnosci do danej pozycji menu
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -109,7 +109,7 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za powrót do aktywności edycji profilu po zakończeniu bieżącej aktywności.
+     * Metoda odpowiedzialna za powrot do aktywnosci edycji profilu po zakonczeniu biezacej aktywnosci.
      */
     private void backToEditProfile() {
         Intent intent = new Intent(EditPasswordActivity.this, EditProfileActivity.class);
@@ -118,7 +118,7 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda pobierająca dane użytkownika z lokalnej bazy danych oraz dane z pól tekstowych przeznaczonych na stare oraz nowe hasła. Po pobraniu owych danych oraz porównaniu ich zgodności hasło użytkownika zostaje zmienione lub zostaje wyświetlony komunikat o błędzie.
+     * Metoda pobierajaca dane uzytkownika z lokalnej bazy danych oraz dane z pol tekstowych przeznaczonych na stare oraz nowe hasla. Po pobraniu owych danych oraz porownaniu ich zgodnosci, haslo uzytkownika zostaje zmienione lub zostaje wyswietlony komunikat o bledzie.
      */
     private void changePassword() {
         HashMap<String, String> user = db.getUserDetails();
@@ -136,11 +136,11 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda zapisująca nowe hasło w bazie danych na serwerze.
+     * Metoda zapisujaca nowe haslo w bazie danych na serwerze.
      *
-     * @param login    login użytkownika
-     * @param old_pass stare hasło uzytkownika
-     * @param new_pass nowe hasło użytkownika
+     * @param login    login uzytkownika
+     * @param old_pass stare haslo uzytkownika
+     * @param new_pass nowe haslo uzytkownika
      */
     private void changePasswordDB(final String login, final String old_pass, final String new_pass) {
         String tag_string_req = "changePass_req";
@@ -195,7 +195,7 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za wyświetlanie komunikatu "Zmiana hasła..." po zatwierdzeniu zmian przez użytkownika.
+     * Metoda odpowiedzialna za wyswietlanie komunikatu "Zmiana hasla..." po zatwierdzeniu zmian przez uzytkownika.
      */
     private void showDialog() {
         if (!pDialog.isShowing())
@@ -203,7 +203,7 @@ public class EditPasswordActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za ukrycie komunikatu "Zmiana hasła...", gdy proces aktualizacji zakończył się, to znaczy, gdy dane pomyślnie zostały przekazane na serwer.
+     * Metoda odpowiedzialna za ukrycie komunikatu "Zmiana hasla...", gdy proces aktualizacji zakonczyl sie, to znaczy, gdy dane pomyslnie zostaly przekazane na serwer.
      */
     private void hideDialog() {
         if (pDialog.isShowing())
