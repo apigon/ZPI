@@ -952,7 +952,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 progressDialog = null;
             }
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Fetching route, Please wait...");
+            progressDialog.setMessage("Trwa wyznaczanie trasy...");
             progressDialog.setIndeterminate(true);
             progressDialog.show();
         }
