@@ -28,7 +28,9 @@ import pl.mf.zpi.matefinder.app.AppConfig;
 import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
-
+/**
+ * Aktywnosc odpowiedzialna za uruchomienie aktywnosci dodawania nowego uzytkownika do znajomych
+ */
 public class AddFriendActivity extends ActionBarActivity implements View.OnClickListener {
 
     private static final String TAG = "addFriend";
@@ -97,6 +99,10 @@ public class AddFriendActivity extends ActionBarActivity implements View.OnClick
             pDialog.dismiss();
     }
 
+    /**
+     * metoda odpowiedzialna za wysylanie na serwer zaproszenia uzytkownika do znajomych
+     * @param login - login uzytkownika dodawanego do znajomych
+     */
     private void addFriend(final String login) {
         // Tag used to cancel the request
         String tag_string_req = "addUserToFriends_req";

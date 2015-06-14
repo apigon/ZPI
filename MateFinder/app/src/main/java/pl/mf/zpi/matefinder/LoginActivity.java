@@ -38,7 +38,9 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
-
+/**
+ * Aktywnosc odpowiedzialna za logowanie sie uzytkownika do aplikacji
+ */
 public class LoginActivity extends Activity {
 
     // LogCat tag
@@ -110,6 +112,11 @@ public class LoginActivity extends Activity {
         });
     }
 
+    /**
+     * Metoda sprawdzajaca czy dane podane do logowania sa prawidlowe - jesli tak, to pobieramy z serwera dane uzykownika i tworzymy odpowiednie tabele w bazie sqlite
+     * @param login - login podany przez uzytkownika
+     * @param password - haslo podane przez uzytkownika
+     */
     private void checkLogin(final String login, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -208,6 +215,10 @@ public class LoginActivity extends Activity {
             pDialog.dismiss();
     }
 
+    /**
+     * metoda zapisujaca zdjecie uzytkownika do galerii
+     * @param photo_name - adres zapisywanego zdjecia
+     */
     private void savePhotoToGallery(final String photo_name) {
         String url = "http://156.17.130.212/android_login_api/images/" + photo_name;
         ImageRequest ir = new ImageRequest(url, new Response.Listener<Bitmap>() {
@@ -234,6 +245,10 @@ public class LoginActivity extends Activity {
         AppController.getInstance().addToRequestQueue(ir, "image_request");
     }
 
+    /**
+     * Metoda tworzaca w bazie sqlite liste znajomych uzytkownika o podanym id
+     * @param userID - id zalogowanego uzytkownika
+     */
     private void addFriendsList(final String userID) {
         // Tag used to cancel the request
         String tag_string_req = "req_getFriends";
@@ -285,6 +300,10 @@ public class LoginActivity extends Activity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     *  Metoda tworzaca w bazie sqlite liste grup uzytkownika o podanym id
+     * @param userID - id zalogowanego uzytkownika
+     */
     private void addGroupList(final String userID) {
         String tag_string_req = "req_getGroups";
         StringRequest strReq = new StringRequest(Method.POST,
@@ -333,6 +352,10 @@ public class LoginActivity extends Activity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    /**
+     * Metoda tworzaca w bazie sqlite liste przynaleznosci do grup znajomych uzytkownika o podanym id
+     * @param userID - id zalogowanego uzytkownika
+     */
     private void addMembersList(final String userID) {
         String tag_string_req = "req_getMembers";
         StringRequest strReq = new StringRequest(Method.POST,

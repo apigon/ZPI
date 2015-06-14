@@ -48,7 +48,9 @@ import pl.mf.zpi.matefinder.app.AppController;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
-
+/**
+ * Glowna aktywnosc aplikacji - pojawia sie po zalogowaniu oraz po ponownym uruchomieniu aplikacji
+ */
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -95,8 +97,6 @@ public class MainActivity extends ActionBarActivity {
             logoutUser();
         }
 
-        //if (connChecker())
-        //    getFriendsRequests();
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -304,153 +304,6 @@ public class MainActivity extends ActionBarActivity {
         return conn_ok;
     }
 
-    private void addFriend(final String requestID, final String user2ID) {
-        String tag_string_req = "req_addFriend";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Adding friend Response: " + response.toString());
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        db.deleteFriends();
-                        String tempUserID = db.getUserDetails().get("userID");
-                        addFriendsList(tempUserID);
-                        // db.deleteFriends();
-                        // addFriendsList(userID); + zaimplementować w tej klasie
-                        // sprawdzic w metodzie addfriend w php jaki response ustawiony
-                        // dodac add friend do sqlite i do listview
-                        Toast.makeText(getApplicationContext(),
-                                "Użytkownik został dodany do grona znajomych.", Toast.LENGTH_LONG).show();
-                    } else {
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Adding friend ERROR: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                HashMap<String, String> user = db.getUserDetails();
-                String user1ID = user.get("userID");
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "addFriend");
-                params.put("user1ID", user1ID);
-                params.put("user2ID", user2ID);
-                params.put("requestID", requestID);
-                return params;
-            }
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    private void removeFriendRequest(final String requestID) {
-        String tag_string_req = "req_removeFriendRequest";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_REGISTER, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Removing friend request Response: " + response.toString());
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-                        Toast.makeText(getApplicationContext(),
-                                "Zaproszenie zostało odrzucone.", Toast.LENGTH_LONG).show();
-                    } else {
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getApplicationContext(),
-                                errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Removing friend request ERROR: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                HashMap<String, String> user = db.getUserDetails();
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "removeFriendRequest");
-                params.put("requestID", requestID);
-                return params;
-            }
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-    private void addFriendsList(final String userID) {
-        String tag_string_req = "req_getFriends";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_LOGIN, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, "Getting friends list Response: " + response.toString());
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    JSONArray user = jObj.getJSONArray("users");
-                    for (int i = 0; i < user.length(); i++) {
-                        JSONObject u = user.getJSONObject(i);
-                        String userID = u.getString("userID");
-                        String login = u.getString("login");
-                        String email = u.getString("email");
-                        String phone = u.getString("phone_number");
-                        String name = u.getString("name");
-                        String surname = u.getString("surname");
-                        String photo = u.getString("photo");
-                        String location = u.getString("location");
-                        db.addFriend(userID, login, email, phone, name, surname, photo, location);
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Getting friends list ERROR: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("tag", "friends");
-                params.put("userID", userID);
-                return params;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
 
     private void setLocationIcon() {
         MenuItem location = menu.findItem(R.id.action_share_location);
