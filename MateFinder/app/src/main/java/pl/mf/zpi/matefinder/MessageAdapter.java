@@ -11,26 +11,26 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Klasa umożliwiająca przechowywanie listy wiadomości w postaci adaptera.
+ * Klasa umozliwiajaca przechowywanie listy wiadomosci w postaci adaptera.
  */
 public class MessageAdapter extends ArrayAdapter<Message> {
 
     /**
-     * Konstruktor dziedziczący po nadklasie, którą jest klasa ArrayAdapter.
+     * Konstruktor dziedziczacy po nadklasie, ktora jest klasa ArrayAdapter.
      *
      * @param context kontekst danej intencji
-     * @param objects lista wiadomości umieszczanych w adapterze
+     * @param objects lista wiadomosci umieszczanych w adapterze
      */
     public MessageAdapter(Context context, List<Message> objects) {
         super(context, R.layout.message_row, objects);
     }
 
     /**
-     * Metoda odpowiedzialna za dodawanie oraz wyświetlanie poszczególnych wiadomości w adapterze. Przyporządkowuje odpowiednim komponentom widoku ich treść, login autora, datę dostarczenia oraz ikonę wiadomości.
+     * Metoda odpowiedzialna za dodawanie oraz wyswietlanie poszczegolnych wiadomosci w adapterze. Przyporzadkowuje odpowiednim komponentom widoku ich tresc, login autora, date dostarczenia oraz ikonę wiadomosci.
      *
-     * @param position    pozycja danej wiadomości w adapterze
-     * @param convertView stary widok, który może zostać użyty, jeżeli to możliwe
-     * @param parent      grupa widoków, do których dany widok zostanie przyłączony
+     * @param position    pozycja danej wiadomosci w adapterze
+     * @param convertView stary widok, ktory może zostać uzyty, jezeli to mozliwe
+     * @param parent      grupa widokow, do ktorych dany widok zostanie przylaczony
      * @return
      */
     @Override

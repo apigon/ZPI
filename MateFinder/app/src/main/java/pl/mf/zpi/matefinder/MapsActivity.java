@@ -748,6 +748,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         }
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+        removeUpdates();
+    }
+
     /**
      *
      * @param encoded

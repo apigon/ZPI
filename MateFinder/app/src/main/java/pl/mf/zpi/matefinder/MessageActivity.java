@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 
 /**
- * Aktywność odpowiadająca za wyświetlanie listy otrzymanych wiadomości, wyswietlanie poszczególnych pozycji tej listy oraz usuwanie ich.
+ * Aktywnosc odpowiadajaca za wyswietlanie listy otrzymanych wiadomosci, wyswietlanie poszczegolnych pozycji tej listy oraz usuwanie ich.
  */
 public class MessageActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
@@ -30,9 +30,9 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     private int message_id;
 
     /**
-     * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
+     * Metoda wywolywana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
      *
-     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowała się aktywność przed jej zakończeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
+     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowala sie aktywnosc przed jej zakonczeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +58,12 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     }
 
     /**
-     * Metoda odpowiadająca za wyświetlanie danej wiadomości w postaci dialogu, po kliknięciu na nią. Wyświetlona w ten sposób wiadomość zostaje oznaczona jako przeczytana, jej ikona zostaje zmieniona.
+     * Metoda odpowiadajaca za wyświetlanie danej wiadomości w postaci dialogu, po kliknieciu na nia. Wyswietlona w ten sposob wiadomosc zostaje oznaczona jako przeczytana, jej ikona zostaje zmieniona.
      *
-     * @param parent   adapter przechowujący wiadomości
-     * @param view     widok, w którym uzytkownik obecnie się znajduje
-     * @param position pozycja wybranej, klikniętej wiadomości w adapterze
-     * @param id       identyfikator wybranej, klikniętej wiadomości
+     * @param parent   adapter przechowujacy wiadomosci
+     * @param view     widok, w ktorym uzytkownik obecnie się znajduje
+     * @param position pozycja wybranej, kliknietej wiadomosci w adapterze
+     * @param id       identyfikator wybranej, kliknietej wiadomosci
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -84,13 +84,13 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     }
 
     /**
-     * Metoda odpowiadająca za umożliwienie użytkownikowi zarządzanie wiadomością po dłuższym kliknięciu na nią. Po dłuższym kliknięciu na wybraną wiadomość, zostaje wyświetlone menu, zawierające opcje takie jak usunięcie danej wiadomości lub usunięcie wszystkich wiadomości.
+     * Metoda odpowiadajaca za umozliwienie uzytkownikowi zarzadzanie wiadomoscią po dluzszym kliknieciu na nia. Po dluzszym kliknieciu na wybrana wiadomosc, zostaje wyswietlone menu, zawierajace opcje takie jak usuniecie danej wiadomosci lub usuniecie wszystkich wiadomosci.
      *
-     * @param parent   adapter przechowujący wiadomości
-     * @param view     widok, w którym uzytkownik obecnie się znajduje
-     * @param position pozycja wybranej, klikniętej wiadomości w adapterze
-     * @param id       identyfikator wybranej, klikniętej wiadomości
-     * @return po wykonaniu operacji związanej z dłuższym kliknięciem na daną wiadomość, zawsze zwraca wartość TRUE
+     * @param parent   adapter przechowujacy wiadomosci
+     * @param view     widok, w ktorym uzytkownik obecnie się znajduje
+     * @param position pozycja wybranej, kliknietej wiadomosci w adapterze
+     * @param id       identyfikator wybranej, kliknietej wiadomosci
+     * @return po wykonaniu operacji zwiazanej z dluższym kliknieciem na dana wiadomosc, zawsze zwraca wartosc TRUE
      */
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -105,10 +105,10 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     }
 
     /**
-     * Metoda odpowiadająca za przypisanie odpowiednich funkcji opcjom w menu danej wiadomości, wyświetlanym po dłuższym kliknięciu na wiadomość. W zależności od wybranej opcji, dana wiadomość może zostać usunięta lub też może zostać wyczyszczona cała skrzynka odbiorcza. W przypadku błędu, który wystąpił podczas wykonywania danej operacji, lub też po pomyślnym wykonaniu danej operacji, zostaje wyświetlony odpowiedni komunikat.
+     * Metoda odpowiadajaca za przypisanie odpowiednich funkcji opcjom w menu danej wiadomosci, wyswietlanym po dluższym kliknieciu na wiadomosc. W zalezności od wybranej opcji, dana wiadomosc moze zostac usunieta lub tez moze zostac wyczyszczona cala skrzynka odbiorcza. W przypadku bledu, ktory wystąpil podczas wykonywania danej operacji, lub tez po pomyslnym wykonaniu danej operacji, zostaje wyswietlony odpowiedni komunikat.
      *
      * @param item wybrana pozycja w menu
-     * @return w każdym wypadku zwraca wartość FALSE; żadne inne zadania nie zostaną wykonane, ponieważ każdy ciąg instrukcji kończy się poleceniem BREAK
+     * @return w kazdym wypadku zwraca wartosc FALSE; zadne inne zadania nie zostana wykonane, poniewaz kazdy ciag instrukcji konczy sie poleceniem BREAK
      */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -134,10 +134,10 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku Menu do danej aktywności.
+     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywności.
      *
-     * @param menu parametr, do którego przypisywany jest odpowiedni widok
-     * @return po dokonaniu przypisania zawsze zwraca wartość TRUE
+     * @param menu parametr, do ktorego przypisywany jest odpowiedni widok
+     * @return po dokonaniu przypisania zawsze zwraca wartosc TRUE
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -147,10 +147,10 @@ public class MessageActivity extends ActionBarActivity implements AdapterView.On
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie funkcjonalności, odpowiednich zachowań aplikacji do poszczególnych pozycji w Menu całej aktywności.
+     * Metoda odpowiedzialna za przypisanie funkcjonalnosci, odpowiednich zachowan aplikacji do poszczegolnych pozycji w menu calej aktywnosci.
      *
-     * @param item wybrana pozycja, do której przypisywana jest określona funkcjonalność
-     * @return zwraca wartość 'true' po przypisaniu funkcjonalności do danej pozycji Menu
+     * @param item wybrana pozycja, do której przypisywana jest okreslona funkcjonalnosc
+     * @return zwraca wartosc 'true' po przypisaniu funkcjonalnosci do danej pozycji menu
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

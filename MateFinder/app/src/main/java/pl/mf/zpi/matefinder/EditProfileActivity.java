@@ -50,7 +50,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 /**
- * Aktywność odpowiadająca za edycję profilu użytkownika zalogowanego w aplikacji.
+ * Aktywnosc odpowiadajaca za edycje profilu uzytkownika zalogowanego w aplikacji.
  */
 public class EditProfileActivity extends ActionBarActivity {
 
@@ -73,10 +73,10 @@ public class EditProfileActivity extends ActionBarActivity {
     private SessionManager session;
 
     /**
-     * Metoda odpowiedzialna za przekształcenie zdjęcia w postaci bitmapy na jego bitową reprezentację.
+     * Metoda odpowiedzialna za przeksztalcenie zdjecia w postaci bitmapy na jego bitowa reprezentacje.
      *
-     * @param image zdjęcie w postaci bitmapy
-     * @return zdjęcie w postaci ciągu 64 bitów
+     * @param image zdjecie w postaci bitmapy
+     * @return zdjecie w postaci ciągu 64 bitow
      */
     private static String encodeToBase64(Bitmap image) {
         System.gc();
@@ -89,9 +89,9 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda wywoływana przy tworzeniu aktywności, zawiera inicjalizację wszelkich potrzebnych parametrów, widoków, bocznego menu.
+     * Metoda wywolywana przy tworzeniu aktywnosci, zawiera inicjalizacje wszelkich potrzebnych parametrow, widokow, bocznego menu.
      *
-     * @param savedInstanceState parametr przechowujący poprzedni stan, w którym znajdowała się aktywność przed jej zakończeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
+     * @param savedInstanceState parametr przechowujacy poprzedni stan, w ktorym znajdowala się aktywnosc przed jej zakonczeniem; na jego podstawie odtwarzana jest poprzednia konfiguracja, np. orientacja ekranu
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,10 +183,10 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywności.
+     * Metoda odpowiedzialna za przypisanie odpowiedniego, wyspecjalizowanego widoku menu do danej aktywnosci.
      *
-     * @param menu parametr, do którego przypisywany jest odpowiedni widok
-     * @return po dokonaniu przypisania zawsze zwraca wartość TRUE
+     * @param menu parametr, do ktorego przypisywany jest odpowiedni widok
+     * @return po dokonaniu przypisania zawsze zwraca wartosc TRUE
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,10 +196,10 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie funkcjonalności, odpowiednich zachowań aplikacji do poszczególnych pozycji w menu.
+     * Metoda odpowiedzialna za przypisanie funkcjonalnosci, odpowiednich zachowan aplikacji do poszczegolnych pozycji w menu.
      *
-     * @param item wybrana pozycja, do której przypisywana jest określona funkcjonalność
-     * @return zwraca wartość TRUE po przypisaniu funkcjonalności do danej pozycji Menu
+     * @param item wybrana pozycja, do której przypisywana jest okreslona funkcjonalnosc
+     * @return zwraca wartosc TRUE po przypisaniu funkcjonalnosci do danej pozycji menu
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -228,9 +228,9 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za pobranie danych zalogowanego użytkownika z lokalnej bazy danych na urządzeniu oraz wypełnienie nimi poszczególnych pól w widoku je wyświetającym.
+     * Metoda odpowiedzialna za pobranie danych zalogowanego uzytkownika z lokalnej bazy danych na urzadzeniu oraz wypelnienie nimi poszczegolnych pol w widoku je wyswietajacym.
      *
-     * @throws IOException wyjątek zwracany przy błędzie napotkanym podczas odczytu danych z lokalnej bazy lub podczas przypisywania ich do określonych komponentów widoku
+     * @throws IOException wyjatek zwracany przy bledzie napotkanym podczas odczytu danych z lokalnej bazy lub podczas przypisywania ich do okreslonych komponentow widoku
      */
     private void updateUserInfo() throws IOException {
         HashMap<String, String> user = db.getUserDetails();
@@ -245,7 +245,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za pobranie zdjęcia użytkownika, zapisanego w pamięci wewnętrznej urządzenia oraz wyświetlenie go w komponencie na to przeznaczonym.
+     * Metoda odpowiedzialna za pobranie zdjecia uzytkownika, zapisanego w pamięci wewnetrznej urzadzenia oraz wyswietlenie go w komponencie na to przeznaczonym.
      */
     private void loadImageFromStorage() {
         try {
@@ -260,7 +260,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za zapisanie zmian dokonanych przez użytkownika w panelu edycji profilu, po zatwierdzeniu ich przez niego.
+     * Metoda odpowiedzialna za zapisanie zmian dokonanych przez uzytkownika w panelu edycji profilu, po zatwierdzeniu ich przez niego.
      */
     private void actionUpdate() {
         String up_login = login.getText().toString();
@@ -275,9 +275,9 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda umożliwiająca przycięcie zdjęcia do rozmiaru ramki, do której zostanie ono przypisane.
+     * Metoda umozliwiajaca przyciecie zdjecia do rozmiaru ramki, do której zostanie ono przypisane.
      *
-     * @param u lokalizacja, adres przycinanego zdjęcia
+     * @param u lokalizacja, adres przycinanego zdjecia
      */
     private void performCrop(Uri u) {
         try {
@@ -298,11 +298,11 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za pobranie z pamięci urządzenia wybranego zdjęcia użytkownika.
+     * Metoda odpowiedzialna za pobranie z pamieci urzadzenia wybranego zdjecia uzytkownika.
      *
-     * @param reqCode parametr określający, jakie dalsze czynności powinny zostać wykonane po pobraniu zdjęcia; przyjmuje wartości '1' lub '2'
-     * @param resCode parametr określajacy, czy pobranie zdjęcia z galerii przebiegło pomyślnie; po pomyślnym zakończeniu operacji, zostają wykonywane dalsze czynności
-     * @param data    intencja wywoływana na rzecz danej czynności - tutaj: przejście do galerii, skąd wybierane jest zdjęcie
+     * @param reqCode parametr okreslający, jakie dalsze czynnosci powinny zostac wykonane po pobraniu zdjecia; przyjmuje wartosci '1' lub '2'
+     * @param resCode parametr okreslajacy, czy pobranie zdjecia z galerii przebieglo pomyslnie; po pomyslnym zakonczeniu operacji, zostaja wykonywane dalsze czynnosci
+     * @param data    intencja wywolywana na rzecz danej czynnosci - tutaj: przejscie do galerii, skad wybierane jest zdjecie
      */
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         if (resCode == RESULT_OK) {
@@ -318,9 +318,9 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przypisanie wybranego zdjęcia do komponentu będącego odpowiedzialnym za jego przechowywanie i wyświetlanie oraz określenie jego bitowej reprezentacji.
+     * Metoda odpowiedzialna za przypisanie wybranego zdjecia do komponentu bedacego odpowiedzialnym za jego przechowywanie i wyswietlanie oraz okreslenie jego bitowej reprezentacji.
      *
-     * @param image zdjęcie w postaci bitmapy
+     * @param image zdjecie w postaci bitmapy
      */
     private void setImage(Bitmap image) {
         image = Bitmap.createScaledBitmap(image, 80, 80, false);
@@ -330,7 +330,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za zapisanie wybranego, przyciętego do określonych rozmiarów zdjęcia w pamięci urządzenia.
+     * Metoda odpowiedzialna za zapisanie wybranego, przycietego do okreslonych rozmiarow zdjecia w pamieci urzadzenia.
      */
     private void savePhotoToGallery() {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
@@ -349,13 +349,13 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za zapis zmodyfikowanych danych użytkownika oraz jego zdjęcia w lokalnej bazie danych urządzenia, oraz w bazie danch na serwerze.
+     * Metoda odpowiedzialna za zapis zmodyfikowanych danych uzytkownika oraz jego zdjecia w lokalnej bazie danych urzadzenia, oraz w bazie danch na serwerze.
      *
-     * @param login   login użytkownika
+     * @param login   login uzytkownika
      * @param email   adres e-mail uzytkownika
-     * @param phone   numer telefonu użytkownika
-     * @param name    imię użytkownika
-     * @param surname nazwisko użytkownika
+     * @param phone   numer telefonu uzytkownika
+     * @param name    imie uzytkownika
+     * @param surname nazwisko uzytkownika
      */
     private void updateUserDB(final String login, final String email, final String phone,
                               final String name, final String surname) {
@@ -427,7 +427,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za wyświetlanie komunikatu "Aktualizowanie informacji..." po zatwierdzeniu zmian przez użytkownika.
+     * Metoda odpowiedzialna za wyswietlanie komunikatu "Aktualizowanie informacji..." po zatwierdzeniu zmian przez uzytkownika.
      */
     private void showDialog() {
         if (!pDialog.isShowing())
@@ -435,7 +435,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za ukrycie komunikatu "Aktualizowanie informacji...", gdy proces aktualizacji zakończył się, to znaczy, gdy dane pomyślnie zostały przekazane na serwer.
+     * Metoda odpowiedzialna za ukrycie komunikatu "Aktualizowanie informacji...", gdy proces aktualizacji zakonczyl sie, to znaczy, gdy dane pomyslnie zostały przekazane na serwer.
      */
     private void hideDialog() {
         if (pDialog.isShowing())
@@ -451,7 +451,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowiedzialna za przejście z danej aktywności do aktywności głównej - tutaj ekranu znajomych.
+     * Metoda odpowiedzialna za przejscie z danej aktywnosci do aktywnosci glownej - tutaj ekranu znajomych.
      */
     private void backToMain() {
         Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
@@ -460,7 +460,7 @@ public class EditProfileActivity extends ActionBarActivity {
     }
 
     /**
-     * Metoda odpowidzialna za proces wylogowania użytkownika z aplikacji.
+     * Metoda odpowiedzialna za proces wylogowania uzytkownika z aplikacji.
      */
     private void logoutUser() {
         session.setLogin(false);
