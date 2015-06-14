@@ -27,7 +27,7 @@ import pl.mf.zpi.matefinder.helper.SQLiteHandler;
 import pl.mf.zpi.matefinder.helper.SessionManager;
 
 /**
- * Klasa umożliwiająca asynchroniczne pobieranie wiadomości z serwera. Łączenie z serwerem odbywa się co 1 minutę.
+ * Klasa umozliwiajaca asynchroniczne pobieranie wiadomosci z serwera. Laczenie z serwerem odbywa się co 1 minute.
  */
 public class MessageAsync extends AsyncTask<Void, Void, Boolean> {
 
