@@ -716,7 +716,11 @@ class FriendsAdapter extends BaseAdapter implements AdapterView.OnItemClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         klikniete = position;
-        PopupMenu menu = new PopupMenu(context, listView.getChildAt(position));
+        View v = listView.getChildAt(position);
+        if(v==null) {
+            v = listView.getChildAt(listView.getLastVisiblePosition() - 6);
+        }
+        PopupMenu menu = new PopupMenu(context, v);
         menu.getMenuInflater().inflate(R.menu.friend_popup_menu, menu.getMenu());
         menu.setOnMenuItemClickListener(this);
         menu.show();
