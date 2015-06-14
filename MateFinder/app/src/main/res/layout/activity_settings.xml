@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="7dp"
-    android:paddingBottom="10dp"
     tools:context="pl.mf.zpi.matefinder.SettingsActivity">
 
 
@@ -12,10 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/app_bar" />
+
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@id/app_bar">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -25,7 +29,6 @@
                     android:id="@+id/checkboxs"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:layout_marginTop="@dimen/abc_action_bar_default_height_material"
                     android:orientation="vertical">
 
                     <TextView
@@ -156,10 +159,6 @@
                         android:orientation="horizontal"
                         android:padding="5dp" />
                 </LinearLayout>
-
-                <include
-                    android:id="@+id/app_bar"
-                    layout="@layout/app_bar" />
 
                 <Button
                     android:id="@+id/button"
