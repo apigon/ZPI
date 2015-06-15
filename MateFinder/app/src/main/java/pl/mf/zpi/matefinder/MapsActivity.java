@@ -611,6 +611,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 if(single !=null && single.size() != 0)
                     friends.addAll(single);
         }
+        if(friendLoc!=null)
+            googleMap.clear();
         Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation = null;
@@ -641,6 +643,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 Log.e(TAG, "NULL FRIEND LOCATION" + friends.get(i).get("locationID"));
             i++;
         }
+        moveCameraOnMe();
     }
 
     /**
