@@ -89,7 +89,7 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".AddFriendToGroupActivity"
-            android:label="@string/title_activity_add_friend_to_group"
+            android:label="@string/title_activity_add_friend_to_groups"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ShowFriendProfileActivity"

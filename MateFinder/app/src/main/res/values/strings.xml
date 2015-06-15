@@ -137,7 +137,8 @@
     <string name="delete_member_yes">Tak</string>
     <string name="delete_member_no">Nie</string>
 
-    <string name="title_activity_add_friend_to_group">Dodaj znajomego do grup</string>
+    <string name="title_activity_add_friend_to_groups">Dodaj znajomego do grup</string>
+    <string name="title_activity_add_friends_to_group">Dodaj znajomych do grupy</string>
     <string name="title_activity_update_group">Edytuj grupę</string>
     <string name="title_activity_add_friend">Dodaj znajomego</string>
     <string name="title_activity_show_friend_profile">Profil znajomego</string>
