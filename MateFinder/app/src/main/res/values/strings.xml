@@ -133,7 +133,7 @@
 
     <!--Usuwanie członka-->
     <string name="delete_member_title">Usuń grupę</string>
-    <string name="dlelete_member_confirm">Czy na pewno chcesz usunąć wybraną grupę?</string>
+    <string name="dlelete_member_confirm">Czy na pewno chcesz usunąć wybranego użytkownika z grupy?</string>
     <string name="delete_member_yes">Tak</string>
     <string name="delete_member_no">Nie</string>
 

@@ -357,7 +357,8 @@ public class MainActivity extends ActionBarActivity {
     private void backToMain() {
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         startActivity(intent);
-        doAsynchronousTask.cancel();
+        if(doAsynchronousTask!=null)
+            doAsynchronousTask.cancel();
         doAsynchronousTask = null;
         finish();
     }
