@@ -856,11 +856,13 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onResume() {
-        super.onResume();  // Always call the superclass method first
+        super.onResume();
+          googleMap.clear();// Always call the superclass method first
         Handler handler = new Handler(); //wait 1 sec than try again set my location
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 setMyLocation();
             }
         }, 1500);
