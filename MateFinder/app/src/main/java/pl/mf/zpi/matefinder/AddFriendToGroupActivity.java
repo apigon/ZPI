@@ -44,6 +44,7 @@ public class AddFriendToGroupActivity extends ActionBarActivity {
             FriendCheckAdapter adapter = new FriendCheckAdapter(this, list, id);
             list.setAdapter(adapter);
             findViewById(R.id.save).setOnClickListener(adapter);
+            getSupportActionBar().setTitle(getString(R.string.title_activity_add_friends_to_group));
         }
 
     }
