@@ -1,5 +1,6 @@
 package pl.mf.zpi.matefinder;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -399,20 +400,23 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             me.remove();
             me = null;
         }
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        LatLng coordinate = new LatLng(lat, lng);
-        me = googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
-                .draggable(false));
-
+        if(location != null) {
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            LatLng coordinate = new LatLng(lat, lng);
+            me = googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
+                    .draggable(false));
+        }
     }
     public void moveCameraOnMe()
     {
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        LatLng coordinate = new LatLng(lat, lng);
-        CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
-        googleMap.moveCamera(center);
+        if(location != null) {
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            LatLng coordinate = new LatLng(lat, lng);
+            CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
+            googleMap.moveCamera(center);
+        }
     }
     /**
      * Odswiezanie lokalizacji uzytkownika korzystajacego z aplikacji.
@@ -966,7 +970,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Trwa wyznaczanie trasy...");
             progressDialog.setIndeterminate(true);
-            progressDialog.show();
+
+            if(!((Activity)context).isFinishing())
+            {
+                progressDialog.show();
+            }
         }
 
         @Override
@@ -979,8 +987,12 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.hide();
-            progressDialog.dismiss();
+            if(progressDialog!=null)
+            {
+                progressDialog.hide();
+                progressDialog.dismiss();
+            }
+
             if (result != null) {
                 drawPath(result);
             }
