@@ -82,7 +82,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     Context context;
     Bundle bundle;
     int routeFriendID=0;
-    LatLng friendLoc; //do wyznaczania trasy
+    LatLng friendLoc=null; //do wyznaczania trasy
     Polyline line;
 
     private SQLiteHandler db;
@@ -114,7 +114,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         //pobiera lokalizacje i ustawia na nas kamere
         setMyLocation();
-
+        moveCameraOnMe();
         // session manager
         session = new SessionManager(getApplicationContext());
 
@@ -182,6 +182,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
          * Przekazywanie indeksu znajomego,
          * do ktorego ma być wyznaczona trasa.
          */
+        friendLoc=null;
         bundle = getIntent().getExtras();
         if (bundle != null) {
             routeFriendID = Integer.parseInt(bundle.getString("friendID"));
@@ -365,11 +366,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         /**
          * Odswiezanie co 10 sek lub 1 metr
          */
-        locationManager.requestLocationUpdates(provider, 10000, 1, this);
+        locationManager.requestLocationUpdates(provider, 3000, 1, this);
 
         if (location != null) {
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-            moveCameraOnMe();
+            addMyMarkerOnMap();
             googleMap.animateCamera(zoom);
         } else {
             Toast.makeText(getApplicationContext(), "Problem z lokalizacją!", Toast.LENGTH_SHORT).show();
@@ -393,7 +394,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     /**
      * Przeniesienie kamery na uzytkownika korzystajacego z aplikacji.
      */
-    public void moveCameraOnMe() {
+    public void addMyMarkerOnMap() {
         if (me != null) {
             me.remove();
             me = null;
@@ -403,10 +404,16 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         LatLng coordinate = new LatLng(lat, lng);
         me = googleMap.addMarker(new MarkerOptions().position(coordinate).title("Ty")
                 .draggable(false));
+
+    }
+    public void moveCameraOnMe()
+    {
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        LatLng coordinate = new LatLng(lat, lng);
         CameraUpdate center = CameraUpdateFactory.newLatLng(coordinate);
         googleMap.moveCamera(center);
     }
-
     /**
      * Odswiezanie lokalizacji uzytkownika korzystajacego z aplikacji.
      */
@@ -418,7 +425,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 if (connChecker()) {
                     updateLocationDB(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
                 }
-                moveCameraOnMe();
+                addMyMarkerOnMap();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -611,7 +618,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 if(single !=null && single.size() != 0)
                     friends.addAll(single);
         }
-        if(friendLoc!=null)
+        //if(friendLoc==null)
             googleMap.clear();
         Marker marker;
         // Fetching user details from sqlite
@@ -643,7 +650,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 Log.e(TAG, "NULL FRIEND LOCATION" + friends.get(i).get("locationID"));
             i++;
         }
-        moveCameraOnMe();
+        addMyMarkerOnMap();
     }
 
     /**
@@ -742,7 +749,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             }
             builder.include(getMyLastLocation());
             LatLngBounds bounds = builder.build();
-            int padding = 10; // offset from edges of the map in pixels
+            int padding = 60; // offset from edges of the map in pixels
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             googleMap.animateCamera(cu);
             line = googleMap.addPolyline(options);
