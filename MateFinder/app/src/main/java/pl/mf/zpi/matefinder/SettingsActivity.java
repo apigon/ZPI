@@ -255,7 +255,8 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
     private void logoutUser() {
         session.setLogin(false);
 
-        MainActivity.doAsynchronousTask.cancel();
+        if (MainActivity.doAsynchronousTask != null)
+            MainActivity.doAsynchronousTask.cancel();
         MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
@@ -322,7 +323,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
      */
     @Override
     public void onBackPressed() {
-        if(!drawerOpened)
+        if (!drawerOpened)
             backToMain();
         else
             hideMenu();
@@ -337,7 +338,7 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         finish();
     }
 
-    public void hideMenu(){
+    public void hideMenu() {
         Drawer.closeDrawers();
     }
 }

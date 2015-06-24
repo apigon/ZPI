@@ -585,7 +585,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Metoda zwracajaca wszystkie grupy, które sa niewidoczne
+     * Metoda zwracajaca wszystkie grupy, ktore sa niewidoczne
      * @return
      */
     public ArrayList<Group> getInvisibleGroups(){
@@ -771,7 +771,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Metoda usuwajaca wszystkie dane zalogowanego u¿ytkownika z bazy danych
+     * Metoda usuwajaca wszystkie dane zalogowanego uï¿½ytkownika z bazy danych
      */
     public void deleteUsers() {
         SQLiteDatabase db = this.getWritableDatabase();

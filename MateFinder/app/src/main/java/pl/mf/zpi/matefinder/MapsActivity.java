@@ -82,8 +82,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     List<Marker> markers;
     Context context;
     Bundle bundle;
-    int routeFriendID=0;
-    LatLng friendLoc=null; //do wyznaczania trasy
+    int routeFriendID = 0;
+    LatLng friendLoc = null; //do wyznaczania trasy
     Polyline line;
 
     private SQLiteHandler db;
@@ -95,6 +95,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     private ActionBarDrawerToggle mDrawerToggle;
     private SessionManager session;
     private boolean drawerOpened;
+    private boolean cancel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
         /**
          * Menu boczne
-          */
+         */
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
@@ -183,12 +184,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
          * Przekazywanie indeksu znajomego,
          * do ktorego ma być wyznaczona trasa.
          */
-        friendLoc=null;
+        friendLoc = null;
         bundle = getIntent().getExtras();
         if (bundle != null) {
             routeFriendID = Integer.parseInt(bundle.getString("friendID"));
-            if (routeFriendID != 0)
-            {
+            if (routeFriendID != 0) {
                 friendLoc = getFriendLocation(routeFriendID);
                 fetchRouteToFriend(friendLoc); // wyznacz trase
 
@@ -205,9 +205,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
 
     /**
-     *
      * @param friendLocation - wspolrzedne znajomego.
-     * Wyznaczanie trasy do znajomego.
+     *                       Wyznaczanie trasy do znajomego.
      */
     public void fetchRouteToFriend(LatLng friendLocation) {
 
@@ -223,7 +222,6 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @param userID - identyfikator znajomego
      * @return - zwraca wspolrzedne znajomego
      */
@@ -246,11 +244,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @param lat - szerokosc geograficzna uzytkownika korzystajacego z aplikacji
      * @param lng - długosc geograficzna uzytkownika korzystajacego z aplikacji
-     * @throws IOException
-     * Aktualizacja danych na serwer oraz do bazy SQLite.
+     * @throws IOException Aktualizacja danych na serwer oraz do bazy SQLite.
      */
     private void updateLocationDB(final String lat, final String lng) throws IOException {
         db = new SQLiteHandler(getApplicationContext());
@@ -323,9 +319,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @param latLng - wspolrzedne geograficzne uzytkoniwka korzystajacego z aplikacji
-     *              Tworzenie widoku StreetView.
+     *               Tworzenie widoku StreetView.
      */
     private void createStreetView(final LatLng latLng) {
 
@@ -390,7 +385,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             }
 
         }
-      }
+    }
 
     /**
      * Przeniesienie kamery na uzytkownika korzystajacego z aplikacji.
@@ -400,7 +395,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             me.remove();
             me = null;
         }
-        if(location != null) {
+        if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             LatLng coordinate = new LatLng(lat, lng);
@@ -408,9 +403,9 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                     .draggable(false));
         }
     }
-    public void moveCameraOnMe()
-    {
-        if(location != null) {
+
+    public void moveCameraOnMe() {
+        if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             LatLng coordinate = new LatLng(lat, lng);
@@ -418,6 +413,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
             googleMap.moveCamera(center);
         }
     }
+
     /**
      * Odswiezanie lokalizacji uzytkownika korzystajacego z aplikacji.
      */
@@ -434,17 +430,19 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                 e.printStackTrace();
             }
     }
-    public void removeUpdates()
-    {
+
+    public void removeUpdates() {
         locationManager.removeUpdates(this);
     }
+
     /**
      * Wylogowanie uzytkownika z aplikacji.
      */
     private void logoutUser() {
         session.setLogin(false);
         locationManager.removeUpdates(this);
-        MainActivity.doAsynchronousTask.cancel();
+        if (MainActivity.doAsynchronousTask != null)
+            MainActivity.doAsynchronousTask.cancel();
         MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
@@ -484,7 +482,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
      * Tworzenie mapy i wyswietlenie jej na ekranie.
      */
     private void createMapView() {
-      try {
+        try {
             if (null == googleMap) {
                 googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                         R.id.mapView)).getMap();
@@ -504,16 +502,15 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
      * Metoda wywolywana tylko w przypadku problemow z lokalizacja uzytkownika.
      */
     private void addWroclawMarker() {
-           if (null != googleMap) {
+        if (null != googleMap) {
             LatLng wroclaw = new LatLng(51.107885, 17.038538);
             googleMap.addMarker(new MarkerOptions().position(wroclaw).title("Centrum Wrocławia")
                     .draggable(true));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(wroclaw, 10));
-           }
+        }
     }
 
     /**
-     *
      * @param groupName - nazwa grupy, ktorej członkow zapisujemy w bazie danych
      *                  Pobieranie lokalizacji czlonkow oraz zapisywanie ich do bazy lokalnej.
      */
@@ -558,7 +555,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
                             showMyFriends();
                         } catch (IOException e) {
                             e.printStackTrace();
-                        };
+                        }
+                        ;
                         //Toast.makeText(getApplicationContext(), "Pobrano lokalizacje użytkowników", Toast.LENGTH_LONG).show();
                     } else {
                         // Error occurred in registration. Get the error
@@ -602,6 +600,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     /**
      * Dodawanie lokalizacji znajomych wraz z ich loginami do listy,
      * a nastepnie wyswietlanie ich na mapie.
+     *
      * @throws IOException
      */
     private void showMyFriends() throws IOException {
@@ -613,17 +612,16 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         ArrayList<Friend> doWyswietlenia = db.getFriends();
         ArrayList<Group> niewidoczneGrupy = db.getInvisibleGroups();
 
-        for (int i=0; i<niewidoczneGrupy.size(); i++)
+        for (int i = 0; i < niewidoczneGrupy.size(); i++)
             doWyswietlenia.removeAll(db.getMembersDetails(niewidoczneGrupy.get(i).getID()));
-        List<HashMap<String, String>> friends=new ArrayList();
-        for(int i=0;i< doWyswietlenia.size();i++)
-        {
-           List<HashMap<String, String>> single = db.getFriendLocationDetails(doWyswietlenia.get(i).getId());
-                if(single !=null && single.size() != 0)
-                    friends.addAll(single);
+        List<HashMap<String, String>> friends = new ArrayList();
+        for (int i = 0; i < doWyswietlenia.size(); i++) {
+            List<HashMap<String, String>> single = db.getFriendLocationDetails(doWyswietlenia.get(i).getId());
+            if (single != null && single.size() != 0)
+                friends.addAll(single);
         }
         //if(friendLoc==null)
-            googleMap.clear();
+        googleMap.clear();
         Marker marker;
         // Fetching user details from sqlite
         LatLng friendLocation = null;
@@ -658,12 +656,10 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @return - wspolrzedne z ostatnia lokalizacja uzytkownika
      * korzystajacego z aplikacji.
-     * @throws IOException
-     * Pobieranie ostatniej lokalizacji uzytkownika z bazy danych,
-     * w przypadku braku polaczenia z internetem lub systemem GPS.
+     * @throws IOException Pobieranie ostatniej lokalizacji uzytkownika z bazy danych,
+     *                     w przypadku braku polaczenia z internetem lub systemem GPS.
      */
     private LatLng getMyLastLocation() throws IOException {
         db = new SQLiteHandler(getApplicationContext());
@@ -704,14 +700,12 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
-     * @param result
-     * Rysowanie trasy prowadzacej do znajomego.
+     * @param result Rysowanie trasy prowadzacej do znajomego.
      */
     public void drawPath(String result) {
         if (line != null) {
             googleMap.clear();
-            line=null;
+            line = null;
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             LatLng coordinate = new LatLng(lat, lng);
@@ -768,10 +762,8 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @param encoded
-     * @return
-     * Dekodowanie odpowiedzi serwera Google, w celu wyznaczenia trasy na mapie.
+     * @return Dekodowanie odpowiedzi serwera Google, w celu wyznaczenia trasy na mapie.
      */
     private List<LatLng> decodePoly(String encoded) {
 
@@ -808,13 +800,11 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     }
 
     /**
-     *
      * @param sourcelat - szerokosc geograficzna uzytkownika korzystającego z aplikacji
      * @param sourcelog - dlugosc geograficzna uzytkownika korzystajacego z aplikacji
-     * @param destlat - szerokosc geograficzna znajomego, do ktorego wyznaczamy trase
-     * @param destlog - dlugosc geograficzna znajomego, do ktorego wyznaczamy trase
-     * @return
-     * Tworzenie adresu URL wysyłanego później na serwer Google,
+     * @param destlat   - szerokosc geograficzna znajomego, do ktorego wyznaczamy trase
+     * @param destlog   - dlugosc geograficzna znajomego, do ktorego wyznaczamy trase
+     * @return Tworzenie adresu URL wysyłanego później na serwer Google,
      * w celu wyznaczenia trasy na mapie.
      */
     public String makeURL(double sourcelat, double sourcelog, double destlat,
@@ -868,7 +858,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
     @Override
     public void onResume() {
         super.onResume();
-          googleMap.clear();// Always call the superclass method first
+        googleMap.clear();// Always call the superclass method first
         Handler handler = new Handler(); //wait 1 sec than try again set my location
         handler.postDelayed(new Runnable() {
             @Override
@@ -882,7 +872,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     @Override
     public void onBackPressed() {
-        if(!drawerOpened)
+        if (!drawerOpened)
             backToMain();
         else
             hideMenu();
@@ -890,6 +880,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      * Metoda aktualizujaca lokalizacje uzytkownika korzystajacego z aplikacji.
+     *
      * @param location - lokalizacja uzytkownika
      */
     @Override
@@ -897,8 +888,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         this.location = location;
         refresh();
         getMyFriendsLocation("Znajomi");
-        if(friendLoc!=null)
-        {
+        if (friendLoc != null) {
             Handler handler = new Handler(); //wait 1 sec than try again set my location
             handler.postDelayed(new Runnable() {
                 @Override
@@ -928,6 +918,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
 
     /**
      * Sprawdzanie dostępnosci polaczenia internetowego.
+     *
      * @return - zmienna true/false informujaca o dostepie do internetu.
      */
     private boolean connChecker() {
@@ -944,7 +935,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         return conn_ok;
     }
 
-    public void hideMenu(){
+    public void hideMenu() {
         Drawer.closeDrawers();
     }
 
@@ -963,16 +954,14 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
-            if(progressDialog !=null)
-            {
+            if (progressDialog != null) {
                 progressDialog = null;
             }
             progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("Trwa wyznaczanie trasy...");
             progressDialog.setIndeterminate(true);
 
-            if(!((Activity)context).isFinishing())
-            {
+            if (!((Activity) context).isFinishing()) {
                 progressDialog.show();
             }
         }
@@ -987,8 +976,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(progressDialog!=null)
-            {
+            if (progressDialog != null) {
                 progressDialog.hide();
                 progressDialog.dismiss();
             }

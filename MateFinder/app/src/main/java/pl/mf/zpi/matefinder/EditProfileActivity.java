@@ -453,7 +453,7 @@ public class EditProfileActivity extends ActionBarActivity {
      */
     @Override
     public void onBackPressed() {
-        if(!drawerOpened)
+        if (!drawerOpened)
             backToMain();
         else
             hideMenu();
@@ -474,7 +474,8 @@ public class EditProfileActivity extends ActionBarActivity {
     private void logoutUser() {
         session.setLogin(false);
 
-        MainActivity.doAsynchronousTask.cancel();
+        if (MainActivity.doAsynchronousTask != null)
+            MainActivity.doAsynchronousTask.cancel();
         MainActivity.doAsynchronousTask = null;
 
         db.deleteFriends();
@@ -486,7 +487,7 @@ public class EditProfileActivity extends ActionBarActivity {
         finish();
     }
 
-    public void hideMenu(){
+    public void hideMenu() {
         Drawer.closeDrawers();
     }
 }

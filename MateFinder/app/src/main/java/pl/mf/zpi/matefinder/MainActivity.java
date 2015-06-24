@@ -189,7 +189,8 @@ public class MainActivity extends ActionBarActivity {
     private void logoutUser() {
         session.setLogin(false);
 
-        doAsynchronousTask.cancel();
+        if (MainActivity.doAsynchronousTask != null)
+            doAsynchronousTask.cancel();
         doAsynchronousTask = null;
 
         db.deleteFriends();
@@ -357,7 +358,7 @@ public class MainActivity extends ActionBarActivity {
     private void backToMain() {
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         startActivity(intent);
-        if(doAsynchronousTask!=null)
+        if (doAsynchronousTask != null)
             doAsynchronousTask.cancel();
         doAsynchronousTask = null;
         finish();
