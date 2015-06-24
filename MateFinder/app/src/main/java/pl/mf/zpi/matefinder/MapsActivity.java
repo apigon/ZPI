@@ -362,7 +362,7 @@ public class MapsActivity extends ActionBarActivity implements LocationListener 
         /**
          * Odswiezanie co 10 sek lub 1 metr
          */
-        locationManager.requestLocationUpdates(provider, 3000, 1, this);
+        locationManager.requestLocationUpdates(provider, 10000, 3, this);
 
         if (location != null) {
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
