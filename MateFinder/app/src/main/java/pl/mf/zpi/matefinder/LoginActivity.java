@@ -47,6 +47,7 @@ public class LoginActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnLogin;
     private Button btnLinkToRegister;
+    private Button btnLinkToChangePassword;
     private EditText inputLogin;
     private EditText inputPassword;
     private ProgressDialog pDialog;
@@ -62,6 +63,7 @@ public class LoginActivity extends Activity {
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLinkToRegister = (Button) findViewById(R.id.btnLinkToRegisterScreen);
+        btnLinkToChangePassword = (Button) findViewById(R.id.btnLinkTochangePassword);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -106,6 +108,17 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(),
                         RegisterActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+
+        btnLinkToChangePassword.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(),
+                        RemindPasswordActivity.class);
                 startActivity(i);
                 finish();
             }

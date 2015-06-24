@@ -219,4 +219,13 @@ public class RegisterActivity extends Activity {
         return done;
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(
+                RegisterActivity.this,
+                LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 }

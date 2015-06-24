@@ -6,6 +6,7 @@
     <string name="loading">Ładuję...</string>
     <string name="action_settings">Ustawienia</string>
     <string name="hint_email">Email</string>
+    <string name="hint_new_password">nowe hasło</string>
     <string name="hint_password">Hasło</string>
     <string name="hint_password_repeat">Powtórz hasło</string>
     <string name="hint_name">Imię i nazwisko</string>
@@ -14,6 +15,9 @@
     <string name="btn_register">ZAREJESTRUJ</string>
     <string name="btn_link_to_register">Nie jesteś członkiem? <u>Zarejestruj się.</u></string>
     <string name="btn_link_to_login">Jestem zarejestrowany! <u>Zaloguj mnie.</u></string>
+    <string name="btn_link_to_login_remember_password">Pamiętam hasło! <u>Zaloguj mnie.</u></string>
+    <string name="btn_link_to_change_password"><u>Zapomniałeś hasła?</u></string>
+    <string name="btn_confirm_change_password">Zapisz hasło</string>
     <string name="action_logout">Wyloguj</string>
     <string name="name">Imię i nazwisko</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -151,6 +155,7 @@
     <string name="title_activity_messages">Wiadomości</string>
     <string name="message_delete">Usuń</string>
     <string name="message_delete_all">Usuń wszystkie</string>
+    <string name="title_activity_remind_password">RemindPasswordActivity</string>
 
 
 </resources>
